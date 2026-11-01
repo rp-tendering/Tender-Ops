@@ -6,24 +6,25 @@
 <meta name="theme-color" content="#13212f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Tender Board">
+<meta name="apple-mobile-web-app-title" content="Tender Ops">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
 </head>
 <body>
-<title>Tender Board</title>
+<title>Tender Ops Monitor</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
-/* Layout: status deck (counts + recovery estimate), then the board as four lanes running ship → shore, stowed rack below. Signal orange = tenders, STBD green / PORT red. */
+/* Layout: compact status strip + pontoon line, then the board as a grid like the bridge whiteboard:
+   one row per boat (numeric), columns SHIP | IN TRANSIT | SHORE, the boat token sits in its column. */
 :root{
   --bg:#e9edf1; --surface:#ffffff; --surface-2:#f3f5f8; --ink:#13212f; --muted:#5a6b7d; --line:#d3dbe4;
   --accent:#e4570f; --accent-ink:#ffffff; --accent-soft:#fde8dc;
-  --sea:#1f6391; --sea-tint:#dde9f3; --hull:#fbfcfd;
-  --ok:#2b8a3e; --warn:#d97706; --crit:#d63031; --track:#e2e7ed;
+  --sea:#1f6391; --sea-tint:#e3eef6; --hull:#fbfcfd; --fender:#1d2329; --glass:#1b2733;
+  --ok:#2b8a3e; --warn:#d97706; --crit:#d63031; --track:#e2e7ed; --off:#eceff3;
   --stbd:#1f9d55; --port:#d63031;
   --shadow:0 1px 2px rgba(19,33,47,.06),0 2px 8px rgba(19,33,47,.05);
   --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
@@ -34,16 +35,16 @@
   :root:not([data-theme="light"]){
     --bg:#0a141e; --surface:#112131; --surface-2:#0d1a27; --ink:#e4ecf3; --muted:#8ea3b7; --line:#22374b;
     --accent:#ff7a33; --accent-ink:#1a0d04; --accent-soft:#3a2214;
-    --sea:#5aaee0; --sea-tint:#0f2638; --hull:#dfe7ee;
-    --ok:#51cf66; --warn:#fcc419; --crit:#ff6b6b; --track:#1d3245;
+    --sea:#5aaee0; --sea-tint:#0f2638; --hull:#dfe7ee; --fender:#05080b; --glass:#0b1117;
+    --ok:#51cf66; --warn:#fcc419; --crit:#ff6b6b; --track:#1d3245; --off:#0c1621;
     --stbd:#51cf66; --port:#ff6b6b; --shadow:none; color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0a141e; --surface:#112131; --surface-2:#0d1a27; --ink:#e4ecf3; --muted:#8ea3b7; --line:#22374b;
   --accent:#ff7a33; --accent-ink:#1a0d04; --accent-soft:#3a2214;
-  --sea:#5aaee0; --sea-tint:#0f2638; --hull:#dfe7ee;
-  --ok:#51cf66; --warn:#fcc419; --crit:#ff6b6b; --track:#1d3245;
+  --sea:#5aaee0; --sea-tint:#0f2638; --hull:#dfe7ee; --fender:#05080b; --glass:#0b1117;
+  --ok:#51cf66; --warn:#fcc419; --crit:#ff6b6b; --track:#1d3245; --off:#0c1621;
   --stbd:#51cf66; --port:#ff6b6b; --shadow:none; color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -53,16 +54,17 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 button,input,select,textarea{font:inherit;color:inherit}
 .mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
 .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:1500px;margin:0 auto}
+:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
 
 /* top bar */
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
-.top .wrap{display:flex;align-items:center;gap:14px;padding-block:10px;flex-wrap:wrap}
+.top .wrap{display:flex;align-items:center;gap:10px 14px;padding-block:8px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:10px;margin-right:auto;min-width:0}
-.brand svg{width:46px;height:20px;flex:none}
-.brand b{font-family:var(--f-display);font-weight:700;font-size:22px;letter-spacing:.02em;text-transform:uppercase;line-height:1}
+.brand svg{width:54px;height:20px;flex:none}
+.brand b{font-family:var(--f-display);font-weight:700;font-size:21px;letter-spacing:.03em;text-transform:uppercase;line-height:1;white-space:nowrap}
 .brand span{display:block;font-size:11px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
 .tabs{display:flex;gap:2px;background:var(--surface-2);border:1px solid var(--line);border-radius:9px;padding:3px}
-.tabs a{font-family:var(--f-display);font-weight:600;font-size:15px;letter-spacing:.05em;text-transform:uppercase;text-decoration:none;color:var(--muted);padding:6px 12px;border-radius:6px}
+.tabs a{font-family:var(--f-display);font-weight:600;font-size:15px;letter-spacing:.05em;text-transform:uppercase;text-decoration:none;color:var(--muted);padding:5px 12px;border-radius:6px;white-space:nowrap}
 .tabs a[aria-current="page"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
 .who{display:flex;align-items:center;gap:8px}
 .chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:999px;border:1px solid var(--line);background:var(--surface-2);white-space:nowrap}
@@ -71,142 +73,160 @@ button,input,select,textarea{font:inherit;color:inherit}
 .chip.role{background:var(--ink);color:var(--surface);border-color:var(--ink)}
 .icon-btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;height:32px;min-width:32px;padding:0 8px;cursor:pointer;font-size:13px;font-weight:600}
 .icon-btn:hover{background:var(--surface-2)}
-
 .demo{background:var(--accent-soft);border-bottom:1px solid var(--line);font-size:13px}
-.demo .wrap{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding-block:7px}
-.demo b{font-weight:700}
+.demo .wrap{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding-block:6px}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:var(--surface)}
 .seg button{border:0;background:none;padding:3px 10px;font-size:12px;font-weight:600;cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
 .linkish{background:none;border:0;text-decoration:underline;cursor:pointer;font-size:13px;padding:0}
 
-main{padding-block:16px 60px;display:flex;flex-direction:column;gap:16px}
+main{padding-block:12px 70px;display:flex;flex-direction:column;gap:12px}
 
 /* buttons */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:8px;border:1px solid var(--line);background:var(--surface);padding:8px 13px;font-weight:600;font-size:14px;cursor:pointer;line-height:1.1;min-height:38px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:8px;border:1px solid var(--line);background:var(--surface);padding:8px 13px;font-weight:600;font-size:14px;cursor:pointer;line-height:1.1;min-height:38px;white-space:nowrap}
 .btn:hover{background:var(--surface-2)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .btn.primary:hover{filter:brightness(1.06)}
 .btn.dark{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.btn.sea{background:var(--sea);border-color:var(--sea);color:#fff}
 .btn.danger{color:var(--crit);border-color:color-mix(in srgb,var(--crit) 40%,var(--line))}
 .btn.arm{background:var(--crit);border-color:var(--crit);color:#fff}
 .btn.small{min-height:30px;padding:5px 10px;font-size:13px}
-.btn:disabled{opacity:.45;cursor:not-allowed}
-:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
+.btn.big{min-height:46px;font-size:16px}
+.btn:disabled{opacity:.42;cursor:not-allowed}
 
-/* day strip */
-.daybar{display:flex;align-items:center;gap:10px 18px;flex-wrap:wrap}
-.daybar h1{font-family:var(--f-display);font-size:30px;font-weight:700;margin:0;letter-spacing:.01em;line-height:1;text-wrap:balance}
-.daybar .sub{color:var(--muted);font-size:14px}
-.daybar .spacer{flex:1}
-.daybar .acts{display:flex;gap:8px;flex-wrap:wrap}
+/* day line */
+.dayline{display:flex;align-items:baseline;gap:6px 14px;flex-wrap:wrap}
+.dayline h1{font-family:var(--f-display);font-size:28px;font-weight:700;margin:0;line-height:1}
+.dayline .sub{color:var(--muted);font-size:14px}
+.dayline .sub b{color:var(--ink);font-weight:600}
+.dayline .spacer{flex:1}
 
-/* counts */
-.deck{display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) minmax(0,1.6fr);gap:10px}
-.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
-.kpi .lab{font-family:var(--f-display);font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-size:14px;color:var(--muted);display:flex;justify-content:space-between;gap:6px;align-items:baseline}
-.kpi .lab small{font-family:var(--f-body);font-size:11px;letter-spacing:.04em;text-transform:none;font-weight:500}
-.kpi .val{font-family:var(--f-display);font-weight:700;font-size:40px;line-height:1;font-variant-numeric:tabular-nums}
-.kpi.ashore{background:var(--ink);color:var(--surface);border-color:var(--ink)}
-.kpi.ashore .lab{color:color-mix(in srgb,var(--surface) 70%,transparent)}
-.kpi.ashore .val{color:var(--accent)}
-.kpi .foot{font-size:12px;color:var(--muted);min-height:16px}
-.kpi.ashore .foot{color:color-mix(in srgb,var(--surface) 70%,transparent)}
-.kpi .sync{margin-top:6px;align-self:flex-start;background:transparent;color:inherit;border-color:color-mix(in srgb,var(--surface) 35%,transparent)}
-.kpi .sync:hover{background:color-mix(in srgb,var(--surface) 12%,transparent)}
+/* status strip */
+.strip{display:flex;align-items:stretch;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.m{display:flex;flex-direction:column;justify-content:center;padding:7px 14px;border-right:1px solid var(--line);min-width:0}
+.m .l{font-family:var(--f-display);font-weight:600;font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.m .l small{font-family:var(--f-body);font-size:10.5px;letter-spacing:.03em;text-transform:none;font-weight:500;margin-left:4px}
+.m .v{font-family:var(--f-display);font-weight:700;font-size:25px;line-height:1.05;font-variant-numeric:tabular-nums;white-space:nowrap}
+.m.ashore{background:var(--ink);color:var(--surface);flex-direction:row;align-items:center;gap:12px}
+.m.ashore .l{color:color-mix(in srgb,var(--surface) 70%,transparent)}
+.m.ashore .v{color:var(--accent);font-size:32px}
+.m.ashore .sync{background:transparent;color:inherit;border-color:color-mix(in srgb,var(--surface) 35%,transparent)}
+.m.ashore .sync:hover{background:color-mix(in srgb,var(--surface) 12%,transparent)}
+.m .s{font-size:11px;color:color-mix(in srgb,var(--surface) 65%,transparent);white-space:nowrap}
+.m.rec{flex:1;flex-direction:row;align-items:center;gap:10px;border-right:0;flex-wrap:wrap}
+.recbtn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface-2);border-radius:999px;padding:5px 12px;font-weight:600;cursor:pointer;font-size:14px;text-align:left}
+.recbtn .dotc{width:9px;height:9px;border-radius:50%;flex:none}
+.recbtn .dotc.ok{background:var(--ok)} .recbtn .dotc.warn{background:var(--warn)} .recbtn .dotc.crit{background:var(--crit)} .recbtn .dotc.none{background:var(--muted)}
+.recbtn .chev{color:var(--muted);font-size:12px}
+.recd{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;display:flex;gap:10px 22px;flex-wrap:wrap;align-items:center;font-size:14px}
+.recd div{display:flex;flex-direction:column}
+.recd span{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.recd b{font-family:var(--f-display);font-size:21px;font-weight:700;font-variant-numeric:tabular-nums}
+.recd p{margin:0;flex-basis:100%;color:var(--muted)}
 
-.recov{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-width:0}
-.recov .lab{font-family:var(--f-display);font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-size:14px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
-.recov .line{font-size:15px;line-height:1.35}
-.recov .line b{font-weight:700}
-.recov .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.recov .stats div{display:flex;flex-direction:column;min-width:0}
-.recov .stats span{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
-.recov .stats b{font-family:var(--f-display);font-size:24px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
-.recov .verdict{display:flex;gap:8px;flex-wrap:wrap}
-.pill{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line)}
-.pill.ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 35%,var(--line))}
-.pill.warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 40%,var(--line))}
-.pill.crit{color:var(--crit);border-color:color-mix(in srgb,var(--crit) 40%,var(--line))}
-
-/* board */
-.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:stretch}
-.lane{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:10px;min-width:0;min-height:180px}
-.lane.transit{background:var(--sea-tint)}
-.lane > header{display:flex;align-items:center;gap:8px;font-family:var(--f-display);font-weight:700;font-size:17px;letter-spacing:.06em;text-transform:uppercase;padding:2px 4px}
-.lane > header svg{width:30px;height:18px;flex:none;color:var(--muted)}
-.lane > header .n{margin-left:auto;font-family:var(--f-mono);font-size:13px;font-weight:600;color:var(--muted)}
-.lane .empty{color:var(--muted);font-size:13px;text-align:center;padding:18px 6px;border:1px dashed var(--line);border-radius:10px}
-.cards{display:flex;flex-direction:column;gap:10px}
-
-.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px 12px;display:flex;flex-direction:column;gap:8px;box-shadow:var(--shadow);min-width:0}
-.card .row1{display:flex;align-items:center;gap:6px 8px;flex-wrap:wrap}
-.tname{font-family:var(--f-display);font-weight:700;font-size:26px;line-height:1;letter-spacing:.01em;white-space:nowrap}
-.side{font-size:11px;font-weight:700;letter-spacing:.1em;padding:2px 6px;border-radius:5px;border:1.5px solid currentColor}
+/* pontoons */
+.pont{display:flex;align-items:center;gap:8px 10px;flex-wrap:wrap;font-size:14px}
+.pont .ttl{font-family:var(--f-display);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:14px;color:var(--muted)}
+.side{font-size:11px;font-weight:700;letter-spacing:.1em;padding:2px 6px;border-radius:5px;border:1.5px solid currentColor;white-space:nowrap;line-height:1.2}
 .side.STBD{color:var(--stbd)} .side.PORT{color:var(--port)} .side.SHORE{color:var(--sea)}
-.card .more{margin-left:auto}
-.card .vis{display:flex;align-items:center;gap:10px}
-.card .vis .boat{flex:1;min-width:0;height:auto;max-width:150px}
-.card .meta{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--muted);flex-wrap:wrap}
-.card .meta b{color:var(--ink);font-weight:600}
-.card .dir{white-space:nowrap;font-family:var(--f-display);font-weight:700;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--sea)}
-.card .flag{font-size:12.5px;font-weight:600;color:var(--crit);display:flex;gap:6px;align-items:center}
-.card .acts{display:flex;gap:6px;flex-wrap:wrap}
-.card .acts .btn{flex:1 1 auto}
+.pchip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:4px 11px;background:var(--surface);font-weight:600;font-size:13.5px;white-space:nowrap}
+.pchip i{width:9px;height:9px;border-radius:50%;flex:none;background:var(--ok)}
+.pchip.occ i{background:var(--accent)} .pchip.closed{color:var(--muted);background:var(--surface-2)} .pchip.closed i{background:var(--line)}
+.pchip em{font-style:normal;font-weight:500;color:var(--muted)}
+.pchip.occ em{color:var(--ink);font-weight:700;font-family:var(--f-display);font-size:15px}
+
+/* board grid */
+.board{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.grow{display:grid;grid-template-columns:minmax(150px,200px) repeat(3,minmax(0,1fr)) 176px;grid-template-areas:"b s t h a";border-top:1px solid var(--line)}
+.grow.head{border-top:0;background:var(--surface-2)}
+.grow.head > div{min-height:0}
+.grow.head > div{padding:9px 12px;font-family:var(--f-display);font-weight:700;font-size:16px;letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;gap:8px;color:var(--muted)}
+.grow.head svg{width:28px;height:16px;flex:none}
+.grow.head .h-t{justify-content:center}
+.grow > .cb{grid-area:b} .grow > .cs{grid-area:s} .grow > .ct{grid-area:t} .grow > .ch{grid-area:h} .grow > .ca{grid-area:a}
+.cs,.ct,.ch{border-left:1px dashed var(--line);display:flex;align-items:center;justify-content:center;padding:8px 6px;min-height:96px;min-width:0}
+.ct{background:var(--sea-tint)}
+.grow.head .ct{background:color-mix(in srgb,var(--sea-tint) 70%,var(--surface-2))}
+.cb{padding:10px 12px;display:flex;flex-direction:column;justify-content:center;gap:3px;min-width:0;text-align:left;background:none;border:0;cursor:pointer;color:inherit}
+.cb:hover .bn{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
+.bn{font-family:var(--f-display);font-weight:700;font-size:28px;line-height:1;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.bn .nm{overflow:hidden;text-overflow:ellipsis}
+.bn.long{font-size:21px}
+.bn.long .nm{white-space:normal;line-height:1.05}
+.drv{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.drv b{color:var(--ink);font-weight:600}
+.marks{display:flex;gap:6px;flex-wrap:wrap;font-size:12px;font-weight:600}
+.marks .iss{color:var(--crit)} .marks .nt{color:var(--sea)}
+.ca{display:flex;flex-direction:column;gap:6px;justify-content:center;padding:8px 10px;border-left:1px solid var(--line)}
+.ca .btn{width:100%}
+.ca .wait{font-size:12.5px;color:var(--muted);text-align:center}
+
+.tok{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;max-width:100%}
+.tok .vis{display:flex;align-items:center;gap:6px;max-width:100%}
+.tok .boat{width:136px;max-width:100%;height:auto;flex:0 1 auto;min-width:0}
+.tok .tag{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:5px;white-space:nowrap}
+.tag.berth{background:var(--ink);color:var(--surface)}
+.tag.sb{background:color-mix(in srgb,var(--warn) 22%,transparent);color:var(--warn);border:1px solid color-mix(in srgb,var(--warn) 45%,transparent)}
+.tag.dir{color:var(--sea);font-family:var(--f-display);font-size:13px;letter-spacing:.06em;padding:0}
+.tok .since{font-size:11.5px;color:var(--muted);white-space:nowrap}
 .ring{flex:none}
 .ring .trk{fill:none;stroke:var(--track);stroke-width:8}
 .ring .val{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .6s ease,stroke .3s}
 .ring.ok .val{stroke:var(--ok)} .ring.warn .val{stroke:var(--warn)} .ring.crit .val{stroke:var(--crit)}
-.ring .n{font-family:var(--f-display);font-weight:700;font-size:24px;fill:var(--ink);text-anchor:middle;dominant-baseline:middle;font-variant-numeric:tabular-nums}
-.ring .c{font-family:var(--f-mono);font-size:10.5px;fill:var(--muted);text-anchor:middle}
+.ring .n{font-family:var(--f-display);font-weight:700;font-size:25px;fill:var(--ink);text-anchor:middle;dominant-baseline:middle;font-variant-numeric:tabular-nums}
+.ring .c{font-family:var(--f-mono);font-size:11px;fill:var(--muted);text-anchor:middle}
 .ring.crit .n{fill:var(--crit)}
 
-.boat .b-hull{fill:var(--hull);stroke:var(--ink);stroke-width:1.2;stroke-linejoin:round}
-.boat .b-can,.boat .b-helm{fill:var(--accent);stroke:var(--ink);stroke-width:1.2;stroke-linejoin:round}
-.boat.shore .b-can,.boat.shore .b-helm{fill:var(--sea)}
-.boat.muted .b-can,.boat.muted .b-helm{fill:var(--track)}
-.boat .b-win{fill:var(--ink);opacity:.72}
-.boat .b-mast{stroke:var(--ink);stroke-width:1.4}
-.boat .b-light{fill:var(--warn)}
-.boat.muted .b-light{fill:var(--muted)}
-.boat .b-rub{stroke:var(--ink);stroke-width:.8;opacity:.45}
-.boat .b-wave{fill:none;stroke:var(--sea);stroke-width:1.4;stroke-linecap:round}
-.boat.muted .b-wave{stroke:var(--line)}
-@media (prefers-reduced-motion: no-preference){
-  .lane.transit .boat g.hullg{animation:bob 3.2s ease-in-out infinite}
-  @keyframes bob{50%{transform:translateY(1.2px) rotate(-.6deg)}}
-}
+.grow.off{background:var(--off)}
+.grow.off .cb{opacity:.75}
+.grow.off .offc{grid-column:2 / 5;display:flex;align-items:center;gap:14px;padding:8px 14px;border-left:1px dashed var(--line);color:var(--muted);font-size:14px;min-width:0}
+.grow.off .offc .boat{width:96px;flex:none}
+.grow.off .offc b{font-family:var(--f-display);font-size:17px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.sep{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface-2);border-top:1px solid var(--line);font-family:var(--f-display);font-weight:700;font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.sep .btn{margin-left:auto;font-family:var(--f-body);letter-spacing:0;text-transform:none}
 
-/* stowed rack */
-.rack{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px}
-.rack h2{font-family:var(--f-display);font-weight:700;font-size:17px;letter-spacing:.06em;text-transform:uppercase;margin:0;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.rack h2 small{font-family:var(--f-body);text-transform:none;letter-spacing:0;font-size:13px;color:var(--muted);font-weight:500}
-.rack .items{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px}
-.stow{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--surface-2);min-width:0}
-.stow .boat{width:70px;flex:none}
-.stow .txt{display:flex;flex-direction:column;min-width:0;flex:1}
-.stow .txt b{font-family:var(--f-display);font-size:20px;line-height:1}
-.stow .txt span{font-size:12px;color:var(--muted)}
-.stow .btn{flex:none}
+/* boat drawing */
+.boat .hull{fill:var(--hull);stroke:var(--ink);stroke-width:1.1;stroke-linejoin:round}
+.boat .can{fill:var(--accent);stroke:var(--ink);stroke-width:1.1;stroke-linejoin:round}
+.boat .stripe{fill:none;stroke:var(--ink);stroke-width:.9;opacity:.55}
+.boat .win{fill:var(--glass);stroke:var(--hull);stroke-width:.8}
+.boat .door{fill:var(--glass);stroke:var(--hull);stroke-width:.8}
+.boat .fend{fill:var(--fender)}
+.boat .fsep{stroke:var(--hull);stroke-width:.6;opacity:.5}
+.boat .post{fill:var(--accent);stroke:var(--ink);stroke-width:.9}
+.boat .num{font-family:var(--f-display);font-weight:700;font-size:7.5px;fill:var(--ink)}
+.boat .wave{fill:none;stroke:var(--sea);stroke-width:1.3;stroke-linecap:round}
+.boat.shore .can,.boat.shore .post{fill:var(--sea)}
+.boat.muted .can,.boat.muted .post{fill:var(--track)}
+.boat.muted .wave{stroke:var(--line)}
+.boat.muted .win,.boat.muted .door{fill:var(--muted)}
+@media (prefers-reduced-motion: no-preference){
+  .ct .boat .hullg{animation:bob 3.2s ease-in-out infinite;transform-origin:80px 40px}
+  @keyframes bob{50%{transform:translateY(1.2px) rotate(-.5deg)}}
+}
 
 /* pages */
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
 .panel-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .panel-head h2{font-family:var(--f-display);font-size:26px;font-weight:700;margin:0;margin-right:auto;line-height:1.05}
 .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-select.f,input.f,textarea.f{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 10px;min-height:38px;max-width:100%}
+select.f{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 10px;min-height:38px;max-width:100%}
 .tablebox{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
 table{border-collapse:collapse;width:100%;font-size:14px}
 th{font-family:var(--f-display);font-weight:600;text-transform:uppercase;letter-spacing:.07em;font-size:13px;color:var(--muted);text-align:left;padding:8px 10px;background:var(--surface-2);border-bottom:1px solid var(--line);white-space:nowrap}
-td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+td{padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
 tr:last-child td{border-bottom:0}
 td.t{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
 td.u{font-family:var(--f-display);font-weight:700;font-size:17px;white-space:nowrap}
 td.num{font-family:var(--f-mono);text-align:right;white-space:nowrap}
 td.ra{white-space:nowrap;text-align:right}
-tr.k-sync td{background:color-mix(in srgb,var(--sea) 8%,transparent)}
-tr.k-lower td,tr.k-hoist td{background:color-mix(in srgb,var(--accent) 7%,transparent)}
-
+tr.k-sync td,tr.k-pont td{background:color-mix(in srgb,var(--sea) 8%,transparent)}
+tr.k-lower td,tr.k-hoist td{background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.sumgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.sumgrid div{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.sumgrid span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.sumgrid b{font-family:var(--f-display);font-size:22px}
 .issues{display:flex;flex-direction:column;gap:8px}
 .issue{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 12px;align-items:start;background:var(--surface)}
 .issue .who2{font-family:var(--f-display);font-weight:700;font-size:22px;line-height:1;min-width:48px}
@@ -216,10 +236,11 @@ tr.k-lower td,tr.k-hoist td{background:color-mix(in srgb,var(--accent) 7%,transp
 .issue .res{font-size:13px;color:var(--muted);border-left:2px solid var(--ok);padding-left:8px;margin-top:2px}
 .issue .side-acts{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
 .cat{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.status{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:999px}
+.status{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:999px;white-space:nowrap}
 .status.open{background:color-mix(in srgb,var(--crit) 15%,transparent);color:var(--crit)}
 .status.resolved{background:color-mix(in srgb,var(--ok) 15%,transparent);color:var(--ok)}
-
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;border:1px solid var(--line)}
+.pill.warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 40%,var(--line))}
 .days{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
 .dayc{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--surface);text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:6px}
 .dayc:hover{border-color:var(--muted)}
@@ -228,26 +249,21 @@ tr.k-lower td,tr.k-hoist td{background:color-mix(in srgb,var(--accent) 7%,transp
 .dayc .g{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px}
 .dayc .g span{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);display:block}
 .dayc .g i{font-style:normal;font-family:var(--f-display);font-weight:700;font-size:19px}
-.sumgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
-.sumgrid div{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
-.sumgrid span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
-.sumgrid b{font-family:var(--f-display);font-size:22px}
-
 .emptystate{background:var(--surface);border:1px dashed var(--line);border-radius:14px;padding:40px 20px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
 .emptystate h2{font-family:var(--f-display);font-size:28px;margin:0}
 .emptystate p{margin:0;color:var(--muted);max-width:52ch}
-.emptystate .boat{width:180px}
+.emptystate .boat{width:200px}
 
 /* login */
 .login{min-height:80vh;display:flex;align-items:center;justify-content:center;padding-block:30px}
 .login form{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;width:min(400px,100%);display:flex;flex-direction:column;gap:14px}
-.login h1{font-family:var(--f-display);font-size:32px;margin:0;text-transform:uppercase;letter-spacing:.03em}
+.login h1{font-family:var(--f-display);font-size:28px;margin:0;text-transform:uppercase;letter-spacing:.03em;line-height:1}
 .login .err{color:var(--crit);font-size:14px;min-height:18px}
 
 /* modal */
 .overlay{position:fixed;inset:0;z-index:50;background:rgba(6,14,22,.55);display:flex;align-items:flex-end;justify-content:center;padding:max(12px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
 @media (min-width:640px){.overlay{align-items:center}}
-.modal{background:var(--surface);border-radius:16px;width:min(460px,100%);max-height:100%;overflow:auto;display:flex;flex-direction:column;border:1px solid var(--line)}
+.modal{background:var(--surface);border-radius:16px;width:min(480px,100%);max-height:100%;overflow:auto;display:flex;flex-direction:column;border:1px solid var(--line)}
 .modal header{padding:14px 16px 4px;display:flex;align-items:center;gap:10px}
 .modal header h3{font-family:var(--f-display);font-size:24px;margin:0;line-height:1.1;flex:1}
 .modal .mb{padding:8px 16px 4px;display:flex;flex-direction:column;gap:12px}
@@ -255,37 +271,73 @@ tr.k-lower td,tr.k-hoist td{background:color-mix(in srgb,var(--accent) 7%,transp
 .fld{display:flex;flex-direction:column;gap:5px}
 .fld > span{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .fld input,.fld select,.fld textarea{border:1px solid var(--line);background:var(--surface-2);border-radius:9px;padding:9px 11px;min-height:42px;width:100%}
-.fld textarea{min-height:90px;resize:vertical}
-.fld .hint{font-size:12.5px;color:var(--muted)}
+.fld textarea{min-height:80px;resize:vertical}
+.hint{font-size:12.5px;color:var(--muted)}
 .fld input.big{font-family:var(--f-display);font-size:34px;font-weight:700;text-align:center;padding:4px;font-variant-numeric:tabular-nums}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .quick{display:flex;gap:6px;flex-wrap:wrap}
 .quick button{flex:1}
 .paxprev{display:flex;align-items:center;gap:14px;justify-content:center}
+.choice{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.choice button{display:flex;flex-direction:column;align-items:center;gap:2px;border:2px solid var(--line);background:var(--surface-2);border-radius:12px;padding:12px 6px;cursor:pointer;font-family:var(--f-display);font-weight:700;font-size:19px;letter-spacing:.04em;text-transform:uppercase}
+.choice button small{font-family:var(--f-body);font-size:12px;font-weight:500;color:var(--muted);text-transform:none;letter-spacing:0}
+.choice button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.choice button:disabled{opacity:.4;cursor:not-allowed}
 .menu-list{display:flex;flex-direction:column;gap:8px}
-.menu-list .btn{justify-content:flex-start;min-height:46px;font-size:15px}
+.menu-list .btn{justify-content:flex-start;min-height:44px;font-size:15px}
+.kv{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.kv div{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:7px 9px;min-width:0}
+.kv span{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.kv b{font-family:var(--f-display);font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
 .warnbox{background:color-mix(in srgb,var(--warn) 14%,transparent);border:1px solid color-mix(in srgb,var(--warn) 40%,var(--line));border-radius:9px;padding:8px 10px;font-size:13.5px}
+.toggles{display:flex;gap:8px;flex-wrap:wrap}
+.toggles label{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:10px 14px;background:var(--surface-2);font-weight:600;cursor:pointer;flex:1}
+.toggles input{width:20px;height:20px;accent-color:var(--accent)}
 
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:max(18px,calc(env(safe-area-inset-bottom,0px) + 12px));z-index:60;background:var(--ink);color:var(--surface);padding:10px 16px;border-radius:10px;font-weight:600;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.25);max-width:calc(100vw - 32px)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:max(18px,calc(env(safe-area-inset-bottom,0px) + 12px));z-index:60;background:var(--ink);color:var(--surface);padding:8px 8px 8px 16px;border-radius:12px;font-weight:600;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.25);max-width:calc(100vw - 32px);display:flex;align-items:center;gap:12px}
+.toast button{background:var(--accent);color:var(--accent-ink);border:0;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer}
 
-@media (max-width:1180px){
-  .deck{grid-template-columns:repeat(4,minmax(0,1fr))}
-  .recov{grid-column:1/-1}
+@media (max-width:1100px){
+  .grow{grid-template-columns:minmax(120px,160px) repeat(3,minmax(0,1fr)) 150px}
+  .tok .boat{width:96px}
 }
-@media (max-width:980px){ .board{grid-template-columns:repeat(2,minmax(0,1fr))} }
-@media (max-width:640px){
-  .deck{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .kpi .val{font-size:34px}
-  .board{grid-template-columns:minmax(0,1fr)}
-  .lane{min-height:0}
-  .recov .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:760px){
+  .strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+  .m{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:6px 10px}
+  .m.ashore{grid-column:1 / -1;justify-content:space-between;border-right:0}
+  .m.rec{grid-column:1 / -1;border-bottom:0}
+  .m:nth-child(4){border-right:0}
+  .m .v{font-size:21px}
+  .grow{grid-template-columns:62px repeat(3,minmax(0,1fr));grid-template-areas:"b s t h" "a a a a"}
+  .grow.head{grid-template-areas:"b s t h"}
+  .grow.head .ca,.grow.head .cb{display:none}
+  .grow.head > div{font-size:13px;padding:7px 4px;justify-content:center}
+  .grow.head svg{display:none}
+  .cb{padding:8px 6px;align-items:center;text-align:center}
+  .bn{font-size:21px;flex-direction:column;gap:3px;max-width:100%}
+  .bn .nm{white-space:normal;overflow-wrap:anywhere;text-align:center;line-height:1}
+  .bn.long{font-size:14px}
+  .bn .side{font-size:9.5px;padding:1px 4px}
+  .drv{font-size:11px;max-width:100%}
+  .drv .dl{display:none}
+  .marks{justify-content:center;font-size:11px}
+  .cs,.ct,.ch{min-height:86px;padding:6px 3px}
+  .tok .boat{width:76px}
+  .tok .vis{flex-direction:column;gap:2px}
+  .ring{width:44px;height:44px}
+  .tok .since{font-size:10.5px}
+  .ca{flex-direction:row;border-left:0;border-top:1px dashed var(--line);padding:6px 8px}
+  .ca .btn{min-height:40px}
+  .grow.off{grid-template-areas:"b o o o" "a a a a"}
+  .grow.off .offc{grid-area:o;grid-column:auto;font-size:12.5px;gap:8px}
+  .grow.off .offc .boat{width:60px}
   .tabs{width:100%;order:3}
-  .tabs a{flex:1;text-align:center;padding:6px 4px;font-size:14px}
-  .brand b{font-size:20px}
-  .daybar h1{font-size:26px}
+  .tabs a{flex:1;text-align:center;padding:5px 3px;font-size:14px}
+  .brand b{font-size:18px}
   .issue{grid-template-columns:auto minmax(0,1fr)}
   .issue .side-acts{grid-column:1/-1;flex-direction:row;justify-content:flex-end;flex-wrap:wrap}
   .two{grid-template-columns:1fr}
+  .kv{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 </style>
 
@@ -295,9 +347,8 @@ tr.k-lower td,tr.k-hoist td{background:color-mix(in srgb,var(--accent) 7%,transp
 
 <script>
 /* =====================================================================
-   TENDER BOARD — Royal Princess
-   CONFIG: leave firebase:null for DEMO mode (data on this device only).
-   Paste your Firebase web config to go LIVE (see SETUP guide).
+   TENDER OPS MONITOR — Royal Princess
+   CONFIG: firebase:null = DEMO mode (data on this device only).
    ===================================================================== */
 const CONFIG = {
   firebase: {
@@ -312,17 +363,10 @@ const CONFIG = {
   shipName: "Royal Princess"
 };
 
-const TENDERS = [
-  {id:"T11", num:11, side:"STBD"}, {id:"T15", num:15, side:"STBD"}, {id:"T17", num:17, side:"STBD"},
-  {id:"T14", num:14, side:"PORT"}, {id:"T16", num:16, side:"PORT"}
-];
+const TENDERS = [11, 14, 15, 16, 17].map(n => ({id:"T"+n, num:n, side: n % 2 ? "STBD" : "PORT"}));
+const DEFAULT_CAP = 170, SHORE_CAP = 100;
+const PONTOONS = {FWD:"FWD", MID:"MIDSHIP"};
 const CATEGORIES = ["Engine","Steering","Propulsion","Release hooks / falls","Electrical","Communications","Hull / canopy","Fenders / mooring","Other"];
-const LANES = [
-  {loc:"ship", name:"Alongside Ship"},
-  {loc:"standby", name:"Stand-by"},
-  {loc:"transit", name:"In Transit"},
-  {loc:"shore", name:"Alongside Shore"}
-];
 
 /* ---------------- utils ---------------- */
 const $ = (s, r=document) => r.querySelector(s);
@@ -336,27 +380,35 @@ const ymd = ms => { const d = new Date(ms); return d.getFullYear() + "-" + pad(d
 const fmtDate = s => { if (!s) return ""; const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d).toLocaleDateString("en-GB", {weekday:"short", day:"numeric", month:"short", year:"numeric"}); };
 const hmToMs = (dateStr, hm) => { if (!dateStr || !hm) return null; const [y,m,d] = dateStr.split("-").map(Number); const [h,mi] = hm.split(":").map(Number); return new Date(y, m-1, d, h, mi).getTime(); };
 const fmtDur = min => { if (min == null || !isFinite(min)) return "—"; const neg = min < 0; min = Math.abs(Math.round(min)); const h = Math.floor(min/60), m = min % 60; return (neg?"−":"") + (h ? h + "h " + pad(m) + "m" : m + " min"); };
+const fmtShort = min => { min = Math.max(0, Math.round(min)); return min < 60 ? min + "′" : Math.floor(min/60) + "h" + pad(min%60); };
 const num = n => (n == null || isNaN(n)) ? "—" : Math.round(n).toLocaleString("en-GB");
 const clean = o => JSON.parse(JSON.stringify(o));
 function loadScript(src){ return new Promise((res, rej) => { const s = document.createElement("script"); s.src = src; s.onload = res; s.onerror = () => rej(new Error("Could not load " + src)); document.head.appendChild(s); }); }
 function lsGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
 function lsSet(k, v){ try { localStorage.setItem(k, v); } catch(e){} }
+const berthName = b => b === "FWD" ? "FWD" : b === "MID" ? "MIDSHIP" : "STAND-BY";
 
 /* ---------------- graphics ---------------- */
-function boatSVG(flip=false, cls=""){
-  let wins = "";
-  for (let i = 0; i < 7; i++) wins += `<rect class="b-win" x="${24 + i*9.5}" y="19.5" width="6" height="5" rx="1"/>`;
-  return `<svg class="boat ${cls}" viewBox="0 0 120 50" aria-hidden="true"><g ${flip ? 'transform="translate(120 0) scale(-1 1)"' : ""}>
-  <path class="b-wave" d="M2 47 q6.5 -3 13 0 t13 0 t13 0 t13 0 t13 0 t13 0 t13 0 t13 0 t13 0"/>
-  <g class="hullg" style="transform-origin:60px 40px">
-  <path class="b-hull" d="M5 31 H115 L109 42 Q107 45 103 45 H15 Q11 45 9 42 Z"/>
-  <path class="b-can" d="M13 31 L18 18 Q19.5 14.5 24 14.5 H91 Q96 14.5 98 18 L107 31 Z"/>
-  <path class="b-helm" d="M72 14.5 L75 7.5 H88 L90 14.5 Z"/>
-  <line class="b-mast" x1="81" y1="7.5" x2="81" y2="2.5"/><circle class="b-light" cx="81" cy="2.4" r="1.7"/>
+function boatSVG(flip=false, cls="", number=""){
+  // Side view after the Hatecke tender: orange enclosed canopy, glazed door, black fender band, white hull. Bow to the right.
+  const wins = [16, 27, 38, 75, 86, 97, 108].map(x => `<rect class="win" x="${x}" y="15.5" width="8.5" height="7.5" rx="1"/>`).join("");
+  return `<svg class="boat ${cls}" viewBox="0 0 160 56" aria-hidden="true"><g ${flip ? 'transform="translate(160 0) scale(-1 1)"' : ""}>
+  <path class="wave" d="M4 53 q7 -3 14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0"/>
+  <g class="hullg">
+  <path class="hull" d="M5 31 H143 Q154 31.5 156 35 Q153 45 140 49.5 Q131 51 118 51 H22 Q11 51 8 46 Z"/>
+  <path class="stripe" d="M9 44.5 Q60 46 118 45.5 Q137 45 150 39"/>
+  <path class="can" d="M6 31 V15 Q6 11 10.5 11 H118 L123 6 H136 Q141 6 143 9 L150 21 Q153 27 151 31 Z"/>
+  <rect class="post" x="128" y="1.2" width="3.4" height="5.2" rx="1"/>
+  <path class="win" d="M125 8.5 H135 L139 15 H125 Z"/>
   ${wins}
-  <line class="b-rub" x1="6" y1="34" x2="114" y2="34"/></g></g></svg>`;
+  <rect class="door" x="51" y="13" width="17" height="18" rx="1"/>
+  <line class="stripe" x1="59.5" y1="13" x2="59.5" y2="31" style="stroke:var(--hull);opacity:.6"/>
+  <rect class="fend" x="34" y="31.5" width="88" height="7" rx="3.5"/>
+  <line class="fsep" x1="63" y1="32" x2="63" y2="38"/><line class="fsep" x1="93" y1="32" x2="93" y2="38"/>
+  ${number ? `<text class="num" x="138" y="43" text-anchor="middle" ${flip ? 'transform="translate(276 0) scale(-1 1)"' : ""}>${esc(number)}</text>` : ""}
+  </g></g></svg>`;
 }
-function ringSVG(p, cap, size=82){
+function ringSVG(p, cap, size=56){
   const r = 31, C = 2 * Math.PI * r;
   const ratio = cap ? p / cap : 0;
   const cls = !cap ? "none" : ratio >= 0.95 ? "crit" : ratio >= 0.8 ? "warn" : "ok";
@@ -364,44 +416,46 @@ function ringSVG(p, cap, size=82){
   return `<svg class="ring ${cls}" viewBox="0 0 80 80" width="${size}" height="${size}" role="img" aria-label="${p} of ${cap || "unset"} pax">
     <circle cx="40" cy="40" r="${r}" class="trk"/>
     ${p > 0 ? `<circle cx="40" cy="40" r="${r}" class="val" stroke-dasharray="${C.toFixed(2)}" stroke-dashoffset="${off.toFixed(2)}" transform="rotate(-90 40 40)"/>` : ""}
-    <text x="40" y="37" class="n">${p}</text><text x="40" y="55" class="c">/${cap || "—"}</text></svg>`;
+    <text x="40" y="37" class="n">${p}</text><text x="40" y="56" class="c">/${cap || "—"}</text></svg>`;
 }
 const SHIP_ICON = `<svg viewBox="0 0 30 18" aria-hidden="true"><path d="M1 11h28l-3 5H5z" fill="currentColor"/><path d="M5 11V7h17l3 4M9 7V4h9v3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>`;
-const WAIT_ICON = `<svg viewBox="0 0 30 18" aria-hidden="true"><circle cx="15" cy="9" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M15 5.5V9l2.5 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
 const SEA_ICON = `<svg viewBox="0 0 30 18" aria-hidden="true"><path d="M2 7q3.25-3 6.5 0t6.5 0 6.5 0 6.5 0M2 13q3.25-3 6.5 0t6.5 0 6.5 0 6.5 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
 const PIER_ICON = `<svg viewBox="0 0 30 18" aria-hidden="true"><path d="M2 8h26" stroke="currentColor" stroke-width="2.2"/><path d="M6 8v9M15 8v9M24 8v9" stroke="currentColor" stroke-width="1.8"/><path d="M11 8V4h3v4" fill="currentColor"/></svg>`;
-const LANE_ICONS = {ship:SHIP_ICON, standby:WAIT_ICON, transit:SEA_ICON, shore:PIER_ICON};
 
-/* ---------------- core model: replay events ---------------- */
+/* ---------------- core model: replay the event log ---------------- */
+function pontoonsOf(day, evs){
+  let p = {side: day && day.side || "STBD", FWD: day ? day.fwd !== false : true, MID: day ? day.mid !== false : true};
+  return p;
+}
 function compute(day, events){
   const units = {}, order = [];
-  for (const t of TENDERS){
-    units[t.id] = {id:t.id, name:"T"+t.num, kind:"tender", side:t.side, active:false, loc:"stowed", dir:null, pax:0, cap:null, driver:"", since:null, lowered:null, hoisted:null, tripsOut:0, tripsBack:0, paxOut:0, paxBack:0, lastShipDep:null};
-    order.push(t.id);
-  }
+  const mkUnit = (o) => Object.assign({active:false, loc:"stowed", berth:null, dir:null, pax:0, cap:null, driver:"", note:"", since:null, lowered:null, hoisted:null, tripsOut:0, tripsBack:0, paxOut:0, paxBack:0, lastShipDep:null}, o);
+  for (const t of TENDERS){ units[t.id] = mkUnit({id:t.id, name:"T"+t.num, num:String(t.num), kind:"tender", side:t.side}); order.push(t.id); }
   let ashore = 0;
+  const pont = pontoonsOf(day);
   const cycles = [], log = [], drivers = new Set();
   let firstLowered = null, lastHoisted = null;
   const evs = (events || []).slice().sort((a,b) => a.t - b.t || a.c - b.c);
+  const atBerth = (u, b) => { u.loc = "ship"; u.dir = null; u.berth = b; };
   for (const e of evs){
     let u = units[e.unit], text = "", kind = e.type, pax = null;
-    if (!u && e.type !== "sync" && e.type !== "shore_add") continue;
+    if (!u && !["sync","shore_add","pontoons"].includes(e.type)) continue;
     switch (e.type){
       case "shore_add":
-        units[e.unit] = u = {id:e.unit, name:e.name, kind:"shore", side:"SHORE", active:true, loc:e.at || "shore", dir:null, pax:0, cap:e.cap || null, driver:e.driver || "", since:e.t, lowered:null, hoisted:null, tripsOut:0, tripsBack:0, paxOut:0, paxBack:0, lastShipDep:null};
-        order.push(e.unit);
-        text = `Shoretender on service at ${u.loc === "ship" ? "ship" : "shore"} · max ${u.cap ?? "—"}`;
+        units[e.unit] = u = mkUnit({id:e.unit, name:e.name, num:"", kind:"shore", side:"SHORE", active:true, cap:e.cap || SHORE_CAP, driver:e.driver || "", since:e.t});
+        order.push(e.unit); atBerth(u, e.berth || "SB");
+        text = `Shoretender on service · ${berthName(u.berth)} · max ${u.cap}`;
         break;
       case "activate":
-        Object.assign(u, {active:true, loc:"ship", dir:null, pax:0, since:e.t, lastShipDep:null});
-        if (e.cap) u.cap = e.cap;
-        if (e.driver != null && e.driver !== "") u.driver = e.driver;
-        if (u.kind === "tender"){ u.lowered = e.t; u.hoisted = null; if (firstLowered == null) firstLowered = e.t; kind = "lower"; text = `Lowered to the water · max ${u.cap ?? "—"}`; }
-        else text = "Back on service, alongside ship";
+        Object.assign(u, {active:true, pax:0, since:e.t, lastShipDep:null}); atBerth(u, e.berth || "SB");
+        if (e.cap) u.cap = e.cap; if (!u.cap) u.cap = u.kind === "shore" ? SHORE_CAP : DEFAULT_CAP;
+        if (e.driver) u.driver = e.driver;
+        if (u.kind === "tender"){ u.lowered = e.t; u.hoisted = null; if (firstLowered == null) firstLowered = e.t; kind = "lower"; text = `Lowered · ${berthName(u.berth)} · max ${u.cap}`; }
+        else text = `Back on service · ${berthName(u.berth)}`;
         break;
       case "deactivate":
-        Object.assign(u, {active:false, loc:"stowed", dir:null, pax:0, since:e.t, lastShipDep:null});
-        if (u.kind === "tender"){ u.hoisted = e.t; lastHoisted = e.t; kind = "hoist"; text = "Hoisted and stowed"; }
+        Object.assign(u, {active:false, loc:"stowed", berth:null, dir:null, pax:0, since:e.t, lastShipDep:null});
+        if (u.kind === "tender"){ u.hoisted = e.t; lastHoisted = e.t; kind = "hoist"; text = "Hoisted · not in service"; }
         else text = "Released from service";
         break;
       case "depart": {
@@ -411,30 +465,46 @@ function compute(day, events){
           u.paxOut += pax; u.tripsOut++;
           if (u.lastShipDep != null) cycles.push({unit:u.id, t:e.t, min:(e.t - u.lastShipDep) / 60000});
           u.lastShipDep = e.t;
-        } else { ashore -= pax; u.paxBack += pax; u.tripsBack++; }
-        Object.assign(u, {loc:"transit", dir:e.dir, pax, since:e.t});
-        text = `Departed → ${e.dir === "shore" ? "Shore" : "Ship"}`;
+          text = `Departed ${u.berth && u.berth !== "SB" ? berthName(u.berth) + " " : ""}→ Shore`;
+        } else { ashore -= pax; u.paxBack += pax; u.tripsBack++; text = "Departed → Ship"; }
+        Object.assign(u, {loc:"transit", berth:null, dir:e.dir, pax, since:e.t});
         break;
       }
       case "arrive":
-        pax = u.pax;
-        if (e.at === "shore"){ ashore += u.pax; text = `Alongside Shore · ${u.pax} landed`; }
-        else text = `Alongside Ship · ${u.pax} back on board`;
-        Object.assign(u, {loc:e.at, dir:null, pax:0, since:e.t});
+        if (e.at === "shore"){
+          pax = u.pax; ashore += u.pax; text = `Alongside Shore · ${u.pax} landed`;
+          Object.assign(u, {loc:"shore", berth:null, dir:null, pax:0, since:e.t});
+        } else {
+          const b = e.berth || "SB"; atBerth(u, b); u.since = e.t;
+          if (b === "SB"){ text = `Stand-by at ship · ${u.pax} waiting on board`; }
+          else { pax = u.pax; text = `Alongside ${berthName(b)} · ${u.pax} back on board`; u.pax = 0; }
+        }
         break;
-      case "standby": Object.assign(u, {loc:"standby", dir:null, since:e.t, lastShipDep:null}); text = "Stand-by in the water"; break;
-      case "alongside": Object.assign(u, {loc:e.at, dir:null, since:e.t}); text = `Alongside ${e.at === "ship" ? "Ship" : "Shore"} from stand-by`; break;
+      case "berth": {
+        const b = e.berth;
+        if (b !== "SB" && u.pax > 0){ pax = u.pax; text = `Alongside ${berthName(b)} · ${u.pax} back on board`; }
+        else text = b === "SB" ? "Moved to stand-by" : `Alongside ${berthName(b)}`;
+        atBerth(u, b); u.since = e.t; if (b !== "SB") u.pax = 0;
+        break;
+      }
+      case "pontoons":
+        pont.side = e.side || pont.side; pont.FWD = !!e.fwd; pont.MID = !!e.mid; kind = "pont";
+        text = `Pontoons: ${pont.side} · FWD ${pont.FWD ? "open" : "closed"} · MIDSHIP ${pont.MID ? "open" : "closed"}`;
+        break;
       case "cap": u.cap = e.cap; text = `Max load set to ${e.cap}`; break;
       case "driver": u.driver = e.driver; text = `Driver changed to ${e.driver}`; break;
+      case "note": u.note = e.text || ""; text = e.text ? `Note: ${e.text}` : "Note cleared"; break;
       case "sync": { const prev = ashore; ashore = +e.value; const d = ashore - prev; text = `Ashore synced to ${num(ashore)} (count was ${num(prev)}, Δ ${d >= 0 ? "+" : "−"}${num(Math.abs(d))})`; break; }
+      default: continue;
     }
     if (u && u.driver) drivers.add(u.driver);
     log.push({e, unitName: u ? u.name : "—", unitId: u ? u.id : null, text, kind, pax, driver: (e.type === "depart" || e.type === "activate") ? (u ? u.driver : "") : (e.type === "driver" ? e.driver : "")});
   }
   const list = order.map(id => units[id]);
-  const onTenders = list.filter(u => u.loc === "transit").reduce((a,u) => a + u.pax, 0);
+  const onTenders = list.filter(u => u.loc === "transit" || (u.loc === "ship" && u.berth === "SB")).reduce((a,u) => a + u.pax, 0);
   const total = day ? (+day.total || 0) : 0;
-  // round trip = ship departure → next ship departure of the same unit (stand-by breaks the chain)
+  const occ = {FWD:null, MID:null};
+  list.forEach(u => { if (u.active && u.loc === "ship" && (u.berth === "FWD" || u.berth === "MID")) occ[u.berth] = u; });
   let cycleAvg = null;
   const recent = cycles.slice(-8).map(c => c.min).filter(m => m > 3);
   if (recent.length >= 2){
@@ -442,10 +512,11 @@ function compute(day, events){
     const keep = recent.filter(m => m <= med * 2.2);
     cycleAvg = keep.reduce((a,b) => a+b, 0) / keep.length;
   }
-  const tripsOut = list.reduce((a,u) => a + u.tripsOut, 0), tripsBack = list.reduce((a,u) => a + u.tripsBack, 0);
-  const paxOut = list.reduce((a,u) => a + u.paxOut, 0), paxBack = list.reduce((a,u) => a + u.paxBack, 0);
-  return {units, list, ashore, onTenders, aboard: total - ashore - onTenders, total, cycles, cycleAvg, log, drivers:[...drivers], tripsOut, tripsBack, paxOut, paxBack, firstLowered, lastHoisted};
+  const s = (k) => list.reduce((a,u) => a + u[k], 0);
+  return {units, list, ashore, onTenders, aboard: total - ashore - onTenders, total, pont, occ, cycles, cycleAvg, log, drivers:[...drivers],
+    tripsOut:s("tripsOut"), tripsBack:s("tripsBack"), paxOut:s("paxOut"), paxBack:s("paxBack"), firstLowered, lastHoisted};
 }
+const freeBerths = st => ["FWD","MID"].filter(b => st.pont[b] && !st.occ[b]);
 
 function estimate(day, st, now){
   const active = st.list.filter(u => u.active);
@@ -469,7 +540,7 @@ function estimate(day, st, now){
 
 /* ---------------- stores ---------------- */
 function createLocalStore(){
-  const KEY = "tenderboard.demo.v1";
+  const KEY = "tom.demo.v2";
   let mem = null; const listeners = [];
   const read = () => { const s = lsGet(KEY); if (s){ try { return JSON.parse(s); } catch(e){} } return mem; };
   const db = () => read() || {days:{}, events:{}, issues:{}};
@@ -548,25 +619,21 @@ async function createFirebaseStore(){
 
 /* ---------------- sample data (demo mode only) ---------------- */
 function makeSample(){
-  let s = 11; const rnd = () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  let s = 23; const rnd = () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
   const ri = (a,b) => Math.round(a + rnd() * (b - a));
   const M = 60000, now = Date.now();
   const out = {days:{}, events:{}, issues:{}};
-  const mk = (type, unit, t, extra) => Object.assign({id:uid() + ri(0,9999), c: t * 1000 + ri(0,999), type, unit, t}, extra || {});
+  const mk = (type, unit, t, extra) => Object.assign({id:"e" + uid() + ri(0,99999), c: t * 1000 + ri(0,999), type, unit, t}, extra || {});
 
   function buildDay(o){
-    const ev = [];
-    const slots = [];
-    const lastMs = o.lastTender;
+    const ev = [], slots = [], span = o.lastTender - o.start;
+    const occ = {FWD:null, MID:null}, waiting = [];
+    const take = (id) => { for (const b of ["FWD","MID"]) if (!occ[b]){ occ[b] = id; return b; } return "SB"; };
+    const free = (id) => { for (const b of ["FWD","MID"]) if (occ[b] === id) occ[b] = null; };
     for (const u of o.units){
-      let t = o.start + u.off * M;
-      if (u.kind === "shore") ev.push(mk("shore_add", u.id, t, {name:u.name, cap:u.cap, driver:u.driver, at:"ship"}));
-      else ev.push(mk("activate", u.id, t, {cap:u.cap, driver:u.driver}));
-      t += ri(4,8) * M;
-      while (true){
-        if (t > o.end) break;
-        if (o.complete && t > lastMs + 5*M) break;
-        if (u.stopAt && t > u.stopAt) break;
+      let t = o.start + u.off * M; u.start = t;
+      t += ri(5,9) * M;
+      while (t <= o.end && !(o.complete && t > o.lastTender + 5*M) && !(u.stopAt && t > u.stopAt)){
         slots.push({t, u, k:"depShip"}); t += ri(11,14) * M;
         slots.push({t, u, k:"arrShore"}); t += ri(4,8) * M;
         slots.push({t, u, k:"depShore"}); t += ri(11,14) * M;
@@ -574,56 +641,62 @@ function makeSample(){
         u.endT = t;
       }
     }
+    for (const u of o.units){
+      const b = take(u.id);
+      if (b === "SB") waiting.push(u.id);
+      if (u.kind === "shore") ev.push(mk("shore_add", u.id, u.start, {name:u.name, cap:u.cap, driver:u.driver, berth:b}));
+      else ev.push(mk("activate", u.id, u.start, {cap:u.cap, driver:u.driver, berth:b}));
+    }
     slots.sort((a,b) => a.t - b.t);
-    let ashore = 0, outSum = 0; const carry = {}; const cap0 = (o.total || 4000) * 0.68;
-    const span = lastMs - o.start;
+    let ashore = 0, outSum = 0; const carry = {}; const cap0 = o.total * 0.68;
     for (const sl of slots){
       if (sl.t > o.end) break;
       const f = (sl.t - o.start) / span, u = sl.u, cap = u.cap;
       if (sl.k === "depShip"){
         let p = f < 0.22 ? ri(cap - 35, cap) : f < 0.45 ? ri(30, 90) : f < 0.7 ? ri(4, 30) : ri(0, 4);
-        p = Math.max(0, Math.min(p, Math.round(cap0 - outSum))); outSum += p;
-        carry[u.id] = p; ev.push(mk("depart", u.id, sl.t, {dir:"shore", pax:p}));
+        p = Math.max(0, Math.min(p, Math.round(cap0 - outSum))); outSum += p; carry[u.id] = p;
+        const wi = waiting.indexOf(u.id); if (wi >= 0) waiting.splice(wi, 1);
+        free(u.id);
+        ev.push(mk("depart", u.id, sl.t, {dir:"shore", pax:p}));
+        if (waiting.length){ const w = waiting.shift(); const b = take(w); ev.push(mk("berth", w, sl.t + 2*M, {berth:b})); }
       } else if (sl.k === "arrShore"){ ashore += carry[u.id] || 0; carry[u.id] = 0; ev.push(mk("arrive", u.id, sl.t, {at:"shore"})); }
       else if (sl.k === "depShore"){
         let p = f < 0.35 ? ri(0, 6) : f < 0.65 ? ri(25, 90) : f < 0.85 ? ri(90, cap) : cap;
         p = Math.max(0, Math.min(p, ashore)); ashore -= p; carry[u.id] = p;
         ev.push(mk("depart", u.id, sl.t, {dir:"ship", pax:p}));
-      } else { carry[u.id] = 0; ev.push(mk("arrive", u.id, sl.t, {at:"ship"})); }
+      } else {
+        const b = take(u.id); if (b === "SB") waiting.push(u.id);
+        ev.push(mk("arrive", u.id, sl.t, {at:"ship", berth:b}));
+      }
     }
-    if (o.complete){
-      for (const u of o.units) ev.push(mk(u.kind === "shore" ? "deactivate" : "deactivate", u.id, (u.endT || o.end) + ri(6,14) * M));
-    }
+    if (o.complete) for (const u of o.units){ free(u.id); ev.push(mk("deactivate", u.id, (u.endT || o.end) + ri(6,14) * M)); }
     return ev;
   }
 
-  // a finished day three days ago
   const pastBase = new Date(now - 3 * 864e5); pastBase.setHours(7, 20, 0, 0);
   const pStart = pastBase.getTime(), pLast = pStart + (10*60 + 40) * M;
   const pastId = "d" + uid();
+  out.days[pastId] = {id:pastId, port:"Santorini", date:ymd(pStart), total:4312, lastTender:fmtT(pLast), plannedCycle:32, side:"PORT", fwd:true, mid:true, status:"closed", openedAt:pStart - 30*M, closedAt:pLast + 90*M};
   const pastEv = buildDay({total:4312, start:pStart, lastTender:pLast, end:pLast + 60*M, complete:true, units:[
-    {id:"T11", cap:165, driver:"Marco", off:0}, {id:"T15", cap:165, driver:"Ryan", off:6}, {id:"T14", cap:165, driver:"Dimitri", off:12},
-    {id:"T16", cap:165, driver:"Joel", off:18}, {id:"T17", cap:165, driver:"Ivan", off:30}]});
-  out.days[pastId] = {id:pastId, port:"Santorini", date:ymd(pStart), total:4312, lastTender:fmtT(pLast), plannedCycle:32, status:"closed", openedAt:pStart - 30*M, closedAt:pLast + 90*M};
+    {id:"T11", cap:170, driver:"Jeffery", off:0}, {id:"T14", cap:170, driver:"Said", off:6}, {id:"T15", cap:170, driver:"John", off:12},
+    {id:"T16", cap:170, driver:"Marco", off:18}, {id:"T17", cap:170, driver:"Tesorio", off:30}]});
   out.events[pastId] = pastEv;
-  const pst = compute(out.days[pastId], pastEv);
-  out.days[pastId].summary = summaryOf(pst);
+  out.days[pastId].summary = summaryOf(compute(out.days[pastId], pastEv));
 
-  // today, in progress
   const start = now - 5.5 * 3600e3, last = now + 2 * 3600e3 + 10*M;
   const id = "d" + uid();
-  const units = [
-    {id:"T11", cap:170, driver:"Marco", off:0}, {id:"T15", cap:170, driver:"Ryan", off:5},
-    {id:"T14", cap:170, driver:"Dimitri", off:10}, {id:"T17", cap:170, driver:"Joel", off:16, stopAt: now - 50*M},
-    {id:"S1", kind:"shore", name:"Kotor Star", cap:120, driver:"Local crew", off:45}
-  ];
-  const ev = buildDay({total:4280, start, lastTender:last, end:now, complete:false, units});
-  ev.push(mk("driver", "T11", start + 190*M, {driver:"Aldo"}));
-  out.days[id] = {id, port:"Kotor", date:ymd(start), total:4280, lastTender:fmtT(last), plannedCycle:32, status:"open", openedAt:start - 20*M};
-  // T17 waits on stand-by once its loop ends
-  const t17 = ev.filter(e => e.unit === "T17").sort((a,b) => a.t - b.t).pop();
-  if (t17 && t17.type === "arrive" && t17.at === "ship") ev.push(mk("standby", "T17", t17.t + 4*M));
-  // a sync from the gangway two hours ago
+  out.days[id] = {id, port:"Kotor", date:ymd(start), total:4280, lastTender:fmtT(last), plannedCycle:32, side:"STBD", fwd:true, mid:true, status:"open", openedAt:start - 20*M};
+  const ev = buildDay({total:4280, start, lastTender:last, end:now, complete:false, units:[
+    {id:"T11", cap:170, driver:"Jeffery", off:0}, {id:"T14", cap:170, driver:"Said", off:5},
+    {id:"T15", cap:170, driver:"John", off:10}, {id:"T17", cap:170, driver:"Tesorio", off:16},
+    {id:"S1", kind:"shore", name:"Kotor Star", cap:100, driver:"Local crew", off:45}]});
+  ev.push(mk("driver", "T11", start + 190*M, {driver:"Musdar"}));
+  ev.push(mk("note", "T15", now - 70*M, {text:"Refuel before the next run"}));
+  // a realistic moment: MIDSHIP closed for swell, T11 alongside FWD, the shoretender waiting off the ship
+  ev.push(mk("pontoons", null, now - 40*M, {side:"STBD", fwd:true, mid:false}));
+  const lastOf = id => ev.filter(e => e.unit === id).sort((a,b) => a.t - b.t).pop();
+  const l11 = lastOf("T11"); if (l11 && l11.type === "depart" && l11.dir === "ship") ev.push(mk("arrive", "T11", Math.max(l11.t + 8*M, now - 3*M), {at:"ship", berth:"FWD"}));
+  const lS1 = lastOf("S1"); if (lS1 && lS1.type === "depart" && lS1.dir === "ship") ev.push(mk("arrive", "S1", Math.max(lS1.t + 8*M, now - 1*M), {at:"ship", berth:"SB"}));
   const syncT = now - 120*M;
   const before = compute(out.days[id], ev.filter(e => e.t < syncT));
   ev.push(mk("sync", null, syncT, {value: Math.max(0, before.ashore + 7)}));
@@ -638,56 +711,49 @@ function makeSample(){
 }
 
 function summaryOf(st){
-  return {tripsOut:st.tripsOut, tripsBack:st.tripsBack, paxOut:st.paxOut, paxBack:st.paxBack, firstLowered:st.firstLowered, lastHoisted:st.lastHoisted, cycleAvg: st.cycleAvg != null ? Math.round(st.cycleAvg) : null, ashoreEnd:st.ashore,
-    units: st.list.filter(u => u.tripsOut || u.lowered || u.kind === "shore").map(u => ({name:u.name, trips:u.tripsOut + u.tripsBack, lowered:u.lowered, hoisted:u.hoisted}))};
+  return {tripsOut:st.tripsOut, tripsBack:st.tripsBack, paxOut:st.paxOut, paxBack:st.paxBack, firstLowered:st.firstLowered, lastHoisted:st.lastHoisted, cycleAvg: st.cycleAvg != null ? Math.round(st.cycleAvg) : null, ashoreEnd:st.ashore};
 }
 
 /* ---------------- app state ---------------- */
-const S = {
-  store:null, role:null, data:{days:[], currentDay:null, events:[], issues:[]},
-  view:"board", logUnit:"all", issueUnit:"all", issueStatus:"all",
-  hist:null, histEvents:null, undoArm:null, demoRole:"admin"
-};
+const S = {store:null, role:null, data:{days:[], currentDay:null, events:[], issues:[]}, view:"board", logUnit:"all", issueUnit:"all", issueStatus:"all", hist:null, histEvents:null, recOpen:false};
 const isAdmin = () => S.role === "admin";
-let ST = null; // computed state of current day
-
-function setData(d){ S.data = d; ST = d.currentDay ? compute(d.currentDay, d.events) : null; render(); }
+let ST = null;
+function setData(d){ S.data = d; ST = d.currentDay ? compute(d.currentDay, d.events) : null; render(); refreshSheet(); }
 
 /* ---------------- rendering ---------------- */
 function render(){
   const app = $("#app");
   if (!S.role){ app.innerHTML = loginHTML(); bindLogin(); return; }
-  const v = S.view;
   let body = "";
-  if (v === "board") body = boardHTML();
-  else if (v === "log") body = logHTML();
-  else if (v === "issues") body = issuesHTML();
-  else if (v === "history") body = historyHTML();
+  if (S.view === "board") body = boardHTML();
+  else if (S.view === "log") body = logHTML();
+  else if (S.view === "issues") body = issuesHTML();
+  else body = historyHTML();
   app.innerHTML = headerHTML() + `<main class="wrap">${body}</main>`;
 }
 
 function headerHTML(){
   const d = S.data;
   const conn = S.store.mode === "demo" ? `<span class="chip"><span class="dot"></span>This device</span>`
-    : d.offline ? `<span class="chip off" title="Changes are saved on this device and will sync when back online"><span class="dot"></span>Offline${d.pending ? " · pending" : ""}</span>`
+    : d.offline ? `<span class="chip off" title="Changes are saved on this device and sync when back online"><span class="dot"></span>Offline${d.pending ? " · pending" : ""}</span>`
     : `<span class="chip"><span class="dot"></span>Live</span>`;
   const tab = (id, label) => `<a href="#${id}" ${S.view === id ? 'aria-current="page"' : ""}>${label}</a>`;
   const openIssues = d.issues.filter(i => i.status === "open").length;
-  const demo = S.store.mode === "demo" ? `<div class="demo"><div class="wrap"><span><b>Demo mode</b> · sample data, saved on this device only. Connect Firebase to share live between devices.</span>
+  const demo = S.store.mode === "demo" ? `<div class="demo"><div class="wrap"><span><b>Demo mode</b> · sample data on this device only.</span>
     <span class="seg" role="group" aria-label="View as"><button data-act="demo-role" data-r="admin" aria-pressed="${S.role === "admin"}">Bridge</button><button data-act="demo-role" data-r="viewer" aria-pressed="${S.role === "viewer"}">Crew View</button></span>
     <button class="linkish" data-act="demo-reset">Reset sample</button></div></div>` : "";
   return `<header class="top"><div class="wrap">
-    <div class="brand">${boatSVG(false)}<div><b>Tender Board</b><span>${esc(CONFIG.shipName)}</span></div></div>
+    <div class="brand">${boatSVG(false)}<div><b>Tender Ops Monitor</b><span>${esc(CONFIG.shipName)}</span></div></div>
     <nav class="tabs">${tab("board","Board")}${tab("log","Log")}${tab("issues","Issues" + (openIssues ? " · " + openIssues : ""))}${tab("history","History")}</nav>
     <div class="who">${conn}<span class="chip role">${isAdmin() ? "Bridge" : "Crew View"}</span>
-      <button class="icon-btn" data-act="theme" title="Switch light / dark" aria-label="Switch light or dark theme">${themeLabel()}</button>
+      <button class="icon-btn" data-act="theme" title="Switch light / dark">${themeLabel()}</button>
       ${S.store.mode === "live" ? `<button class="icon-btn" data-act="signout">Sign out</button>` : ""}</div>
   </div></header>${demo}`;
 }
 
 function noDayHTML(){
   return `<div class="emptystate">${boatSVG(false)}<h2>No tender operation open</h2>
-    <p>${isAdmin() ? "Open a tender day to start logging lowering times, trips and passengers. Tenders you lower will appear on the board." : "The board fills in as soon as the Bridge opens today's tender operation."}</p>
+    <p>${isAdmin() ? "Open a tender day to start logging lowering times, trips and passengers." : "The board fills in as soon as the Bridge opens today’s tender operation."}</p>
     ${isAdmin() ? `<button class="btn primary" data-act="open-day">Open tender day</button>` : ""}</div>`;
 }
 
@@ -695,91 +761,87 @@ function boardHTML(){
   const day = S.data.currentDay;
   if (!day) return noDayHTML();
   const st = ST, now = Date.now(), est = estimate(day, st, now);
-  const lastEv = lastEvent();
-  const undoLabel = S.undoArm && lastEv && S.undoArm === lastEv.e.id ? `Tap to confirm: undo “${esc(lastEv.unitName)} ${esc(shortText(lastEv))}”` : "Undo last";
   const syncs = st.log.filter(l => l.e.type === "sync");
   const lastSync = syncs.length ? syncs[syncs.length - 1] : null;
 
-  const recov = recovHTML(day, st, est);
-  const deck = `<section class="deck" aria-label="People count">
-    <div class="kpi"><div class="lab">Total <small>reference</small></div><div class="val">${num(st.total)}</div><div class="foot">Guests + crew at start</div></div>
-    <div class="kpi ashore"><div class="lab">Ashore</div><div class="val">${num(st.ashore)}</div>
-      <div class="foot">${lastSync ? `Synced ${fmtT(lastSync.e.t)} · then tender count` : "From tender count"}</div>
-      ${isAdmin() ? `<button class="btn small sync" data-act="sync">Sync Ashore</button>` : ""}</div>
-    <div class="kpi"><div class="lab">On Tenders</div><div class="val">${num(st.onTenders)}</div><div class="foot">${st.list.filter(u => u.loc === "transit").length} underway</div></div>
-    <div class="kpi"><div class="lab">Aboard <small>calculated</small></div><div class="val">${num(st.aboard)}</div><div class="foot">Total − ashore − on tenders</div></div>
-    ${recov}</section>`;
-
-  const lanes = LANES.map(l => {
-    const us = st.list.filter(u => u.active && u.loc === l.loc);
-    return `<div class="lane ${l.loc}"><header>${LANE_ICONS[l.loc]}${l.name}<span class="n">${us.length}</span></header>
-      <div class="cards">${us.length ? us.map(cardHTML).join("") : `<div class="empty">No tenders</div>`}</div></div>`;
-  }).join("");
-
-  const stowed = st.list.filter(u => !u.active);
-  const rack = `<section class="rack"><h2>Stowed · Not in service <small>Lower a tender to put it on the board</small>
-      ${isAdmin() ? `<button class="btn small" data-act="add-shore" style="margin-left:auto">+ Shoretender</button>` : ""}</h2>
-    <div class="items">${stowed.length ? stowed.map(u => `<div class="stow">${boatSVG(false, "muted" + (u.kind === "shore" ? " shore" : ""))}
-      <div class="txt"><b>${esc(u.name)} <span class="side ${u.side}">${u.side}</span></b><span>${u.kind === "shore" ? "Released" : "Stowed"}${u.hoisted ? " · hoisted " + fmtT(u.hoisted) : u.kind === "tender" ? " · embarkation deck" : ""}</span></div>
-      ${isAdmin() ? `<button class="btn small" data-act="activate" data-u="${u.id}">${u.kind === "tender" ? "Lower" : "Return"}</button>` : ""}</div>`).join("") : `<div class="stow"><div class="txt"><span>All tenders are in the water.</span></div></div>`}</div></section>`;
-
-  return `<section class="daybar"><div><h1>${esc(day.port || "Tender day")}</h1>
-      <div class="sub">${fmtDate(day.date)} · Last tender <span class="mono">${esc(day.lastTender || "—")}</span></div></div>
-      <div class="spacer"></div>
-      ${isAdmin() ? `<div class="acts"><button class="btn ${S.undoArm ? "arm" : ""}" data-act="undo" ${lastEv ? "" : "disabled"}>${undoLabel}</button><button class="btn" data-act="edit-day">Edit day</button></div>` : ""}
-    </section>${deck}<section class="board" aria-label="Tender board">${lanes}</section>${rack}`;
-}
-
-function recovHTML(day, st, est){
-  let verdict = "";
-  if (!est.activeCount) verdict = `<span class="pill">No tenders in service</span>`;
-  else if (!est.avgCap) verdict = `<span class="pill warn">Set a max load on the tenders to estimate</span>`;
-  else if (est.A === 0) verdict = `<span class="pill ok">Nobody ashore · all ${est.activeCount} recoverable</span>`;
-  else {
-    verdict = `<span class="pill ${est.needed >= est.activeCount ? "warn" : "ok"}">Need ${est.needed} of ${est.activeCount} in service</span>`;
-    if (est.recoverable > 0) verdict += `<span class="pill ok">${est.recoverable} can be recovered</span>`;
-    if (est.remain != null && est.remain <= 0) verdict += `<span class="pill crit">Past last tender time</span>`;
-    else if (est.perUnit != null && est.needed >= est.activeCount && est.trips > est.activeCount * est.perUnit) verdict += `<span class="pill crit">Not enough round trips left</span>`;
+  // recovery summary sentence
+  let rc = "none", rtext = "No tenders in service";
+  if (est.activeCount){
+    if (!est.avgCap) rtext = "Set max loads to estimate";
+    else if (est.A === 0){ rc = "ok"; rtext = `Nobody ashore · all ${est.activeCount} recoverable`; }
+    else if (est.remain != null && est.remain <= 0){ rc = "crit"; rtext = `Past last tender · ${est.trips} trips still needed`; }
+    else { rc = est.needed >= est.activeCount ? "warn" : "ok"; rtext = `Need ${est.needed} of ${est.activeCount}` + (est.recoverable ? ` · ${est.recoverable} recoverable` : " · none recoverable"); }
   }
-  const line = est.avgCap && est.A > 0
-    ? `<b>${num(est.A)}</b> ashore at ~${Math.round(est.avgCap)} per trip = <b>${est.trips} trip${est.trips === 1 ? "" : "s"}</b>${est.perUnit ? ` · each tender can make ${est.perUnit} more` : ""}.`
-    : "Live estimate of how many tenders the remaining guests need.";
-  return `<div class="recov"><div class="lab"><span>Recovery estimate</span><span class="mono" style="letter-spacing:0">${est.remain != null ? (est.remain > 0 ? "Last tender in " + fmtDur(est.remain) : "Last tender " + esc(day.lastTender)) : "Set last tender time"}</span></div>
-    <div class="line">${line}</div>
-    <div class="stats"><div><span>Round trip</span><b>${Math.round(est.cycle)} min</b><span>${est.cycleSrc}</span></div>
+  const strip = `<section class="strip" aria-label="People count">
+    <div class="m ashore"><div><div class="l">Ashore</div><div class="v">${num(st.ashore)}</div><div class="s">${lastSync ? "synced " + fmtT(lastSync.e.t) : "tender count"}</div></div>
+      ${isAdmin() ? `<button class="btn small sync" data-act="sync">Sync</button>` : ""}</div>
+    <div class="m"><div class="l">On tenders</div><div class="v">${num(st.onTenders)}</div></div>
+    <div class="m"><div class="l">Aboard<small>calc.</small></div><div class="v">${num(st.aboard)}</div></div>
+    <div class="m"><div class="l">Total<small>ref.</small></div><div class="v">${num(st.total)}</div></div>
+    <div class="m rec"><span class="l">Recovery</span><button class="recbtn" data-act="rec" aria-expanded="${S.recOpen}"><span class="dotc ${rc}"></span>${rtext}<span class="chev">${S.recOpen ? "▲" : "▼"}</span></button></div>
+  </section>`;
+  const recd = S.recOpen ? `<section class="recd">
+      <div><span>Ashore</span><b>${num(est.A)}</b></div>
+      <div><span>Load per trip</span><b>${est.avgCap ? Math.round(est.avgCap) : "—"}</b></div>
       <div><span>Trips needed</span><b>${est.trips ?? "—"}</b></div>
+      <div><span>Round trip</span><b>${Math.round(est.cycle)} min</b></div>
+      <div><span>Trips per tender left</span><b>${est.perUnit ?? "—"}</b></div>
       <div><span>Tenders needed</span><b>${est.needed ?? "—"}</b></div>
-      <div><span>Recoverable</span><b>${est.recoverable ?? "—"}</b></div></div>
-    <div class="verdict">${verdict}</div></div>`;
+      <div><span>Recoverable</span><b>${est.recoverable ?? "—"}</b></div>
+      <p>Round trip is ${est.cycleSrc === "measured" ? "measured from today’s ship departures" : "the planned value until two round trips are logged"}. Advisory only.</p></section>` : "";
+
+  const pc = (b) => { const open = st.pont[b], o = st.occ[b];
+    if (!open) return `<span class="pchip closed"><i></i>${PONTOONS[b]} <em>closed</em></span>`;
+    return o ? `<span class="pchip occ"><i></i>${PONTOONS[b]} <em>${esc(o.name)}</em></span>` : `<span class="pchip"><i></i>${PONTOONS[b]} <em>free</em></span>`; };
+  const sbCount = st.list.filter(u => u.active && u.loc === "ship" && u.berth === "SB").length;
+  const pont = `<section class="pont"><span class="ttl">Pontoons</span><span class="side ${st.pont.side}">${st.pont.side}</span>${pc("FWD")}${pc("MID")}
+      ${sbCount ? `<span class="pchip" style="border-color:color-mix(in srgb,var(--warn) 45%,var(--line))"><i style="background:var(--warn)"></i>Stand-by <em>${sbCount}</em></span>` : ""}
+      ${isAdmin() ? `<button class="btn small" data-act="pontoons">Change</button>` : ""}</section>`;
+
+  const lastInfo = est.remain != null ? (est.remain > 0 ? ` (in ${fmtDur(est.remain)})` : " (passed)") : "";
+  const dayline = `<section class="dayline"><h1>${esc(day.port || "Tender day")}</h1>
+    <span class="sub">${fmtDate(day.date)} · Last tender <b class="mono">${esc(day.lastTender || "—")}</b>${lastInfo}</span>
+    <span class="spacer"></span>${isAdmin() ? `<button class="btn small" data-act="edit-day">Edit day</button>` : ""}</section>`;
+
+  const tenders = st.list.filter(u => u.kind === "tender"), shores = st.list.filter(u => u.kind === "shore" && u.active);
+  const head = `<div class="grow head"><div class="cb">Boat</div><div class="cs">${SHIP_ICON}Ship</div><div class="ct h-t">${SEA_ICON}In transit</div><div class="ch">${PIER_ICON}Shore</div><div class="ca"></div></div>`;
+  const board = `<section class="board" aria-label="Tender board">${head}${tenders.map(rowHTML).join("")}
+    <div class="sep">Shoretenders ${isAdmin() ? `<button class="btn small" data-act="add-shore">+ Add shoretender</button>` : ""}</div>
+    ${shores.length ? shores.map(rowHTML).join("") : `<div class="grow"><div class="cb"></div><div class="offc" style="grid-column:2 / -1;padding:12px;color:var(--muted);font-size:13.5px">No shoretenders today.</div></div>`}</section>`;
+  return dayline + strip + recd + pont + board;
 }
 
-function cardHTML(u){
+function rowHTML(u){
   const now = Date.now();
   const openIs = S.data.issues.filter(i => i.status === "open" && i.unitName === u.name).length;
-  const flip = u.loc === "transit" && u.dir === "ship";
-  const since = u.since ? `${fmtT(u.since)} · ${fmtDur((now - u.since) / 60000)}` : "";
-  let status = "";
-  if (u.loc === "transit") status = `<span class="dir">${u.dir === "shore" ? "→ To shore" : "← To ship"}</span>`;
+  const cb = `<button class="cb" data-act="sheet" data-u="${u.id}" aria-label="${esc(u.name)} details">
+      <span class="bn${u.name.length > 4 ? " long" : ""}"><span class="nm">${esc(u.name)}</span><span class="side ${u.side}">${u.side}</span></span>
+      <span class="drv"><span class="dl">Driver </span><b>${esc(u.driver || "—")}</b></span>
+      ${openIs || u.note ? `<span class="marks">${openIs ? `<span class="iss">⚠ ${openIs} issue${openIs > 1 ? "s" : ""}</span>` : ""}${u.note ? `<span class="nt">✎ note</span>` : ""}</span>` : ""}</button>`;
+  if (!u.active){
+    return `<div class="grow off">${cb}<div class="offc">${boatSVG(false, "muted" + (u.kind === "shore" ? " shore" : ""), u.num)}<div><b>Not in service</b><div>${u.hoisted ? "Hoisted " + fmtT(u.hoisted) : u.kind === "tender" ? "Stowed" : "Released"}</div></div></div>
+      <div class="ca">${isAdmin() ? `<button class="btn" data-act="activate" data-u="${u.id}">${u.kind === "tender" ? "Lower" : "Return"}</button>` : ""}</div></div>`;
+  }
+  const since = u.since ? `${fmtT(u.since)} · ${fmtShort((now - u.since) / 60000)}` : "";
+  // bow faces the next move: at ship → shore (right), at shore → ship (left), stand-by waits facing the ship
+  const flip = (u.loc === "transit" && u.dir === "ship") || u.loc === "shore" || (u.loc === "ship" && u.berth === "SB");
+  const tag = u.loc === "ship" ? (u.berth === "SB" ? `<span class="tag sb">Stand-by</span>` : `<span class="tag berth">${berthName(u.berth)}</span>`)
+    : u.loc === "transit" ? `<span class="tag dir">${u.dir === "shore" ? "→ to shore" : "← to ship"}</span>` : "";
+  const tok = `<div class="tok"><div class="vis">${ringSVG(u.pax, u.cap)}${boatSVG(flip, u.kind === "shore" ? "shore" : "", u.num)}</div>${tag}<span class="since mono">${since}</span></div>`;
+  const cell = loc => u.loc === loc ? tok : "";
   let acts = "";
   if (isAdmin()){
-    const B = (act, label, cls="") => `<button class="btn small ${cls}" data-act="${act}" data-u="${u.id}">${label}</button>`;
-    if (u.loc === "ship") acts = B("depart-shore", "Depart → Shore", "primary") + B("standby", "Stand-by");
-    else if (u.loc === "standby") acts = B("alongside-ship", "Alongside Ship") + B("alongside-shore", "Alongside Shore");
+    const B = (act, label, cls="", extra="") => `<button class="btn ${cls}" data-act="${act}" data-u="${u.id}" ${extra}>${label}</button>`;
+    if (u.loc === "ship" && u.berth !== "SB") acts = B("depart-shore", "Depart → Shore", "primary");
+    else if (u.loc === "ship"){
+      const fb = freeBerths(ST);
+      acts = fb.length ? fb.map(b => B("berth", "Alongside " + berthName(b), "sea", `data-b="${b}"`)).join("") : `<span class="wait">Waiting for a free pontoon</span>`;
+    }
     else if (u.loc === "transit") acts = u.dir === "shore" ? B("arrive-shore", "Arrived Shore", "dark") : B("arrive-ship", "Arrived Ship", "dark");
-    else if (u.loc === "shore") acts = B("depart-ship", "Depart → Ship", "primary") + B("standby", "Stand-by");
+    else if (u.loc === "shore") acts = B("depart-ship", "Depart → Ship", "primary");
   }
-  return `<article class="card" aria-label="${esc(u.name)}">
-    <div class="row1"><span class="tname">${esc(u.name)}</span><span class="side ${u.side}">${u.side}</span>${status}
-      ${isAdmin() ? `<button class="icon-btn more" data-act="menu" data-u="${u.id}" aria-label="More options for ${esc(u.name)}">•••</button>` : ""}</div>
-    <div class="vis">${ringSVG(u.pax, u.cap)}${boatSVG(flip, u.kind === "shore" ? "shore" : "")}</div>
-    <div class="meta"><span>Driver <b>${esc(u.driver || "—")}</b></span><span class="mono">${since}</span></div>
-    ${u.kind === "tender" && u.lowered ? `<div class="meta"><span>In water since <b class="mono">${fmtT(u.lowered)}</b></span><span>${u.tripsOut} out · ${u.tripsBack} back</span></div>` : `<div class="meta"><span>${u.tripsOut} out · ${u.tripsBack} back</span></div>`}
-    ${openIs ? `<div class="flag">⚠ ${openIs} open issue${openIs > 1 ? "s" : ""} · <a href="#issues" data-act="issues-for" data-n="${esc(u.name)}">view</a></div>` : ""}
-    ${acts ? `<div class="acts">${acts}</div>` : ""}</article>`;
+  return `<div class="grow">${cb}<div class="cs">${cell("ship")}</div><div class="ct">${cell("transit")}</div><div class="ch">${cell("shore")}</div><div class="ca">${acts}</div></div>`;
 }
-
-function shortText(l){ return (l.text || "").split(" · ")[0]; }
-function lastEvent(){ if (!ST || !ST.log.length) return null; const byCreated = ST.log.slice().sort((a,b) => (b.e.c || 0) - (a.e.c || 0)); return byCreated[0]; }
 
 function logRows(st, opts){
   const rows = st.log.filter(l => opts.unit === "all" || l.unitName === opts.unit).slice().reverse();
@@ -788,7 +850,12 @@ function logRows(st, opts){
     <td class="num">${l.pax != null ? l.pax : ""}</td><td>${esc(l.driver || "")}</td>
     ${opts.edit ? `<td class="ra"><button class="btn small" data-act="edit-ev" data-id="${l.e.id}">Edit</button></td>` : ""}</tr>`).join("");
 }
-
+function sumTiles(s){
+  return `<div><span>Trips to shore</span><b>${s.tripsOut}</b></div><div><span>Pax to shore</span><b>${num(s.paxOut)}</b></div>
+    <div><span>Trips to ship</span><b>${s.tripsBack}</b></div><div><span>Pax back</span><b>${num(s.paxBack)}</b></div>
+    <div><span>First lowered</span><b class="mono">${fmtT(s.firstLowered)}</b></div><div><span>Last hoisted</span><b class="mono">${fmtT(s.lastHoisted)}</b></div>
+    <div><span>Avg round trip</span><b>${s.cycleAvg != null ? s.cycleAvg + " min" : "—"}</b></div>`;
+}
 function logHTML(){
   const day = S.data.currentDay;
   if (!day) return noDayHTML();
@@ -796,26 +863,17 @@ function logHTML(){
   const names = st.list.filter(u => u.tripsOut || u.lowered || u.active || u.kind === "shore").map(u => u.name);
   return `<section class="panel"><div class="panel-head"><h2>${esc(day.port)} · Today’s log</h2>
       <div class="filters"><select class="f" id="logUnit" data-act="log-unit" aria-label="Filter by unit"><option value="all">All units</option>${names.map(n => `<option ${S.logUnit === n ? "selected" : ""}>${esc(n)}</option>`).join("")}</select>
-      <button class="btn" data-act="csv">Export CSV</button>${isAdmin() ? `<button class="btn danger" data-act="close-day">Close day</button>` : ""}</div></div>
+      ${isAdmin() ? `<button class="btn" data-act="undo-last">Undo last</button>` : ""}<button class="btn" data-act="csv">Export CSV</button>${isAdmin() ? `<button class="btn danger" data-act="close-day">Close day</button>` : ""}</div></div>
     <div class="sumgrid">${sumTiles(summaryOf(st))}</div>
     <div class="tablebox"><table><thead><tr><th>Time</th><th>Unit</th><th>Event</th><th style="text-align:right">Pax</th><th>Driver</th>${isAdmin() ? "<th></th>" : ""}</tr></thead>
     <tbody>${logRows(st, {unit:S.logUnit, edit:isAdmin()})}</tbody></table></div></section>`;
 }
-
-function sumTiles(s){
-  return `<div><span>Trips to shore</span><b>${s.tripsOut}</b></div><div><span>Pax to shore</span><b>${num(s.paxOut)}</b></div>
-    <div><span>Trips to ship</span><b>${s.tripsBack}</b></div><div><span>Pax back</span><b>${num(s.paxBack)}</b></div>
-    <div><span>First lowered</span><b class="mono">${fmtT(s.firstLowered)}</b></div><div><span>Last hoisted</span><b class="mono">${fmtT(s.lastHoisted)}</b></div>
-    <div><span>Avg round trip</span><b>${s.cycleAvg != null ? s.cycleAvg + " min" : "—"}</b></div>`;
-}
-
 function issueUnits(){
-  const set = new Set(TENDERS.map(t => "T" + t.num));
+  const set = new Set(TENDERS.map(t => t.id));
   if (ST) ST.list.filter(u => u.kind === "shore").forEach(u => set.add(u.name));
   S.data.issues.forEach(i => set.add(i.unitName));
   return [...set];
 }
-
 function issuesHTML(){
   const all = S.data.issues;
   const list = all.filter(i => (S.issueUnit === "all" || i.unitName === S.issueUnit) && (S.issueStatus === "all" || i.status === S.issueStatus));
@@ -828,13 +886,12 @@ function issuesHTML(){
     <div class="issues">${list.length ? list.map(i => {
       const repeat = all.filter(x => x.unitName === i.unitName && x.category === i.category && x.id !== i.id && x.t < i.t).length;
       return `<div class="issue"><div class="who2">${esc(i.unitName)}</div>
-      <div class="body"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="cat">${esc(i.category)}</span><span class="status ${i.status}">${i.status}</span>${repeat ? `<span class="pill warn" style="font-size:11.5px;padding:2px 8px">Seen ${repeat}× before on ${esc(i.unitName)}</span>` : ""}</div>
+      <div class="body"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="cat">${esc(i.category)}</span><span class="status ${i.status}">${i.status}</span>${repeat ? `<span class="pill warn">Seen ${repeat}× before on ${esc(i.unitName)}</span>` : ""}</div>
         <p>${esc(i.text)}</p><span class="when mono">${new Date(i.t).toLocaleDateString("en-GB", {day:"2-digit", month:"short", year:"numeric"})} · ${fmtT(i.t)}${i.port ? " · " + esc(i.port) : ""}</span>
         ${i.status === "resolved" && (i.resolution || i.resolvedAt) ? `<div class="res">${i.resolvedAt ? `<span class="mono">${fmtT(i.resolvedAt)}</span> ` : ""}${esc(i.resolution || "Resolved")}</div>` : ""}</div>
       ${isAdmin() ? `<div class="side-acts">${i.status === "open" ? `<button class="btn small" data-act="resolve" data-id="${i.id}">Resolve</button>` : `<button class="btn small" data-act="reopen" data-id="${i.id}">Reopen</button>`}<button class="btn small" data-act="edit-issue" data-id="${i.id}">Edit</button></div>` : ""}</div>`;
     }).join("") : `<div class="emptystate" style="padding:24px"><p>No issues match this filter.</p></div>`}</div></section>`;
 }
-
 function historyHTML(){
   if (S.hist){
     const d = S.data.days.find(x => x.id === S.hist);
@@ -854,10 +911,9 @@ function historyHTML(){
       <div class="g"><div><span>Trips</span><i>${s.tripsOut != null ? s.tripsOut + s.tripsBack : "—"}</i></div><div><span>Pax ashore</span><i>${s.paxOut != null ? num(s.paxOut) : "—"}</i></div><div><span>Round trip</span><i>${s.cycleAvg != null ? s.cycleAvg + "′" : "—"}</i></div></div></button>`; }).join("")}</div>`
       : `<p style="color:var(--muted);margin:0">Closed tender days appear here.</p>`}</section>`;
 }
-
 function loginHTML(){
   return `<div class="wrap login"><form id="loginForm" autocomplete="on">
-    <div style="display:flex;gap:10px;align-items:center">${boatSVG(false).replace('class="boat ', 'style="width:70px" class="boat ')}<h1>Tender Board</h1></div>
+    <div style="display:flex;gap:10px;align-items:center">${boatSVG(false).replace('class="boat ', 'style="width:80px" class="boat ')}<h1>Tender Ops<br>Monitor</h1></div>
     <div class="fld"><span>Access</span><select id="lgRole"><option value="bridge">Bridge (edit)</option><option value="view">Crew View (read only)</option></select></div>
     <div class="fld"><span>Password</span><input id="lgPw" type="password" autocomplete="current-password" required></div>
     <div class="err" id="lgErr" role="alert"></div>
@@ -869,33 +925,40 @@ function bindLogin(){
   f.addEventListener("submit", async ev => {
     ev.preventDefault(); $("#lgErr").textContent = "";
     try { await S.store.signIn($("#lgRole").value, $("#lgPw").value); }
-    catch(e){ $("#lgErr").textContent = /password|credential|user/i.test(e.code || e.message) ? "Wrong password for this access." : (e.message || "Sign-in failed"); }
+    catch(e){ const c = e.code || ""; $("#lgErr").textContent = c.includes("too-many") ? "Too many attempts from this network. Wait a while, or try from another connection." : /password|credential|user/i.test(c + e.message) ? "Wrong password for this access." : (e.message || "Sign-in failed"); }
   });
 }
 
-/* ---------------- theme ---------------- */
+/* ---------------- theme, toast, wake lock ---------------- */
 function themeLabel(){ const t = lsGet("tb.theme") || "auto"; return t === "auto" ? "Auto" : t === "dark" ? "Dark" : "Light"; }
 function applyTheme(){ const t = lsGet("tb.theme") || "auto"; if (t === "auto") document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", t); }
-
-/* ---------------- toast ---------------- */
-let toastTimer = null;
-function toast(msg){ const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => t.hidden = true, 3200); }
+let toastTimer = null, toastUndo = null;
+function toast(msg, undoId){
+  const t = $("#toast"); toastUndo = undoId || null;
+  t.innerHTML = `<span>${esc(msg)}</span>${undoId ? `<button type="button" id="toastUndo">Undo</button>` : ""}`;
+  t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; toastUndo = null; }, undoId ? 7000 : 3200);
+  const b = $("#toastUndo"); if (b) b.addEventListener("click", () => { if (toastUndo && day()){ S.store.deleteEvent(day().id, toastUndo); t.hidden = true; toastUndo = null; toast("Undone"); } });
+}
+let wakeLock = null;
+async function keepAwake(){ try { if ("wakeLock" in navigator && document.visibilityState === "visible" && !wakeLock){ wakeLock = await navigator.wakeLock.request("screen"); wakeLock.addEventListener("release", () => wakeLock = null); } } catch(e){} }
+document.addEventListener("visibilitychange", keepAwake);
 
 /* ---------------- modal ---------------- */
+let sheetUnit = null;
 function modal({title, body, submit="Save", danger=false, onSubmit, extra="", onOpen}){
   const root = $("#modal-root");
   root.innerHTML = `<div class="overlay" data-close="1"><form class="modal" role="dialog" aria-modal="true" aria-label="${esc(title)}" novalidate>
     <header><h3>${esc(title)}</h3><button type="button" class="icon-btn" data-close="1" aria-label="Close">✕</button></header>
     <div class="mb">${body}</div>
-    <footer>${extra}<button type="button" class="btn" data-close="1">Cancel</button>${submit ? `<button type="submit" class="btn ${danger ? "arm" : "primary"}">${esc(submit)}</button>` : ""}</footer></form></div>`;
+    <footer>${extra}<button type="button" class="btn" data-close="1">${submit ? "Cancel" : "Close"}</button>${submit ? `<button type="submit" class="btn ${danger ? "arm" : "primary"}">${esc(submit)}</button>` : ""}</footer></form></div>`;
   const form = root.querySelector("form");
   root.querySelector(".overlay").addEventListener("click", e => { if (e.target.dataset.close) closeModal(); });
   root.querySelectorAll("button[data-close]").forEach(b => b.addEventListener("click", closeModal));
   form.addEventListener("submit", e => { e.preventDefault(); const r = onSubmit && onSubmit(form); if (r !== false) closeModal(); });
   if (onOpen) onOpen(form);
-  const first = form.querySelector("input:not([type=hidden]),select,textarea"); if (first) setTimeout(() => first.focus(), 30);
+  const first = form.querySelector("input.big, input:not([type=hidden]):not([type=checkbox]), textarea"); if (first && !form.dataset.nofocus) setTimeout(() => first.focus(), 30);
 }
-function closeModal(){ $("#modal-root").innerHTML = ""; }
+function closeModal(){ $("#modal-root").innerHTML = ""; sheetUnit = null; }
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
 
 const normHM = v => { const d = String(v || "").replace(/\D/g, ""); if (d.length < 3 || d.length > 4) return null; const h = +d.slice(0, d.length - 2), m = +d.slice(-2); return h < 24 && m < 60 ? pad(h) + ":" + pad(m) : null; };
@@ -906,28 +969,33 @@ function readTime(form, id, dayDate, fallback){
   const el = form.querySelector("#" + id); if (!el) return fallback ?? Date.now();
   const v = normHM(el.value);
   if (!v || v === el.dataset.init) return fallback ?? Date.now();
-  const base = dayDate || ymd(Date.now());
-  return hmToMs(base, v) ?? Date.now();
+  return hmToMs(dayDate || ymd(Date.now()), v) ?? Date.now();
 }
 const driverList = () => `<datalist id="drvList">${(ST ? ST.drivers : []).map(d => `<option value="${esc(d)}">`).join("")}</datalist>`;
+function berthChoice(st, current, id="mBerth"){
+  const fb = freeBerths(st), def = current || fb[0] || "SB";
+  const btn = (b, sub) => { const dis = b !== "SB" && !fb.includes(b) && current !== b; return `<button type="button" data-berth="${b}" aria-pressed="${def === b}" ${dis ? "disabled" : ""}>${berthName(b)}<small>${sub}</small></button>`; };
+  const sub = b => !st.pont[b] ? "closed" : st.occ[b] && current !== b ? "occupied · " + st.occ[b].name : "free";
+  return `<div class="fld"><span>Ship berth · ${st.pont.side}</span><div class="choice" id="${id}" data-val="${def}">${btn("FWD", sub("FWD"))}${btn("MID", sub("MID"))}${btn("SB", "wait off ship")}</div></div>`;
+}
+function bindChoice(f, id="mBerth"){ const box = f.querySelector("#" + id); if (!box) return; box.querySelectorAll("button").forEach(b => b.addEventListener("click", () => { box.dataset.val = b.dataset.berth; box.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); })); }
 
 /* ---------------- actions ---------------- */
 const day = () => S.data.currentDay;
-function addEv(type, unit, extra, t){
+function addEv(type, unit, extra, t, msg){
   const e = Object.assign({id:"e" + uid(), c:seq(), type, unit:unit || null, t: t ?? Date.now()}, extra || {});
-  S.undoArm = null;
-  return S.store.addEvent(day().id, e);
+  S.store.addEvent(day().id, e);
+  if (msg) toast(msg, e.id);
+  return e;
 }
 
 function departModal(u, dir){
-  const isShore = dir === "shore";
-  const st = ST;
-  const maxHint = isShore ? "" : `<span class="hint">${num(Math.max(0, st.ashore))} currently ashore</span>`;
+  const isShore = dir === "shore", st = ST;
   modal({
     title: `${u.name} · Depart → ${isShore ? "Shore" : "Ship"}`, submit: "Log departure",
-    body: `<div class="paxprev" id="pv">${ringSVG(0, u.cap, 96)}</div>
-      <label class="fld"><span>Pax on board</span><input id="mPax" class="big" type="number" inputmode="numeric" min="0" step="1" placeholder="0" required>${maxHint}</label>
-      <div class="quick"><button type="button" class="btn small" data-q="0">Empty</button>${u.cap ? `<button type="button" class="btn small" data-q="${u.cap}">Full · ${u.cap}</button>` : ""}</div>
+    body: `<div class="paxprev" id="pv">${ringSVG(u.pax || 0, u.cap, 96)}</div>
+      <label class="fld"><span>Pax on board</span><input id="mPax" class="big" type="number" inputmode="numeric" min="0" step="1" placeholder="0" value="${u.pax || ""}" required>${isShore ? "" : `<span class="hint">${num(Math.max(0, st.ashore))} currently ashore</span>`}</label>
+      <div class="quick"><button type="button" class="btn" data-q="0">Empty</button>${u.cap ? `<button type="button" class="btn" data-q="${u.cap}">Full · ${u.cap}</button>` : ""}</div>
       <div id="mWarn"></div>
       <div class="two"><label class="fld"><span>Driver</span><input id="mDrv" list="drvList" value="${esc(u.driver)}" autocomplete="off"></label>${timeField("mT")}</div>${driverList()}`,
     onOpen: f => {
@@ -939,126 +1007,154 @@ function departModal(u, dir){
     onSubmit: f => {
       const v = f.querySelector("#mPax").value;
       if (v === "" || isNaN(+v)){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Enter the number of pax (0 if empty).</div>`; return false; }
-      const drv = f.querySelector("#mDrv").value.trim();
-      addEv("depart", u.id, {dir, pax: Math.max(0, Math.round(+v)), driver: drv}, readTime(f, "mT", day().date));
-      toast(`${u.name} departed → ${isShore ? "Shore" : "Ship"} · ${Math.round(+v)} pax`);
+      const p = Math.max(0, Math.round(+v));
+      addEv("depart", u.id, {dir, pax: p, driver: f.querySelector("#mDrv").value.trim()}, readTime(f, "mT", day().date), `${u.name} departed → ${isShore ? "Shore" : "Ship"} · ${p} pax`);
     }
   });
 }
-
+function arriveShipModal(u){
+  modal({title:`${u.name} · Arrived at ship`, submit:"Log arrival",
+    body: `<p style="margin:0;color:var(--muted)">${u.pax} pax on board. They count as back on board when the tender is alongside a pontoon.</p>${berthChoice(ST, null)}${timeField("mT")}`,
+    onOpen: f => bindChoice(f),
+    onSubmit: f => { const b = f.querySelector("#mBerth").dataset.val;
+      addEv("arrive", u.id, {at:"ship", berth:b}, readTime(f, "mT", day().date), b === "SB" ? `${u.name} on stand-by · ${u.pax} waiting` : `${u.name} alongside ${berthName(b)} · ${u.pax} back on board`); }});
+}
 function activateModal(u){
   const tender = u.kind === "tender";
   modal({
     title: tender ? `Lower ${u.name}` : `Return ${u.name} to service`, submit: tender ? "Log lowering" : "Return to service",
-    body: `<p style="margin:0;color:var(--muted)">${tender ? "Logs the lowering time and puts the tender alongside the ship." : "Puts the shoretender back alongside the ship."}</p>
-      <div class="two"><label class="fld"><span>Max load (pax)</span><input id="mCap" type="number" inputmode="numeric" min="1" value="${u.cap ?? ""}" required></label>
+    body: `<div class="two"><label class="fld"><span>Max load (pax)</span><input id="mCap" type="number" inputmode="numeric" min="1" value="${u.cap ?? (tender ? DEFAULT_CAP : SHORE_CAP)}" required></label>
       <label class="fld"><span>Driver</span><input id="mDrv" list="drvList" value="${esc(u.driver)}" autocomplete="off"></label></div>
-      ${timeField("mT")}${driverList()}<div id="mWarn"></div>`,
+      ${berthChoice(ST, null)}${timeField("mT")}${driverList()}<div id="mWarn"></div>`,
+    onOpen: f => bindChoice(f),
     onSubmit: f => {
       const cap = parseInt(f.querySelector("#mCap").value, 10);
-      if (!cap || cap < 1){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Set the max load for this tender.</div>`; return false; }
-      addEv("activate", u.id, {cap, driver: f.querySelector("#mDrv").value.trim()}, readTime(f, "mT", day().date));
-      toast(tender ? `${u.name} lowered` : `${u.name} back on service`);
+      if (!cap || cap < 1){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Set the max load.</div>`; return false; }
+      addEv("activate", u.id, {cap, driver: f.querySelector("#mDrv").value.trim(), berth: f.querySelector("#mBerth").dataset.val}, readTime(f, "mT", day().date), tender ? `${u.name} lowered` : `${u.name} back on service`);
     }
   });
 }
-
 function shoreModal(){
   modal({
     title: "Add shoretender", submit: "Add to board",
     body: `<label class="fld"><span>Boat name</span><input id="mName" placeholder="e.g. Kotor Star" required></label>
-      <div class="two"><label class="fld"><span>Max load (pax)</span><input id="mCap" type="number" inputmode="numeric" min="1" required></label>
-      <label class="fld"><span>Starts at</span><select id="mAt"><option value="shore">Alongside Shore</option><option value="ship">Alongside Ship</option></select></label></div>
-      <div class="two"><label class="fld"><span>Driver / crew</span><input id="mDrv" autocomplete="off"></label>${timeField("mT")}</div><div id="mWarn"></div>`,
+      <div class="two"><label class="fld"><span>Max load (pax)</span><input id="mCap" type="number" inputmode="numeric" min="1" value="${SHORE_CAP}" required></label>
+      <label class="fld"><span>Driver / crew</span><input id="mDrv" autocomplete="off"></label></div>
+      ${berthChoice(ST, null)}${timeField("mT")}<div id="mWarn"></div>`,
+    onOpen: f => bindChoice(f),
     onSubmit: f => {
       const name = f.querySelector("#mName").value.trim(), cap = parseInt(f.querySelector("#mCap").value, 10);
       if (!name || !cap){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Name and max load are required.</div>`; return false; }
-      if (ST.list.some(u => u.name.toLowerCase() === name.toLowerCase())){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">A unit called ${esc(name)} is already on the board.</div>`; return false; }
-      addEv("shore_add", "S" + uid(), {name, cap, at: f.querySelector("#mAt").value, driver: f.querySelector("#mDrv").value.trim()}, readTime(f, "mT", day().date));
-      toast(`${name} added`);
+      if (ST.list.some(u => u.name.toLowerCase() === name.toLowerCase())){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">${esc(name)} is already on the board.</div>`; return false; }
+      addEv("shore_add", "S" + uid(), {name, cap, berth: f.querySelector("#mBerth").dataset.val, driver: f.querySelector("#mDrv").value.trim()}, readTime(f, "mT", day().date), `${name} added`);
     }
   });
 }
-
-function menuModal(u){
-  const canStow = (u.loc === "ship" || u.loc === "standby") && u.pax === 0;
-  modal({
-    title: `${u.name} options`, submit: null,
-    body: `<div class="menu-list">
-      <button type="button" class="btn" data-m="driver">Change driver</button>
-      <button type="button" class="btn" data-m="cap">Set max load (now ${u.cap ?? "—"})</button>
-      <button type="button" class="btn" data-m="issue">Report issue</button>
-      ${canStow ? `<button type="button" class="btn danger" data-m="stow">${u.kind === "tender" ? "Hoist and stow" : "Release from service"}</button>`
-        : `<span class="hint" style="font-size:13px;color:var(--muted)">${u.kind === "tender" ? "Hoist" : "Release"} is available when the tender is alongside the ship or on stand-by and empty.</span>`}</div>`,
-    onOpen: f => f.querySelectorAll("[data-m]").forEach(b => b.addEventListener("click", () => {
-      const m = b.dataset.m;
-      if (m === "driver") simpleModal(`${u.name} · Driver`, "Driver", "text", u.driver, v => addEv("driver", u.id, {driver: v}), true);
-      if (m === "cap") simpleModal(`${u.name} · Max load`, "Max load (pax)", "number", u.cap ?? "", v => addEv("cap", u.id, {cap: Math.max(1, parseInt(v, 10) || 1)}));
-      if (m === "issue") issueModal(null, u.name);
-      if (m === "stow") modal({title: u.kind === "tender" ? `Hoist ${u.name}` : `Release ${u.name}`, submit: u.kind === "tender" ? "Log hoisting" : "Release",
-        body: `<p style="margin:0;color:var(--muted)">${u.kind === "tender" ? "Logs the hoisting time and moves the tender to Stowed." : "Moves the shoretender off the board."}</p>${timeField("mT")}`,
-        onSubmit: f2 => { addEv("deactivate", u.id, {}, readTime(f2, "mT", day().date)); toast(`${u.name} ${u.kind === "tender" ? "hoisted" : "released"}`); }});
-    }))
+function pontoonModal(){
+  const p = ST.pont;
+  modal({title:"Pontoons", submit:"Save",
+    body: `<div class="fld"><span>Side in use</span><div class="choice" id="mSide" data-val="${p.side}" style="grid-template-columns:1fr 1fr">
+        <button type="button" data-berth="PORT" aria-pressed="${p.side === "PORT"}">Port</button><button type="button" data-berth="STBD" aria-pressed="${p.side === "STBD"}">Starboard</button></div></div>
+      <div class="fld"><span>Open pontoons</span><div class="toggles"><label><input type="checkbox" id="mFwd" ${p.FWD ? "checked" : ""}>FWD pontoon</label><label><input type="checkbox" id="mMid" ${p.MID ? "checked" : ""}>MIDSHIP pontoon</label></div></div>
+      <span class="hint">Tenders already alongside keep their berth label.</span>`,
+    onOpen: f => { f.dataset.nofocus = 1; bindChoice(f, "mSide"); },
+    onSubmit: f => addEv("pontoons", null, {side: f.querySelector("#mSide").dataset.val, fwd: f.querySelector("#mFwd").checked, mid: f.querySelector("#mMid").checked}, Date.now(), "Pontoons updated")
   });
 }
-
-function simpleModal(title, label, type, value, apply, drivers){
-  modal({title, submit:"Save",
-    body: `<label class="fld"><span>${esc(label)}</span><input id="mV" type="${type}" ${type === "number" ? 'inputmode="numeric" min="1"' : ""} ${drivers ? 'list="drvList"' : ""} value="${esc(value)}" autocomplete="off"></label>${drivers ? driverList() : ""}`,
-    onSubmit: f => { const v = f.querySelector("#mV").value.trim(); if (!v) return false; apply(v); toast("Saved"); }});
-}
-
 function syncModal(){
-  const st = ST;
   modal({title:"Sync Ashore", submit:"Sync",
     body: `<p style="margin:0;color:var(--muted)">Enter the official ashore figure (gangway / security count). The tender count continues from this number.</p>
-      <div class="sumgrid"><div><span>Tender count now</span><b>${num(st.ashore)}</b></div></div>
+      <div class="sumgrid"><div><span>Tender count now</span><b>${num(ST.ashore)}</b></div></div>
       <label class="fld"><span>Ashore (official)</span><input id="mV" class="big" type="number" inputmode="numeric" min="0" required></label>${timeField("mT")}<div id="mWarn"></div>`,
     onSubmit: f => { const v = f.querySelector("#mV").value; if (v === "" || +v < 0){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Enter the ashore number.</div>`; return false; }
-      addEv("sync", null, {value: Math.round(+v)}, readTime(f, "mT", day().date)); toast(`Ashore synced to ${num(+v)}`); }});
+      addEv("sync", null, {value: Math.round(+v)}, readTime(f, "mT", day().date), `Ashore synced to ${num(+v)}`); }});
 }
-
 function dayModal(existing){
-  const d = existing || {};
+  const d = existing || {side:"STBD", fwd:true, mid:true};
   modal({title: existing ? "Edit tender day" : "Open tender day", submit: existing ? "Save" : "Open day",
     body: `<label class="fld"><span>Port</span><input id="mPort" value="${esc(d.port || "")}" placeholder="e.g. Kotor" required></label>
       <div class="two"><label class="fld"><span>Date</span><input id="mDate" type="date" value="${esc(d.date || ymd(Date.now()))}"></label>
       <label class="fld"><span>Last tender (24h)</span>${hmInput("mLast", d.lastTender || "")}</label></div>
       <label class="fld"><span>Total on board (guests + crew)</span><input id="mTot" type="number" inputmode="numeric" min="0" value="${esc(d.total ?? "")}"><span class="hint">Reference only, from the ship’s system.</span></label>
+      ${existing ? "" : `<div class="fld"><span>Pontoon side</span><div class="choice" id="mSide" data-val="${d.side}" style="grid-template-columns:1fr 1fr"><button type="button" data-berth="PORT" aria-pressed="false">Port</button><button type="button" data-berth="STBD" aria-pressed="true">Starboard</button></div></div>
+      <div class="toggles"><label><input type="checkbox" id="mFwd" checked>FWD pontoon</label><label><input type="checkbox" id="mMid" checked>MIDSHIP pontoon</label></div>`}
       <label class="fld"><span>Planned round trip (min)</span><input id="mCyc" type="number" inputmode="numeric" min="5" value="${esc(d.plannedCycle ?? 30)}"><span class="hint">Used for the estimate until real round trips are logged.</span></label><div id="mWarn"></div>`,
+    onOpen: f => bindChoice(f, "mSide"),
     onSubmit: f => {
       const port = f.querySelector("#mPort").value.trim();
       if (!port){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Enter the port.</div>`; return false; }
       const rec = {port, date: f.querySelector("#mDate").value || ymd(Date.now()), lastTender: normHM(f.querySelector("#mLast").value) || "", total: parseInt(f.querySelector("#mTot").value, 10) || 0, plannedCycle: parseInt(f.querySelector("#mCyc").value, 10) || 30};
       if (existing) S.store.saveDay(Object.assign({id: existing.id}, rec));
-      else S.store.saveDay(Object.assign({id: "d" + uid(), status:"open", openedAt: Date.now()}, rec));
+      else S.store.saveDay(Object.assign({id: "d" + uid(), status:"open", openedAt: Date.now(), side: f.querySelector("#mSide").dataset.val, fwd: f.querySelector("#mFwd").checked, mid: f.querySelector("#mMid").checked}, rec));
       toast(existing ? "Day updated" : `Tender day open · ${port}`);
     }});
 }
-
 function closeDayModal(){
   const st = ST, active = st.list.filter(u => u.active);
   modal({title:"Close tender day", submit:"Close day", danger:true,
-    body: `${active.length ? `<div class="warnbox">${active.map(u => u.name).join(", ")} still in service. Hoist them first, or close anyway.</div>` : ""}
+    body: `${active.length ? `<div class="warnbox">${active.map(u => esc(u.name)).join(", ")} still in service. Hoist them first, or close anyway.</div>` : ""}
       ${st.ashore > 0 ? `<div class="warnbox">${num(st.ashore)} still counted ashore.</div>` : ""}
-      <p style="margin:0">The day moves to History with its full log. The board will be empty until a new day is opened.</p>`,
+      <p style="margin:0">The day moves to History with its full log. The board stays empty until a new day is opened.</p>`,
     onSubmit: () => { S.store.saveDay({id: day().id, status:"closed", closedAt: Date.now(), summary: summaryOf(st)}); toast("Day closed and saved to History"); location.hash = "history"; }});
 }
 
+/* tender sheet: details, note, less frequent actions */
+function sheetModal(u){
+  sheetUnit = u.id;
+  const isIss = S.data.issues.filter(i => i.status === "open" && i.unitName === u.name);
+  const canHoist = u.active && u.loc === "ship" && u.pax === 0;
+  const status = !u.active ? "Not in service" : u.loc === "ship" ? berthName(u.berth) : u.loc === "transit" ? (u.dir === "shore" ? "→ Shore" : "← Ship") : "Shore";
+  modal({title:`${u.name}`, submit:null,
+    body: `<div class="kv"><div><span>Status</span><b>${status}</b></div><div><span>Pax</span><b>${u.pax} / ${u.cap ?? "—"}</b></div><div><span>Driver</span><b>${esc(u.driver || "—")}</b></div>
+        <div><span>${u.kind === "tender" ? "Lowered" : "On service"}</span><b class="mono">${fmtT(u.kind === "tender" ? u.lowered : u.since)}</b></div><div><span>Trips out / back</span><b>${u.tripsOut} / ${u.tripsBack}</b></div><div><span>Side</span><b>${u.side}</b></div></div>
+      <label class="fld"><span>Note</span><textarea id="mNote" placeholder="e.g. Refuel at 15:30" ${isAdmin() ? "" : "readonly"}>${esc(u.note)}</textarea></label>
+      ${isAdmin() ? `<button type="button" class="btn" id="mSaveNote">Save note</button>` : ""}
+      ${isIss.length ? `<div class="fld"><span>Open issues</span>${isIss.map(i => `<div class="warnbox"><b>${esc(i.category)}</b> · ${esc(i.text)}</div>`).join("")}</div>` : ""}
+      ${isAdmin() && u.active ? `<div class="menu-list">
+        ${u.loc === "ship" && u.berth === "SB" ? `<button type="button" class="btn" data-m="depart-shore">Depart → Shore from stand-by</button>` : ""}
+        ${u.loc === "ship" ? `<button type="button" class="btn" data-m="move">Change berth (FWD / MIDSHIP / stand-by)</button>` : ""}
+        <button type="button" class="btn" data-m="driver">Change driver</button>
+        <button type="button" class="btn" data-m="cap">Set max load (now ${u.cap ?? "—"})</button>
+        <button type="button" class="btn" data-m="issue">Report issue</button>
+        ${canHoist ? `<button type="button" class="btn danger" data-m="stow">${u.kind === "tender" ? "Hoist · not in service" : "Release from service"}</button>` : `<span class="hint">${u.kind === "tender" ? "Hoist" : "Release"} is available when the boat is at the ship and empty.</span>`}</div>`
+      : isAdmin() ? `<div class="menu-list"><button type="button" class="btn" data-m="issue">Report issue</button></div>` : ""}`,
+    onOpen: f => {
+      f.dataset.nofocus = 1;
+      const sn = f.querySelector("#mSaveNote"); if (sn) sn.addEventListener("click", () => { addEv("note", u.id, {text: f.querySelector("#mNote").value.trim()}, Date.now()); closeModal(); toast("Note saved"); });
+      f.querySelectorAll("[data-m]").forEach(b => b.addEventListener("click", () => {
+        const m = b.dataset.m;
+        if (m === "depart-shore") departModal(u, "shore");
+        if (m === "move") modal({title:`${u.name} · Berth`, submit:"Save", body: berthChoice(ST, u.berth), onOpen: f2 => bindChoice(f2),
+          onSubmit: f2 => { const nb = f2.querySelector("#mBerth").dataset.val; if (nb !== u.berth) addEv("berth", u.id, {berth: nb}, Date.now(), `${u.name} → ${berthName(nb)}`); }});
+        if (m === "driver") simpleModal(`${u.name} · Driver`, "Driver", "text", u.driver, v => addEv("driver", u.id, {driver: v}), true);
+        if (m === "cap") simpleModal(`${u.name} · Max load`, "Max load (pax)", "number", u.cap ?? "", v => addEv("cap", u.id, {cap: Math.max(1, parseInt(v, 10) || 1)}));
+        if (m === "issue") issueModal(null, u.name);
+        if (m === "stow") modal({title: u.kind === "tender" ? `Hoist ${u.name}` : `Release ${u.name}`, submit: u.kind === "tender" ? "Log hoisting" : "Release",
+          body: `<p style="margin:0;color:var(--muted)">${u.kind === "tender" ? "Logs the hoisting time. The row turns grey: Not in service." : "Takes the shoretender off the board."}</p>${timeField("mT")}`,
+          onSubmit: f2 => { addEv("deactivate", u.id, {}, readTime(f2, "mT", day().date), `${u.name} ${u.kind === "tender" ? "hoisted" : "released"}`); }});
+      }));
+    }});
+}
+function refreshSheet(){ /* keep an open sheet static; data refresh is shown on the board */ }
+function simpleModal(title, label, type, value, apply, drivers){
+  modal({title, submit:"Save",
+    body: `<label class="fld"><span>${esc(label)}</span><input id="mV" type="${type}" ${type === "number" ? 'inputmode="numeric" min="1"' : ""} ${drivers ? 'list="drvList"' : ""} value="${esc(value)}" autocomplete="off"></label>${drivers ? driverList() : ""}`,
+    onSubmit: f => { const v = f.querySelector("#mV").value.trim(); if (!v) return false; apply(v); toast("Saved"); }});
+}
 function editEvModal(id){
   const l = ST.log.find(x => x.e.id === id); if (!l) return;
   const e = l.e;
   const hasPax = e.type === "depart", hasDrv = e.type === "depart" || e.type === "activate" || e.type === "driver";
   const hasCap = e.type === "cap" || e.type === "activate" || e.type === "shore_add", hasVal = e.type === "sync";
-  modal({title:`Edit · ${l.unitName} · ${shortText(l)}`, submit:"Save",
+  modal({title:`Edit · ${l.unitName}`, submit:"Save",
     extra:`<button type="button" class="btn danger" id="mDel" style="margin-right:auto">Delete</button>`,
-    body: `${timeField("mT", e.t)}
+    body: `<p style="margin:0;color:var(--muted)">${esc(l.text)}</p>${timeField("mT", e.t)}
       ${hasPax ? `<label class="fld"><span>Pax</span><input id="mPax" type="number" inputmode="numeric" min="0" value="${e.pax ?? 0}"></label>` : ""}
       ${hasVal ? `<label class="fld"><span>Ashore value</span><input id="mVal" type="number" inputmode="numeric" min="0" value="${e.value ?? 0}"></label>` : ""}
       ${hasCap ? `<label class="fld"><span>Max load</span><input id="mCap" type="number" inputmode="numeric" min="1" value="${e.cap ?? ""}"></label>` : ""}
       ${hasDrv ? `<label class="fld"><span>Driver</span><input id="mDrv" list="drvList" value="${esc(e.driver || "")}"></label>${driverList()}` : ""}
-      <span class="hint" style="font-size:12.5px;color:var(--muted)">Counts are recalculated from the corrected log.</span>`,
-    onOpen: f => { const b = f.querySelector("#mDel"); b.addEventListener("click", () => {
+      <span class="hint">Counts are recalculated from the corrected log.</span>`,
+    onOpen: f => { f.dataset.nofocus = 1; const b = f.querySelector("#mDel"); b.addEventListener("click", () => {
       if (b.dataset.armed){ S.store.deleteEvent(day().id, e.id); closeModal(); toast("Entry deleted"); }
       else { b.dataset.armed = "1"; b.textContent = "Tap again to delete"; b.classList.add("arm"); } }); },
     onSubmit: f => {
@@ -1070,11 +1166,9 @@ function editEvModal(id){
       S.store.updateEvent(day().id, e.id, p); toast("Entry corrected");
     }});
 }
-
 function issueModal(existing, unitName){
   const i = existing || {};
-  const units = issueUnits();
-  const t = i.t ?? Date.now();
+  const units = issueUnits(), t = i.t ?? Date.now();
   modal({title: existing ? `Edit issue · ${i.unitName}` : "Report issue", submit: existing ? "Save" : "Log issue",
     extra: existing ? `<button type="button" class="btn danger" id="mDel" style="margin-right:auto">Delete</button>` : "",
     body: `<div class="two"><label class="fld"><span>Unit</span><select id="mU">${units.map(n => `<option ${(i.unitName || unitName) === n ? "selected" : ""}>${esc(n)}</option>`).join("")}</select></label>
@@ -1082,7 +1176,7 @@ function issueModal(existing, unitName){
       <div class="two"><label class="fld"><span>Date</span><input id="mD" type="date" value="${ymd(t)}"></label><label class="fld"><span>Time (24h)</span>${hmInput("mTi", fmtT(t))}</label></div>
       <label class="fld"><span>Description</span><textarea id="mTx" required placeholder="What happened, and what was done">${esc(i.text || "")}</textarea></label>
       ${existing && existing.status === "resolved" ? `<label class="fld"><span>Resolution</span><textarea id="mRes">${esc(i.resolution || "")}</textarea></label>` : ""}<div id="mWarn"></div>`,
-    onOpen: f => { const b = f.querySelector("#mDel"); if (b) b.addEventListener("click", () => {
+    onOpen: f => { f.dataset.nofocus = 1; const b = f.querySelector("#mDel"); if (b) b.addEventListener("click", () => {
       if (b.dataset.armed){ S.store.deleteIssue(i.id); closeModal(); toast("Issue deleted"); } else { b.dataset.armed = "1"; b.textContent = "Tap again to delete"; b.classList.add("arm"); } }); },
     onSubmit: f => {
       const text = f.querySelector("#mTx").value.trim();
@@ -1094,14 +1188,12 @@ function issueModal(existing, unitName){
       S.store.saveIssue(rec); toast(existing ? "Issue updated" : `Issue logged on ${rec.unitName}`);
     }});
 }
-
 function resolveModal(i){
   modal({title:`Resolve · ${i.unitName}`, submit:"Mark resolved",
     body: `<p style="margin:0">${esc(i.text)}</p><label class="fld"><span>What was done</span><textarea id="mRes" placeholder="e.g. Strainer cleaned, tested OK"></textarea></label>
       <div class="two"><label class="fld"><span>Date</span><input id="mD" type="date" value="${ymd(Date.now())}"></label><label class="fld"><span>Time (24h)</span>${hmInput("mTi", fmtT(Date.now()))}</label></div>`,
     onSubmit: f => { S.store.saveIssue({id:i.id, status:"resolved", resolution: f.querySelector("#mRes").value.trim(), resolvedAt: hmToMs(f.querySelector("#mD").value, normHM(f.querySelector("#mTi").value)) ?? Date.now()}); toast("Issue resolved"); }});
 }
-
 function csvFor(d, st){
   const rows = [["Date","Port","Time","Unit","Event","Pax","Driver"]];
   st.log.forEach(l => rows.push([d.date, d.port, fmtT(l.e.t), l.unitName, l.text, l.pax ?? "", l.driver || ""]));
@@ -1116,30 +1208,29 @@ function csvFor(d, st){
 document.addEventListener("click", e => {
   const el = e.target.closest("[data-act]"); if (!el || !$("#app").contains(el)) return;
   const act = el.dataset.act, u = el.dataset.u && ST ? ST.units[el.dataset.u] : null;
+  keepAwake();
   switch (act){
     case "theme": { const cur = lsGet("tb.theme") || "auto"; lsSet("tb.theme", cur === "auto" ? "dark" : cur === "dark" ? "light" : "auto"); applyTheme(); render(); break; }
     case "signout": S.store.signOut(); break;
-    case "demo-role": S.role = el.dataset.r; S.demoRole = el.dataset.r; render(); break;
+    case "demo-role": S.role = el.dataset.r; render(); break;
     case "demo-reset": S.store.reset(); toast("Sample data reloaded"); break;
     case "open-day": dayModal(null); break;
     case "edit-day": dayModal(day()); break;
     case "sync": syncModal(); break;
-    case "undo": {
-      const l = lastEvent(); if (!l) break;
-      if (S.undoArm === l.e.id){ S.undoArm = null; S.store.deleteEvent(day().id, l.e.id); toast(`Undone: ${l.unitName} ${shortText(l)}`); }
-      else { S.undoArm = l.e.id; render(); setTimeout(() => { if (S.undoArm === l.e.id){ S.undoArm = null; render(); } }, 5000); }
-      break;
-    }
+    case "rec": S.recOpen = !S.recOpen; render(); break;
+    case "pontoons": pontoonModal(); break;
+    case "sheet": sheetModal(u); break;
     case "depart-shore": departModal(u, "shore"); break;
     case "depart-ship": departModal(u, "ship"); break;
-    case "arrive-shore": addEv("arrive", u.id, {at:"shore"}); toast(`${u.name} alongside Shore · ${u.pax} landed`); break;
-    case "arrive-ship": addEv("arrive", u.id, {at:"ship"}); toast(`${u.name} alongside Ship · ${u.pax} back on board`); break;
-    case "standby": addEv("standby", u.id); toast(`${u.name} on stand-by`); break;
-    case "alongside-ship": addEv("alongside", u.id, {at:"ship"}); break;
-    case "alongside-shore": addEv("alongside", u.id, {at:"shore"}); break;
+    case "arrive-shore": addEv("arrive", u.id, {at:"shore"}, null, `${u.name} alongside Shore · ${u.pax} landed`); break;
+    case "arrive-ship": arriveShipModal(u); break;
+    case "berth": addEv("berth", u.id, {berth: el.dataset.b}, null, `${u.name} alongside ${berthName(el.dataset.b)}${u.pax ? " · " + u.pax + " back on board" : ""}`); break;
     case "activate": activateModal(u); break;
     case "add-shore": shoreModal(); break;
-    case "menu": menuModal(u); break;
+    case "undo-last": { const l = ST && ST.log.slice().sort((a,b) => (b.e.c||0) - (a.e.c||0))[0]; if (!l) break;
+      if (el.dataset.armed){ S.store.deleteEvent(day().id, l.e.id); toast(`Undone: ${l.unitName} · ${l.text}`); }
+      else { el.dataset.armed = "1"; el.classList.add("arm"); el.textContent = `Tap again: undo ${l.unitName} · ${l.text.split(" · ")[0]}`; setTimeout(() => render(), 5000); }
+      break; }
     case "csv": csvFor(day(), ST); break;
     case "close-day": closeDayModal(); break;
     case "edit-ev": editEvModal(el.dataset.id); break;
@@ -1147,7 +1238,6 @@ document.addEventListener("click", e => {
     case "resolve": { const i = S.data.issues.find(x => x.id === el.dataset.id); if (i) resolveModal(i); break; }
     case "reopen": S.store.saveIssue({id: el.dataset.id, status:"open", resolvedAt:null}); toast("Issue reopened"); break;
     case "edit-issue": { const i = S.data.issues.find(x => x.id === el.dataset.id); if (i) issueModal(i); break; }
-    case "issues-for": S.issueUnit = el.dataset.n; S.issueStatus = "all"; break;
     case "hist-open": openHist(el.dataset.id); break;
     case "hist-back": S.hist = null; S.histEvents = null; render(); break;
     case "csv-hist": { const d = S.data.days.find(x => x.id === S.hist); if (d && S.histEvents) csvFor(d, compute(d, S.histEvents)); break; }
@@ -1172,7 +1262,7 @@ function route(){
   render(); window.scrollTo(0, 0);
 }
 addEventListener("hashchange", route);
-setInterval(() => { if (S.role && !$("#modal-root").innerHTML && (S.view === "board")) render(); }, 30000);
+setInterval(() => { if (S.role && !$("#modal-root").innerHTML && S.view === "board") render(); }, 30000);
 
 /* ---------------- boot ---------------- */
 (async function boot(){
@@ -1187,7 +1277,7 @@ setInterval(() => { if (S.role && !$("#modal-root").innerHTML && (S.view === "bo
     S.store.onAuth(user => {
       S.role = user ? (user.email === CONFIG.accounts.bridge ? "admin" : "viewer") : null;
       if (!user){ S.data = {days:[], currentDay:null, events:[], issues:[]}; ST = null; }
-      render();
+      render(); if (user) keepAwake();
     });
   } else {
     S.store = createLocalStore();
