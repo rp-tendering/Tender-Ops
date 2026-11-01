@@ -6,13 +6,13 @@
 <meta name="theme-color" content="#13212f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Tender Ops">
+<meta name="apple-mobile-web-app-title" content="Tendering Ops">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
 </head>
 <body>
-<title>Tender Ops Monitor</title>
+<title>Tendering Operations</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -153,6 +153,7 @@ main{padding-block:12px 70px;display:flex;flex-direction:column;gap:12px}
 .otbtn{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 50%,var(--line))}
 .chip.ot{background:var(--ok);color:#fff;border-color:var(--ok)}
 .chip.role.d-hotel{background:var(--ht);border-color:var(--ht)} .chip.role.d-tech{background:var(--tc);border-color:var(--tc)}
+.badge.warnb{background:var(--crit);color:#fff}
 .badge{font-style:normal;background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:0 6px;font-size:12px;font-family:var(--f-body);font-weight:700;margin-left:2px}
 .chat .panel-head .hint{font-size:13.5px;color:var(--muted)}
 .chat .radio{margin:0;font-size:12.5px;color:var(--muted);border-left:3px solid var(--warn);padding-left:8px}
@@ -160,7 +161,8 @@ main{padding-block:12px 70px;display:flex;flex-direction:column;gap:12px}
 .msg{align-self:flex-start;max-width:min(560px,86%);background:var(--surface-2);border:1px solid var(--line);border-radius:12px 12px 12px 4px;padding:7px 11px;display:flex;flex-direction:column;gap:2px}
 .msg.mine{align-self:flex-end;background:color-mix(in srgb,var(--sea) 12%,var(--surface));border-radius:12px 12px 4px 12px}
 .msg .mh{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:13px}
-.msg .rk{color:var(--muted)} .msg .mt{margin-left:auto;color:var(--muted);font-size:11.5px}
+.msg .nmx{font-size:14px}
+.msg .rk{font-size:11.5px;font-weight:700;letter-spacing:.03em;padding:1px 7px;border-radius:999px;background:color-mix(in srgb,var(--ink) 9%,transparent);color:var(--ink)} .msg .mt{margin-left:auto;color:var(--muted);font-size:11.5px}
 .msg p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
 .dept{font-size:10.5px;font-weight:700;letter-spacing:.08em;padding:1px 6px;border-radius:4px;color:#fff;background:var(--dk)}
 .dept.d-hotel{background:var(--ht)} .dept.d-tech{background:var(--tc)}
@@ -175,6 +177,25 @@ main{padding-block:12px 70px;display:flex;flex-direction:column;gap:12px}
 .board.ro .ca{display:none}
 .board.ro .grow.off .offc{grid-column:2 / 5}
 .legend{display:flex;flex-direction:column;gap:10px}
+.legend h4,.mg{margin:6px 0 0;font-family:var(--f-display);font-size:15px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:3px}
+.lgcols{display:flex;gap:2px}.lgcols i{font-style:normal;font-size:10px;font-weight:700;text-transform:uppercase;padding:3px 4px;border:1px solid var(--line);background:var(--surface-2)}.lgcols i:nth-child(2){background:var(--sea-tint)}
+.lgtime{font-size:12px;color:var(--muted)}
+.lgmarks{font-size:12px;font-weight:600}.lgmarks .iss{color:var(--crit)}.lgmarks .nt{color:var(--sea)}
+.lgdots{display:flex;gap:6px}.lgdots i{width:11px;height:11px;border-radius:50%}.lgdots .f{background:var(--ok)}.lgdots .o{background:var(--accent)}.lgdots .c{background:var(--line)}
+.lgchip{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:999px;white-space:nowrap}
+.lgchip.lt{background:var(--ink);color:var(--surface)}.lgchip.ot{background:var(--ok);color:#fff}.lgchip.off{background:var(--warn);color:#1a1200}
+.hbtn{font-weight:800;font-size:15px;width:32px}
+.helptxt p{margin:0 0 8px}.helptxt ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:5px;font-size:14.5px}
+.bkey{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.bkey div{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:7px 10px;min-width:0}
+.bkey span,.bf span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.bkey b{font-family:var(--f-display);font-size:20px}
+.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.bgroup{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.bgroup h4{margin:0;font-family:var(--f-display);font-size:16px;letter-spacing:.08em;text-transform:uppercase}
+.bf p{margin:1px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14.5px}
+.bh{margin:6px 0 0;font-family:var(--f-display);font-size:20px}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .legend > div{display:grid;grid-template-columns:128px minmax(0,1fr);gap:12px;align-items:center}
 .legend > div > :first-child{justify-self:center}
 .legend p{margin:0;font-size:14px}
@@ -398,8 +419,10 @@ tr.k-lower td,tr.k-hoist td{background:color-mix(in srgb,var(--accent) 8%,transp
   .grow.off{grid-template-areas:"b o o o" "a a a a"}
   .grow.off .offc{grid-area:o;grid-column:auto;font-size:12.5px;gap:8px}
   .grow.off .offc .boat{width:60px}
-  .tabs{width:100%;order:3}
-  .tabs a{flex:1;text-align:center;padding:5px 2px;font-size:13px;letter-spacing:.03em}
+  .tabs{width:100%;order:3;overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs a{flex:1 0 auto;text-align:center;padding:5px 6px;font-size:12.5px;letter-spacing:.02em}
+  .three{grid-template-columns:1fr}
   .mlist{max-height:58vh}
   .brand b{font-size:18px}
   .issue{grid-template-columns:auto minmax(0,1fr)}
@@ -415,7 +438,7 @@ tr.k-lower td,tr.k-hoist td{background:color-mix(in srgb,var(--accent) 8%,transp
 
 <script>
 /* =====================================================================
-   TENDER OPS MONITOR — Royal Princess
+   TENDERING OPERATIONS — Royal Princess
    CONFIG: firebase:null = DEMO mode (data on this device only).
    ===================================================================== */
 const CONFIG = {
@@ -679,7 +702,7 @@ function statusHTML(day, st, est, lastSync){
 
 /* ---------------- stores ---------------- */
 function createLocalStore(){
-  const KEY = "tom.demo.v3";
+  const KEY = "tom.demo.v4";
   let mem = null; const listeners = [];
   const read = () => { const s = lsGet(KEY); if (s){ try { return JSON.parse(s); } catch(e){} } return mem; };
   const db = () => read() || {days:{}, events:{}, issues:{}};
@@ -834,7 +857,10 @@ function makeSample(){
 
   const start = now - 5.5 * 3600e3, last = now + 2 * 3600e3 + 10*M;
   const id = "d" + uid(); const id_ = id;
-  out.days[id] = {id, port:"Kotor", date:ymd(start), total:4280, lastTender:fmtT(last), plannedCycle:32, side:"STBD", fwd:true, mid:true, status:"open", openedAt:start - 20*M};
+  out.days[id] = {id, port:"Kotor", date:ymd(start), total:4280, lastTender:fmtT(last), plannedCycle:32, side:"STBD", fwd:true, mid:true, status:"open", openedAt:start - 20*M,
+    brief:{firstTender:"08:00", allAboard:"17:00", departure:"17:30", anchorage:"Inner bay, 0.6 nm off Kotor old town", landing:"Kotor main pier, tender berths 1–2", route:"Straight run from anchorage to the pier, about 0.6 nm, 10–12 min. Keep clear of the ferry lane on the east side.", hazards:"Shallow patch marked by yellow buoy north of the route. Ferry traffic every 30 min.",
+      vhfTenders:"Ch 72", vhfShore:"Ch 72", vhfPort:"Ch 16 / 12 Kotor Port Control", shoreParty:"2/O Marco + 2 deck crew", weather:"NW 8–12 kn, sea slight, good visibility. Afternoon gusts to 18 kn possible.", tide:"Negligible", sun:"Sunset 16:52",
+      tickets:"Tender tickets from 07:30 in the Theatre until Open Tender is declared.", excursions:"Last excursion coaches back at the pier 16:45.", notes:"Port requires tenders at 5 kn max inside the breakwater.", updatedAt: start, by:"Marco · 2/O"}};
   const ev = buildDay({total:4280, start, lastTender:last, end:now, complete:false, units:[
     {id:"T11", cap:170, driver:"Jeffery", off:0}, {id:"T14", cap:170, driver:"Said", off:5},
     {id:"T15", cap:170, driver:"John", off:10}, {id:"T17", cap:170, driver:"Tesorio", off:16},
@@ -875,7 +901,7 @@ const isAdmin = () => S.role === "deck";
 const canIssues = () => S.role === "deck" || S.role === "tech";
 const canOpenTender = () => S.role === "deck" || S.role === "hotel";
 const DEPT = {deck:"DECK", hotel:"HOTEL", tech:"TECH"};
-const VIEWS = ["board","log","issues","chat","history"];
+const VIEWS = ["board","brief","log","issues","chat","history"];
 let ST = null;
 function setData(d){
   const me = deviceId(), prevMax = S.msgMax;
@@ -893,6 +919,7 @@ function render(){
   else if (S.view === "log") body = logHTML();
   else if (S.view === "issues") body = issuesHTML();
   else if (S.view === "chat") body = chatHTML();
+  else if (S.view === "brief") body = briefHTML(S.data.currentDay, true);
   else body = historyHTML();
   const ta = $("#chatText"), keep = ta ? {v: ta.value, f: document.activeElement === ta, s: ta.selectionStart} : null;
   app.innerHTML = headerHTML() + `<main class="wrap">${body}</main>`;
@@ -910,8 +937,8 @@ function headerHTML(){
     <span class="seg" role="group" aria-label="View as">${["deck","hotel","tech"].map(r => `<button data-act="demo-role" data-r="${r}" aria-pressed="${S.role === r}">${DEPT[r][0] + DEPT[r].slice(1).toLowerCase()}</button>`).join("")}</span>
     <button class="linkish" data-act="demo-reset">Reset sample</button></div></div>` : "";
   return `<header class="top"><div class="wrap">
-    <div class="brand">${boatSVG(false)}<div><b>Tender Ops Monitor</b><span>${esc(CONFIG.shipName)}</span></div></div>
-    <nav class="tabs">${tab("board","Board")}${tab("log","Log")}${tab("issues","Issues" + (openIssues ? " · " + openIssues : ""))}${tab("chat","Chat" + (unreadCount() ? ` <i class="badge">${unreadCount()}</i>` : ""))}${tab("history","History")}</nav>
+    <div class="brand">${boatSVG(false)}<div><b>Tendering Operations</b><span>${esc(CONFIG.shipName)}</span></div></div>
+    <nav class="tabs">${tab("board","Board")}${tab("brief","Brief")}${tab("log","Log")}${tab("issues","Issues" + (openIssues ? ` <i class="badge warnb">${openIssues}</i>` : ""))}${tab("chat","Chat" + (unreadCount() ? ` <i class="badge">${unreadCount()}</i>` : ""))}${tab("history","History")}</nav>
     <div class="who">${conn}${S.data.currentDay && ST && ST.openTender.on ? `<span class="chip ot">Open Tender</span>` : ""}<span class="chip role d-${S.role}">${DEPT[S.role]}</span>
       <button class="icon-btn" data-act="theme" title="Switch light / dark">${themeLabel()}</button>
       ${S.store.mode === "live" ? `<button class="icon-btn" data-act="signout">Sign out</button>` : ""}</div>
@@ -930,9 +957,9 @@ function chatHTML(){
   const id = identity(), me = deviceId(), msgs = chatMsgs();
   let lastDate = "";
   const list = msgs.length ? msgs.map(m => { const dt = new Date(m.t).toDateString(); const sep = dt !== lastDate ? `<div class="msep">${new Date(m.t).toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"})}</div>` : ""; lastDate = dt;
-      return `${sep}<div class="msg ${m.dev === me ? "mine" : ""}"><div class="mh"><span class="dept d-${String(m.dept).toLowerCase()}">${esc(m.dept)}</span><b>${esc(m.name)}</b>${m.rank ? `<span class="rk">${esc(m.rank)}</span>` : ""}<span class="mt mono">${fmtT(m.t)}</span></div><p>${esc(m.text)}</p></div>`; }).join("")
+      return `${sep}<div class="msg ${m.dev === me ? "mine" : ""}"><div class="mh"><span class="dept d-${String(m.dept).toLowerCase()}">${esc(m.dept)}</span><b class="nmx">${esc(m.name)}</b>${m.rank ? `<b class="rk">${esc(m.rank)}</b>` : ""}<span class="mt mono">${fmtT(m.t)}</span></div><p>${esc(m.text)}</p></div>`; }).join("")
     : `<div class="mempty">No messages yet${S.data.currentDay ? " today" : ""}.</div>`;
-  return `<section class="panel chat"><div class="panel-head"><h2>Chat</h2>
+  return `<section class="panel chat"><div class="panel-head"><h2>Chat</h2><button class="icon-btn hbtn" data-act="help" data-k="chat" aria-label="Help">?</button>
       <span class="hint">${id ? `Writing as <b>${esc(id.name)}</b>${id.rank ? " · " + esc(id.rank) : ""} · ${DEPT[S.role]}` : `Set your name to write`}</span>
       <button class="btn small" data-act="chat-id">${id ? "Change" : "Set name"}</button></div>
     <p class="radio">For urgent or safety messages use the radio. Messages may arrive late if the connection drops.</p>
@@ -966,6 +993,42 @@ function identityModal(){
       lsSet("tom.id." + S.role, JSON.stringify({name, rank: f.querySelector("#mRank").value.trim()})); setTimeout(render, 0); }});
 }
 
+/* ---------------- port brief ---------------- */
+const BRIEF = [
+  {g:"Times", f:[["firstTender","First tender to shore","time"],["allAboard","All aboard","time"],["departure","Ship departure","time"]]},
+  {g:"Anchorage & landing", f:[["anchorage","Anchorage / position"],["landing","Landing point (pier, jetty)"],["route","Tender route, distance, transit time","area"],["hazards","Hazards, no-go areas, marks","area"]]},
+  {g:"Communications", f:[["vhfTenders","VHF tenders"],["vhfShore","VHF shore party"],["vhfPort","VHF port / pilot"],["shoreParty","Shore party in charge"]]},
+  {g:"Weather & sea", f:[["weather","Forecast (wind, sea, visibility)","area"],["tide","Tide / current"],["sun","Sunrise / sunset"]]},
+  {g:"Hotel & guests", f:[["tickets","Tender tickets / guest flow","area"],["excursions","Excursions and last coach back","area"]]},
+  {g:"Notes", f:[["local","Local regulations & environmental notes","area"],["notes","Other notes","area"]]}
+];
+function briefHTML(d, page){
+  if (!d) return page ? noDayHTML() : "";
+  const b = d.brief || {};
+  const filled = BRIEF.map(g => ({g:g.g, f:g.f.filter(([k]) => (b[k] || "").trim())})).filter(g => g.f.length);
+  const head = page ? `<div class="panel-head"><h2>Port brief · ${esc(d.port)}</h2><button class="icon-btn hbtn" data-act="help" data-k="brief" aria-label="Help">?</button>
+      ${isAdmin() && d.status === "open" ? `<button class="btn primary" data-act="edit-brief">Edit brief</button>` : ""}</div>` : `<h3 class="bh">Port brief</h3>`;
+  const top = `<div class="bkey"><div><span>Port</span><b>${esc(d.port)}</b></div><div><span>Date</span><b>${fmtDate(d.date)}</b></div>
+      <div><span>Last tender</span><b class="mono">${esc(d.lastTender || "—")}</b></div><div><span>Pontoon side</span><b>${d.side === "PORT" ? "Port" : "Starboard"}</b></div>
+      ${(b.firstTender || "") ? `<div><span>First tender</span><b class="mono">${esc(b.firstTender)}</b></div>` : ""}${(b.allAboard || "") ? `<div><span>All aboard</span><b class="mono">${esc(b.allAboard)}</b></div>` : ""}${(b.departure || "") ? `<div><span>Departure</span><b class="mono">${esc(b.departure)}</b></div>` : ""}</div>`;
+  const groups = filled.filter(g => g.g !== "Times").map(g => `<div class="bgroup"><h4>${g.g}</h4>${g.f.map(([k, l]) => `<div class="bf"><span>${esc(l)}</span><p>${esc(b[k])}</p></div>`).join("")}</div>`).join("");
+  const empty = !groups ? `<p class="hint" style="margin:0">${isAdmin() && d.status === "open" ? "No brief yet. Tap <b>Edit brief</b> to add anchorage, route, VHF channels, weather and notes for the day." : "The Deck has not written a brief for today yet."}</p>` : "";
+  return page ? `<section class="panel brief">${head}${top}${empty}<div class="bgrid">${groups}</div>
+      ${b.updatedAt ? `<p class="hint" style="margin:0">Updated ${fmtT(b.updatedAt)}${b.by ? " · " + esc(b.by) : ""}</p>` : ""}</section>`
+    : (groups || b.firstTender ? `<div class="brief">${head}${top}<div class="bgrid">${groups}</div></div>` : "");
+}
+function briefModal(){
+  const d = day(), b = d.brief || {};
+  const fld = ([k, l, t]) => t === "area" ? `<label class="fld"><span>${esc(l)}</span><textarea id="b_${k}" rows="2">${esc(b[k] || "")}</textarea></label>`
+    : t === "time" ? `<label class="fld"><span>${esc(l)} (24h)</span>${hmInput("b_" + k, b[k] || "")}</label>` : `<label class="fld"><span>${esc(l)}</span><input id="b_${k}" value="${esc(b[k] || "")}"></label>`;
+  modal({title:`Port brief · ${d.port}`, submit:"Save brief",
+    body: BRIEF.map(g => `<h4 class="mg">${g.g}</h4>${g.g === "Times" ? `<div class="three">${g.f.map(fld).join("")}</div>` : g.f.map(fld).join("")}`).join(""),
+    onOpen: f => { f.dataset.nofocus = 1; },
+    onSubmit: f => { const nb = {}; BRIEF.forEach(g => g.f.forEach(([k, , t]) => { const v = f.querySelector("#b_" + k).value.trim(); nb[k] = t === "time" ? (normHM(v) || v) : v; }));
+      const id = identity(); nb.updatedAt = Date.now(); nb.by = id ? id.name + (id.rank ? " · " + id.rank : "") : "Deck";
+      S.store.saveDay({id: d.id, brief: nb}); toast("Brief saved"); }});
+}
+
 function noDayHTML(){
   return `<div class="emptystate">${boatSVG(false)}<h2>No tender operation open</h2>
     <p>${isAdmin() ? "Open a tender day to start logging lowering times, trips and passengers." : "The board fills in as soon as the Bridge opens today’s tender operation."}</p>
@@ -984,7 +1047,7 @@ function boardHTML(){
   const dayline = `<section class="dayline"><h1>${esc(day.port || "Tender day")}</h1>
     <span class="sub">${fmtDate(day.date)} · Last tender <b class="mono">${esc(day.lastTender || "—")}</b>${lastInfo}</span>
     ${st.log.length ? `<span class="sub">· Last entry <b class="mono">${fmtT(Math.max(...st.log.map(l => l.e.t)))}</b></span>` : ""}
-    <span class="spacer"></span>${canOpenTender() && !st.openTender.on ? `<button class="btn small otbtn" data-act="ot-on">Open Tender…</button>` : ""}<button class="btn small" data-act="legend">? Legend</button>${isAdmin() ? `<button class="btn small" data-act="edit-day">Edit day</button>` : ""}</section>`;
+    <span class="spacer"></span>${canOpenTender() && !st.openTender.on ? `<button class="btn small otbtn" data-act="ot-on">Open Tender…</button>` : ""}<button class="btn small" data-act="legend">? Legend</button>${isAdmin() ? `<button class="btn small" data-act="edit-day">Edit day</button><button class="btn small danger" data-act="close-day">Close day…</button>` : ""}</section>`;
 
   const tenders = st.list.filter(u => u.kind === "tender"), shores = st.list.filter(u => u.kind === "shore" && u.active);
   const head = `<div class="grow head"><div class="cb">Boat</div><div class="cs">${SHIP_ICON}Ship</div><div class="ct h-t">${SEA_ICON}In transit</div><div class="ch">${PIER_ICON}Shore</div><div class="ca"></div></div>`;
@@ -1045,9 +1108,9 @@ function logHTML(){
   if (!day) return noDayHTML();
   const st = ST;
   const names = st.list.filter(u => u.tripsOut || u.lowered || u.active || u.kind === "shore").map(u => u.name);
-  return `<section class="panel"><div class="panel-head"><h2>${esc(day.port)} · Today’s log</h2>
+  return `<section class="panel"><div class="panel-head"><h2>${esc(day.port)} · Today’s log</h2><button class="icon-btn hbtn" data-act="help" data-k="log" aria-label="Help">?</button>
       <div class="filters"><select class="f" id="logUnit" data-act="log-unit" aria-label="Filter by unit"><option value="all">All units</option>${names.map(n => `<option value="${esc(n)}" ${S.logUnit === n ? "selected" : ""}>${esc(fullName(n))}</option>`).join("")}</select>
-      ${isAdmin() ? `<button class="btn" data-act="undo-last">Undo last</button><button class="btn danger" data-act="reset-day">Reset board…</button>` : ""}<button class="btn" data-act="csv">Export CSV</button>${isAdmin() ? `<button class="btn danger" data-act="close-day">Close day</button>` : ""}</div></div>
+      ${isAdmin() ? `<button class="btn" data-act="undo-last">Undo last</button><button class="btn danger" data-act="reset-day">Reset board…</button>` : ""}<button class="btn" data-act="csv">Export CSV</button>${isAdmin() ? `<button class="btn danger" data-act="close-day">Close day…</button>` : ""}</div></div>
     <div class="sumgrid">${sumTiles(summaryOf(st))}</div>
     <div class="tablebox"><table><thead><tr><th>Time</th><th>Unit</th><th>Event</th><th style="text-align:right">Pax</th><th>Driver</th>${isAdmin() ? "<th></th>" : ""}</tr></thead>
     <tbody>${logRows(st, {unit:S.logUnit, edit:isAdmin()})}</tbody></table></div></section>`;
@@ -1062,7 +1125,7 @@ function issuesHTML(){
   const all = S.data.issues;
   const list = all.filter(i => (S.issueUnit === "all" || i.unitName === S.issueUnit) && (S.issueStatus === "all" || i.status === S.issueStatus));
   const units = issueUnits();
-  return `<section class="panel"><div class="panel-head"><h2>Tender issues · maintenance log</h2>
+  return `<section class="panel"><div class="panel-head"><h2>Tender issues · maintenance log</h2><button class="icon-btn hbtn" data-act="help" data-k="issues" aria-label="Help">?</button>
       <div class="filters">
         <select class="f" id="issueUnit" data-act="issue-unit" aria-label="Filter by unit"><option value="all">All units</option>${units.map(n => `<option value="${esc(n)}" ${S.issueUnit === n ? "selected" : ""}>${esc(fullName(n))}</option>`).join("")}</select>
         <select class="f" id="issueStatus" data-act="issue-status" aria-label="Filter by status">${[["all","Open + resolved"],["open","Open"],["resolved","Resolved"]].map(([v,l]) => `<option value="${v}" ${S.issueStatus === v ? "selected" : ""}>${l}</option>`).join("")}</select>
@@ -1085,10 +1148,11 @@ function historyHTML(){
     return `<section class="panel"><div class="panel-head"><button class="btn" data-act="hist-back">← All days</button><h2>${esc(d.port)} · ${fmtDate(d.date)}</h2>
       <span class="status ${d.status === "open" ? "open" : "resolved"}">${d.status === "open" ? "In progress" : "Closed"}</span><button class="btn" data-act="csv-hist">Export CSV</button>${isAdmin() ? `<button class="btn danger" data-act="del-day">Delete day</button>` : ""}</div>
       <div class="sumgrid">${sumTiles(summaryOf(st))}<div><span>Total (ref)</span><b>${num(d.total)}</b></div></div>
+      ${briefHTML(d, false)}
       <div class="tablebox"><table><thead><tr><th>Time</th><th>Unit</th><th>Event</th><th style="text-align:right">Pax</th><th>Driver</th></tr></thead><tbody>${logRows(st, {unit:"all", edit:false})}</tbody></table></div></section>`;
   }
   const days = S.data.days;
-  return `<section class="panel"><div class="panel-head"><h2>Tender days</h2></div>
+  return `<section class="panel"><div class="panel-head"><h2>Tender days</h2><button class="icon-btn hbtn" data-act="help" data-k="history" aria-label="Help">?</button></div>
     ${days.length ? `<div class="days">${days.map(d => { const s = d.summary || {}; return `<button class="dayc" data-act="hist-open" data-id="${d.id}">
       <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b>${esc(d.port)}</b><span class="status ${d.status === "open" ? "open" : "resolved"}">${d.status === "open" ? "Today" : "Closed"}</span></div>
       <span class="d">${fmtDate(d.date)} · last tender ${esc(d.lastTender || "—")}</span>
@@ -1097,8 +1161,8 @@ function historyHTML(){
 }
 function loginHTML(){
   return `<div class="wrap login"><form id="loginForm" autocomplete="on">
-    <div style="display:flex;gap:10px;align-items:center">${boatSVG(false).replace('class="boat ', 'style="width:80px" class="boat ')}<h1>Tender Ops<br>Monitor</h1></div>
-    <div class="fld"><span>Access</span><select id="lgRole"><option value="deck">Deck / Bridge (full access)</option><option value="hotel">Hotel (view, Open Tender, chat)</option><option value="tech">Tech (view, maintenance log, chat)</option></select></div>
+    <div style="display:flex;gap:10px;align-items:center">${boatSVG(false).replace('class="boat ', 'style="width:80px" class="boat ')}<h1>Tendering<br>Operations</h1></div>
+    <div class="fld"><span>Access</span><select id="lgRole"><option value="deck">Deck</option><option value="hotel">Hotel</option><option value="tech">Tech</option></select></div>
     <div class="fld"><span>Password</span><input id="lgPw" type="password" autocomplete="current-password" required></div>
     <div class="err" id="lgErr" role="alert"></div>
     <button class="btn primary" type="submit">Sign in</button>
@@ -1292,11 +1356,9 @@ function deleteDayModal(d){
 }
 function closeDayModal(){
   const st = ST, active = st.list.filter(u => u.active);
-  modal({title:"Close tender day", submit:"Close day", danger:true,
-    body: `${active.length ? `<div class="warnbox">${active.map(u => esc(u.full)).join(", ")} still in service. Hoist them first, or close anyway.</div>` : ""}
-      ${st.ashore > 0 ? `<div class="warnbox">${num(st.ashore)} still counted ashore.</div>` : ""}
-      <p style="margin:0">The day moves to History with its full log. The board stays empty until a new day is opened.</p>`,
-    onSubmit: () => { S.store.saveDay({id: day().id, status:"closed", closedAt: Date.now(), summary: summaryOf(st)}); toast("Day closed and saved to History"); location.hash = "history"; }});
+  confirmTyped({title:"Close tender day", word:"CONFIRM", button:"Close day",
+    text:`${active.length ? `<b>${active.map(u => esc(u.full)).join(", ")}</b> still in service. ` : ""}${st.ashore > 0 ? `<b>${num(st.ashore)}</b> still counted ashore. ` : ""}The day of ${esc(day().port)} moves to History with its full log, brief and chat. The board stays empty until a new day is opened.`,
+    onConfirm: () => { S.store.saveDay({id: day().id, status:"closed", closedAt: Date.now(), summary: summaryOf(st)}); toast("Day closed and saved to History"); location.hash = "history"; }});
 }
 
 /* tender sheet: details, note, less frequent actions */
@@ -1339,14 +1401,53 @@ function sheetModal(u){
 function legendModal(){
   modal({title:"How to read the board", submit:null,
     body: `<div class="legend">
-      <div>${ringSVG(60, 170, 46)}<p><b>Pax ring</b> fills clockwise up to the boat’s max load: green, amber from 80%, red from 95%.</p></div>
-      <div>${boatSVG(false, "", "")}<p><b>Bow direction</b> shows where the boat is heading. At the ship it points to shore, at the pier it points back to the ship.</p></div>
-      <div><span class="tag berth">Forward Pontoon</span><p><b>Alongside</b> the ship at that pontoon. Pax have disembarked.</p></div>
-      <div><span class="tag sb">Stand-by</span><p><b>Waiting off the ship</b> for a free pontoon. Its pax are still on the tender and count in “On tenders”.</p></div>
-      <div><span class="offtag">Not in service</span><p>Tender hoisted or not lowered today.</p></div>
-      <div><b class="lgnum">Ashore</b><p>Counted from tender trips (out − back), corrected by <b>Sync</b> with the security count. <b>Aboard</b> = Total − Ashore − On tenders.</p></div>
-      <div><b class="lgnum">Recovery</b><p>Started by the Bridge when guests begin returning. It estimates how many tenders are still needed before the last tender.</p></div></div>`});
+      <h4>Board</h4>
+      <div><span class="lgcols"><i>Ship</i><i>Transit</i><i>Shore</i></span><p>One row per boat, numeric order, shoretenders at the bottom. The drawing sits in the column where the boat is now.</p></div>
+      <div>${boatSVG(false, "", "")}<p><b>Bow direction</b> = where it heads next. In transit: → to shore, ← to ship. At the ship it points to shore, at the pier back to the ship; on stand-by it faces the ship.</p></div>
+      <div>${ringSVG(60, 170, 46)}<p><b>Pax ring</b>: pax on board / max load. Green, amber from 80%, red from 95%.</p></div>
+      <div><span class="tag berth">Forward Pontoon</span><p><b>Alongside</b> that pontoon (Forward or Midship). Its pax have disembarked.</p></div>
+      <div><span class="tag sb">Stand-by</span><p><b>Waiting off the ship</b>: just lowered, or arrived while the open pontoons were busy. Pax stay on the tender until it goes alongside.</p></div>
+      <div><span class="mono lgtime">11:30 · 3′</span><p>Time it entered its current state, and minutes since.</p></div>
+      <div><span class="offtag">Not in service</span><p>Stowed: not lowered today, or hoisted.</p></div>
+      <div><span class="lgmarks"><span class="iss">⚠ 1 issue</span> <span class="nt">✎ note</span></span><p>Open defect or a note on that tender. Tap the tender’s name to read it.</p></div>
+      <h4>Status panel</h4>
+      <div><b class="lgnum">Ashore</b><p>Pax landed minus pax brought back. <b>Sync</b> replaces it with the official security count; later trips continue from there.</p></div>
+      <div><b class="lgnum">On tenders</b><p>Pax underway plus pax waiting on a tender in stand-by.</p></div>
+      <div><b class="lgnum">Aboard</b><p>Total − Ashore − On tenders. Calculated, not counted.</p></div>
+      <div><b class="lgnum">Total</b><p>Guests + crew on board at the start, from the ship’s system. Reference only.</p></div>
+      <div><span class="lgdots"><i class="f"></i><i class="o"></i><i class="c"></i></span><p><b>Pontoons</b>: green free, orange occupied (tender shown), grey closed. Side in use shown beside the title.</p></div>
+      <div><span class="phase on">Active</span><p><b>Recovery</b>: started by Deck when guests return in numbers. Shows how many tenders to keep and how many can be recovered. <b>How</b> shows the working.</p></div>
+      <div><span class="lgchip lt">Last tender</span><p>Ticked on the last departure from the pier. When it is alongside, the app checks that the tender count shows nobody ashore.</p></div>
+      <div><span class="lgchip ot">Open Tender</span><p>Declared by Hotel or Deck: no tender tickets needed, guests go straight to the pontoon. Valid for the rest of the day.</p></div>
+      <div><span class="lgchip off">Offline</span><p>Connection lost. Numbers may be out of date; Deck entries sync when the connection returns.</p></div>
+      <h4>Who can do what</h4>
+      <div><b class="lgnum">Deck</b><p>Everything: the board, counts, pontoons, recovery, corrections, brief, issues, chat.</p></div>
+      <div><b class="lgnum">Hotel</b><p>Sees everything. Declares Open Tender. Uses the chat.</p></div>
+      <div><b class="lgnum">Tech</b><p>Sees everything. Writes and resolves entries in the maintenance log (Issues). Uses the chat.</p></div></div>`});
 }
+const HELP = {
+  log:{t:"Log", b:`<p>Every entry of today’s tender day, newest first: lowerings, departures with pax and driver, arrivals, stand-by, pontoon changes, syncs, recovery, Open Tender, notes, hoisting.</p>
+    <ul><li><b>Filter</b> by boat with the menu at the top.</li><li>The tiles show the day so far: trips and pax each way, first lowering, last hoisting, average round trip.</li>
+    <li><b>Deck</b>: <b>Edit</b> on a line corrects time, pax or driver; <b>Delete</b> removes it. All counts are recalculated from the log.</li>
+    <li><b>Undo last</b> removes the most recent entry (tap twice).</li><li><b>Reset board…</b> clears the whole day (type RESET).</li>
+    <li><b>Export CSV</b> downloads the log for Excel.</li><li><b>Close day…</b> ends the day and moves it to History (type CONFIRM).</li></ul>`},
+  issues:{t:"Issues · maintenance log", b:`<p>A permanent record of tender defects and the work done, kept across days.</p>
+    <ul><li><b>Report issue</b> (Deck, Tech): boat, category, date, time and what happened. Also from the tender’s card on the Board.</li>
+    <li><b>Resolve</b>: write what was done; the time is recorded. <b>Reopen</b> if it comes back.</li>
+    <li>Filter by boat and status to see one tender’s history. <i>Seen N× before</i> flags a repeat of the same category on that boat.</li>
+    <li>Boats with an open issue show ⚠ on the Board. Hotel can read but not write.</li></ul>`},
+  chat:{t:"Chat", b:`<p>Messages between Deck, Hotel and Tech for today’s tender day, live on every device.</p>
+    <ul><li>The first time on a device, enter your <b>name and rank</b>. Several people share each login, so every message shows department, name and rank. <b>Change</b> it when someone else uses the device.</li>
+    <li><b>Enter</b> sends, <b>Shift+Enter</b> starts a new line.</li><li>A number on the Chat tab counts unread messages; a notice appears when one arrives on another page.</li>
+    <li>For anything urgent or safety related use the radio: if the connection drops, messages arrive late.</li></ul>`},
+  history:{t:"History", b:`<p>Closed tender days, newest first, with trips, pax ashore and average round trip.</p>
+    <ul><li>Open a day for its summary, brief and full log.</li><li><b>Export CSV</b> downloads that day’s log.</li>
+    <li><b>Deck</b>: <b>Delete day</b> removes a test or duplicate day (type DELETE). Issues are kept.</li></ul>`},
+  brief:{t:"Port brief", b:`<p>The key information for today’s tender port, in one place for Deck, Hotel and Tech.</p>
+    <ul><li><b>Deck</b> fills it in with <b>Edit brief</b>: times, anchorage and landing, route, communications, weather, tide, hazards, shore party and notes. Empty fields are not shown.</li>
+    <li>Port, date, last tender and pontoon side come from the tender day.</li><li>The brief is kept with the day in History.</li></ul>`}
+};
+function helpModal(k){ const h = HELP[k]; if (h) modal({title: h.t, submit:null, body:`<div class="helptxt">${h.b}</div>`}); }
 function refreshSheet(){ /* keep an open sheet static; data refresh is shown on the board */ }
 function simpleModal(title, label, type, value, apply, drivers){
   modal({title, submit:"Save",
@@ -1433,6 +1534,8 @@ document.addEventListener("click", e => {
     case "rec-start": addEv("recovery", null, {on:true}, null, "Recovery started"); break;
     case "rec-stop": addEv("recovery", null, {on:false}, null, "Recovery ended"); break;
     case "legend": legendModal(); break;
+    case "help": helpModal(el.dataset.k); break;
+    case "edit-brief": briefModal(); break;
     case "chat-id": identityModal(); break;
     case "ot-on": modal({title:"Declare Open Tender", submit:"Declare Open Tender",
         body:`<p style="margin:0">Guests no longer need tender tickets and go straight to the pontoon. Open Tender stays on for the rest of the day.</p><p class="hint" style="margin:0">Declared by ${DEPT[S.role]}.</p>`,
