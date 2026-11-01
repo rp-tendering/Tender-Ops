@@ -172,6 +172,8 @@ main{padding-block:12px 70px;display:flex;flex-direction:column;gap:12px}
 .dept{font-size:10.5px;font-weight:700;letter-spacing:.08em;padding:1px 6px;border-radius:4px;color:#fff;background:var(--dk)}
 .dept.d-hotel{background:var(--ht)} .dept.d-tech{background:var(--tc)}
 .msep{align-self:center;font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:4px 0}
+.mlist.hist{max-height:420px;min-height:0}
+.bh{margin:6px 0 0;font-family:var(--f-display);font-size:20px}
 .mempty{margin:auto;color:var(--muted);font-size:14px;padding:30px 0}
 .composer{display:flex;gap:8px;align-items:flex-end}
 .composer textarea{flex:1;min-width:0;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:10px 12px;resize:none;min-height:44px;max-height:140px}
@@ -847,6 +849,8 @@ function createLocalStore(){
     deleteIssue: id => mut(d => { delete d.issues[id]; }),
     resetDay: dayId => mut(d => { d.events[dayId] = []; }),
     saveMessage: m => mut(d => { (d.messages = d.messages || {})[m.id] = clean(m); }),
+    deleteMessages: ids => mut(d => { ids.forEach(id => { if (d.messages) delete d.messages[id]; }); }),
+    getMessages: async dayId => Object.values(db().messages || {}).filter(m => m.dayId === dayId).sort((a,b) => a.t - b.t),
     saveFeedback: f => mut(d => { d.feedback = d.feedback || {}; d.feedback[f.id] = Object.assign({}, d.feedback[f.id], clean(f)); }),
     deleteDay: dayId => mut(d => { delete d.events[dayId]; delete d.days[dayId]; }),
     getEvents: async dayId => (db().events[dayId] || []).slice()
@@ -900,6 +904,8 @@ async function createFirebaseStore(){
     saveIssue: is => w(fs.collection("issues").doc(is.id).set(clean(is), {merge:true})),
     deleteIssue: id => w(fs.collection("issues").doc(id).delete()),
     saveMessage: m => w(fs.collection("messages").doc(m.id).set(clean(m))),
+    deleteMessages: async ids => { for (let i = 0; i < ids.length; i += 400){ const b = fs.batch(); ids.slice(i, i + 400).forEach(id => b.delete(fs.collection("messages").doc(id))); await b.commit().catch(fail); } },
+    getMessages: async dayId => (await fs.collection("messages").where("dayId", "==", dayId).get()).docs.map(d => d.data()).sort((a,b) => a.t - b.t),
     saveFeedback: f => w(fs.collection("feedback").doc(f.id).set(clean(f), {merge:true})),
     resetDay: async dayId => { const snap = await dayRef(dayId).collection("events").get(); const docs = snap.docs;
       for (let i = 0; i < docs.length; i += 400){ const b = fs.batch(); docs.slice(i, i + 400).forEach(d => b.delete(d.ref)); await b.commit().catch(fail); } },
@@ -1068,19 +1074,23 @@ function headerHTML(){
 function deviceId(){ let d = lsGet("tom.dev"); if (!d){ d = "v" + uid(); lsSet("tom.dev", d); } return d; }
 function identity(){ try { return JSON.parse(lsGet("tom.id." + S.role) || "null"); } catch(e){ return null; } }
 function chatMsgs(){
-  const day = S.data.currentDay, since = Date.now() - 24 * 3600e3;
-  return (S.data.messages || []).filter(m => day ? m.dayId === day.id : m.t > since);
+  const day = S.data.currentDay;
+  return day ? (S.data.messages || []).filter(m => m.dayId === day.id) : [];
 }
 function unreadCount(){ const seen = +(lsGet("tom.seen") || 0), me = deviceId(); return chatMsgs().filter(m => m.t > seen && m.dev !== me).length; }
+function msgsHTML(msgs){
+  const me = deviceId(); let lastDate = "";
+  return msgs.map(m => { const dt = new Date(m.t).toDateString(); const sep = dt !== lastDate ? `<div class="msep">${new Date(m.t).toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"})}</div>` : ""; lastDate = dt;
+      return `${sep}<div class="msg ${m.dev === me ? "mine" : ""}"><div class="mh"><span class="dept d-${String(m.dept).toLowerCase()}">${esc(m.dept)}</span><b class="nmx">${esc(m.name)}</b>${m.rank ? `<b class="rk">${esc(m.rank)}</b>` : ""}<span class="mt mono">${fmtT(m.t)}</span></div><p>${esc(m.text)}</p></div>`; }).join("");
+}
 function chatHTML(){
-  const id = identity(), me = deviceId(), msgs = chatMsgs();
-  let lastDate = "";
-  const list = msgs.length ? msgs.map(m => { const dt = new Date(m.t).toDateString(); const sep = dt !== lastDate ? `<div class="msep">${new Date(m.t).toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"})}</div>` : ""; lastDate = dt;
-      return `${sep}<div class="msg ${m.dev === me ? "mine" : ""}"><div class="mh"><span class="dept d-${String(m.dept).toLowerCase()}">${esc(m.dept)}</span><b class="nmx">${esc(m.name)}</b>${m.rank ? `<b class="rk">${esc(m.rank)}</b>` : ""}<span class="mt mono">${fmtT(m.t)}</span></div><p>${esc(m.text)}</p></div>`; }).join("")
-    : `<div class="mempty">No messages yet${S.data.currentDay ? " today" : ""}.</div>`;
+  const id = identity(), msgs = chatMsgs(), dayOpen = !!S.data.currentDay;
+  if (!dayOpen) return `<section class="panel chat"><div class="panel-head"><h2>Chat</h2><button class="icon-btn hbtn" data-act="help" data-k="chat" aria-label="Help">?</button></div>
+    <div class="emptystate" style="padding:30px"><h2>Chat opens with the next tender day</h2><p>Each tender day has its own chat. Past chats are kept with their day in History.</p></div></section>`;
+  const list = msgs.length ? msgsHTML(msgs) : `<div class="mempty">No messages yet today.</div>`;
   return `<section class="panel chat"><div class="panel-head"><h2>Chat</h2><button class="icon-btn hbtn" data-act="help" data-k="chat" aria-label="Help">?</button>
       <span class="hint">${id ? `Writing as <b>${esc(id.name)}</b>${id.rank ? " · " + esc(id.rank) : ""} · ${DEPT[S.role]}` : `Set your name to write`}</span>
-      <button class="btn small" data-act="chat-id">${id ? "Change" : "Set name"}</button></div>
+      <button class="btn small" data-act="chat-id">${id ? "Change" : "Set name"}</button>${isAdmin() && msgs.length ? `<button class="btn small danger" data-act="chat-clear">Clear chat…</button>` : ""}</div>
     <p class="radio">For urgent or safety messages use the radio. Messages may arrive late if the connection drops.</p>
     <div class="mlist" id="mlist">${list}</div>
     <form class="composer" id="composer"><textarea id="chatText" rows="1" maxlength="500" placeholder="${id ? "Message" : "Set your name and rank first"}" ${id ? "" : "disabled"}></textarea><button class="btn primary" type="submit" ${id ? "" : "disabled"}>Send</button></form></section>`;
@@ -1259,7 +1269,8 @@ function historyHTML(){
     return `<section class="panel"><div class="panel-head"><button class="btn" data-act="hist-back">← All days</button><h2>${esc(d.port)} · ${fmtDate(d.date)}</h2>
       <span class="status ${d.status === "open" ? "open" : "resolved"}">${d.status === "open" ? "In progress" : "Closed"}</span><button class="btn" data-act="csv-hist">Export CSV</button>${isAdmin() ? `<button class="btn danger" data-act="del-day">Delete day</button>` : ""}</div>
       <div class="sumgrid">${sumTiles(summaryOf(st))}<div><span>Total (ref)</span><b>${num(d.total)}</b></div></div>
-      <div class="tablebox"><table><thead><tr><th>Time</th><th>Unit</th><th>Event</th><th style="text-align:right">Pax</th><th>Driver</th></tr></thead><tbody>${logRows(st, {unit:"all", edit:false})}</tbody></table></div></section>`;
+      <div class="tablebox"><table><thead><tr><th>Time</th><th>Unit</th><th>Event</th><th style="text-align:right">Pax</th><th>Driver</th></tr></thead><tbody>${logRows(st, {unit:"all", edit:false})}</tbody></table></div>
+      <h3 class="bh">Chat</h3>${S.histMsgs && S.histMsgs.length ? `<div class="mlist hist">${msgsHTML(S.histMsgs)}</div>` : `<p class="hint" style="margin:0">No chat messages on this day.</p>`}</section>`;
   }
   const days = S.data.days;
   return `<section class="panel"><div class="panel-head"><h2>Tender days</h2><button class="icon-btn hbtn" data-act="help" data-k="history" aria-label="Help">?</button></div>
@@ -1567,12 +1578,14 @@ const HELP = {
   chat:{t:"Chat", b:`<p>Messages between Deck, Hotel and Tech for today’s tender day, live on every device.</p>
     <ul><li>The first time on a device, enter your <b>name and rank</b>. Several people share each login, so every message shows department, name and rank. <b>Change</b> it when someone else uses the device.</li>
     <li><b>Enter</b> sends, <b>Shift+Enter</b> starts a new line.</li><li>A number on the Chat tab counts unread messages; a notice appears when one arrives on another page.</li>
+    <li>Each tender day has its own chat: a new day starts empty. Past chats are kept with their day in History.</li>
+    <li><b>Deck</b>: <b>Clear chat…</b> deletes today’s messages for everyone (type CLEAR). Meant for tests or mistakes.</li>
     <li>For anything urgent or safety related use the radio: if the connection drops, messages arrive late.</li></ul>`},
   feedback:{t:"Feedback", b:`<p>Ideas, problems and requests about the app, from every department.</p>
     <ul><li><b>Write feedback</b>: choose Idea, Problem or Other and describe it. Your name and rank are filled in from the chat if set.</li>
     <li>Deck marks items <b>done</b> when they are dealt with.</li></ul>`},
   history:{t:"History", b:`<p>Closed tender days, newest first, with trips, pax ashore and average round trip.</p>
-    <ul><li>Open a day for its summary and full log.</li><li><b>Export CSV</b> downloads that day’s log.</li>
+    <ul><li>Open a day for its summary, full log and chat.</li><li><b>Export CSV</b> downloads that day’s log.</li>
     <li><b>Deck</b>: <b>Delete day</b> removes a test or duplicate day (type DELETE). Issues are kept.</li></ul>`}
 };
 function helpModal(k){ const h = HELP[k]; if (h) modal({title: h.t, submit:null, body:`<div class="helptxt">${h.b}</div>`}); }
@@ -1679,6 +1692,9 @@ document.addEventListener("click", e => {
     case "fb-toggle": { const f = (S.data.feedback || []).find(x => x.id === el.dataset.id); if (f) S.store.saveFeedback({id:f.id, status: f.status === "done" ? "new" : "done"}); break; }
     case "status-ok": addEv("status", u.id, {status:"ok", text:""}, null, `${u.full} back in service`); break;
     case "chat-id": identityModal(); break;
+    case "chat-clear": confirmTyped({title:"Clear today’s chat", word:"CLEAR", button:"Clear chat",
+        text:`This permanently deletes all ${chatMsgs().length} messages of today’s chat, for everyone. Use it for test messages or messages sent by mistake. This cannot be undone.`,
+        onConfirm: () => { S.store.deleteMessages(chatMsgs().map(m => m.id)); toast("Chat cleared"); }}); break;
     case "ot-on": modal({title:"Declare Open Tender", submit:"Declare Open Tender",
         body:`<p style="margin:0">Guests no longer need tender tickets and go straight to the pontoon. Open Tender stays on for the rest of the day.</p><p class="hint" style="margin:0">Declared by ${DEPT[S.role]}.</p>`,
         onSubmit: () => { addEv("opentender", null, {on:true, by: DEPT[S.role]}); toast("Open Tender declared"); }}); break;
@@ -1722,6 +1738,7 @@ async function openHist(id){
   S.hist = id; S.histEvents = null; render();
   const d = S.data.days.find(x => x.id === id);
   S.histEvents = d && d.status === "open" && S.data.currentDay && S.data.currentDay.id === id ? S.data.events : await S.store.getEvents(id);
+  try { S.histMsgs = await S.store.getMessages(id); } catch(e){ S.histMsgs = []; }
   render();
 }
 function route(){
