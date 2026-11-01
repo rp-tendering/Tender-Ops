@@ -175,6 +175,35 @@ main{padding-block:12px 70px;display:flex;flex-direction:column;gap:12px}
 .mempty{margin:auto;color:var(--muted);font-size:14px;padding:30px 0}
 .composer{display:flex;gap:8px;align-items:flex-end}
 .composer textarea{flex:1;min-width:0;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:10px 12px;resize:none;min-height:44px;max-height:140px}
+.credit{font-style:italic;letter-spacing:.04em;text-transform:none;opacity:.85}
+.lgfoot{font-size:12.5px;color:var(--muted);text-align:center;line-height:1.5}
+.acct{display:inline-flex;align-items:center;gap:6px}
+.themebtn{display:inline-flex;align-items:center;justify-content:center;width:34px;padding:0}
+.grow.head .cb{flex-direction:row;align-items:center;gap:8px}
+.grow.head .hbtn{width:26px;height:26px;min-width:26px;border-radius:50%;font-size:13px;padding:0}
+.capbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 22px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 14px;font-size:13.5px}
+.capbar .l{font-family:var(--f-display);font-weight:700;font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-right:6px}
+.capbar b{font-family:var(--f-display);font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+.capbar i{font-style:normal;color:var(--muted);margin:0 10px 0 4px}
+.capbar .u{color:var(--muted);margin-left:5px;font-size:12.5px}
+.capbar > div{display:flex;align-items:baseline;flex-wrap:wrap}
+.meter{display:inline-block;width:90px;height:7px;border-radius:4px;background:var(--track);margin-left:10px;overflow:hidden;align-self:center}
+.meter span{display:block;height:100%;background:var(--ok)}
+.capbar.mid .meter span{background:var(--warn)} .capbar.hi .meter span{background:var(--crit)}
+.sug{font-weight:700;font-size:13.5px;padding:4px 11px;border-radius:999px;margin-left:auto;white-space:nowrap}
+.sug.up{background:color-mix(in srgb,var(--accent) 15%,transparent);color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line))}
+.sug.down{background:color-mix(in srgb,var(--sea) 13%,transparent);color:var(--sea);border:1px solid color-mix(in srgb,var(--sea) 40%,var(--line))}
+.rec .rl{display:block;font-size:12.5px;color:var(--muted);margin-top:3px}
+.flagl{display:inline-flex;flex-direction:column;font-size:11.5px;font-weight:800;letter-spacing:.05em;padding:2px 7px;border-radius:5px;max-width:100%}
+.flagl em{font-style:normal;font-weight:500;letter-spacing:0;font-size:12px;overflow-wrap:anywhere}
+.flagl.f-tech,.flagl.f-pvi{background:color-mix(in srgb,var(--warn) 20%,transparent);color:color-mix(in srgb,var(--warn) 75%,var(--ink))}
+.flagl.f-emergency{background:var(--crit);color:#fff}
+.grow.fl-tech,.grow.fl-pvi{background:color-mix(in srgb,var(--warn) 9%,var(--surface));box-shadow:inset 4px 0 0 var(--warn)}
+.grow.fl-emergency{background:color-mix(in srgb,var(--crit) 10%,var(--surface));box-shadow:inset 5px 0 0 var(--crit)}
+.grow.fl-pvi .tok{opacity:.6}
+.embar{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;background:var(--crit);color:#fff;border-radius:12px;padding:10px 16px}
+.embar > b{font-family:var(--f-display);font-size:24px;letter-spacing:.12em;text-transform:uppercase}
+@media (prefers-reduced-motion: no-preference){ .embar{animation:empulse 1.6s ease-in-out infinite} @keyframes empulse{50%{filter:brightness(1.15)}} }
 .offbar{background:var(--warn);color:#1a1200;font-weight:600;font-size:13.5px}
 .offbar .wrap{padding-block:6px}
 .board.ro .grow{grid-template-columns:minmax(170px,220px) repeat(3,minmax(0,1fr));grid-template-areas:"b s t h"}
@@ -403,7 +432,13 @@ tr.k-lower td,tr.k-hoist td{background:color-mix(in srgb,var(--accent) 8%,transp
   .grow.head{grid-template-areas:"b s t h"}
   .board.ro .grow{grid-template-columns:62px repeat(3,minmax(0,1fr))}
   .board.ro .grow.off{grid-template-areas:"b o o o"}
-  .grow.head .ca,.grow.head .cb{display:none}
+  .grow.head .ca{display:none}
+  .grow.head .cb .hl{display:none}
+  .flagl{font-size:9.5px;padding:2px 4px;text-align:center}
+  .flagl em{display:none}
+  .capbar{gap:6px 14px;font-size:12.5px}
+  .capbar b{font-size:17px}
+  .sug{margin-left:0}
   .grow.head > div{font-size:13px;padding:7px 4px;justify-content:center}
   .grow.head svg{display:none}
   .cb{padding:8px 6px;align-items:center;text-align:center}
@@ -460,7 +495,7 @@ const CONFIG = {
 };
 
 const TENDERS = [11, 14, 15, 16, 17].map(n => ({id:"T"+n, num:n, side: n % 2 ? "STBD" : "PORT"}));
-const DEFAULT_CAP = 170, SHORE_CAP = 100, RECOVERY_LEAD_H = 3;
+const DEFAULT_CAP = 170, SHORE_CAP = 100, RECOVERY_LEAD_H = 3, LOAD_FACTOR = 0.85, DEFAULT_MAX_WAIT = 15;
 const PONTOONS = {FWD:"FWD", MID:"MIDSHIP"};
 const CATEGORIES = ["Engine","Steering","Propulsion","Release hooks / falls","Electrical","Communications","Hull / canopy","Fenders / mooring","Other"];
 
@@ -529,11 +564,11 @@ function pontoonsOf(day, evs){
 }
 function compute(day, events){
   const units = {}, order = [];
-  const mkUnit = (o) => Object.assign({active:false, loc:"stowed", berth:null, dir:null, pax:0, cap:null, driver:"", note:"", since:null, lowered:null, hoisted:null, tripsOut:0, tripsBack:0, paxOut:0, paxBack:0, lastShipDep:null}, o);
+  const mkUnit = (o) => Object.assign({active:false, loc:"stowed", berth:null, dir:null, pax:0, cap:null, driver:"", note:"", since:null, lowered:null, hoisted:null, tripsOut:0, tripsBack:0, paxOut:0, paxBack:0, lastShipDep:null, flag:null, tDepShip:null, tArrShore:null, tDepShore:null, tArrShip:null}, o);
   for (const t of TENDERS){ units[t.id] = mkUnit({id:t.id, name:"T"+t.num, full:"Tender "+t.num, num:String(t.num), kind:"tender", side:t.side}); order.push(t.id); }
   let ashore = 0;
   const pont = pontoonsOf(day);
-  const cycles = [], log = [], drivers = new Set();
+  const cycles = [], log = [], drivers = new Set(), legs = {tOut:[], pier:[], tIn:[], ship:[]}, trips = [], changes = [];
   let firstLowered = null, lastHoisted = null, recovery = {on:false, since:null}, lastDep = null, openTender = {on:false, since:null, by:""};
   const evs = (events || []).slice().sort((a,b) => a.t - b.t || a.c - b.c);
   const atBerth = (u, b) => { u.loc = "ship"; u.dir = null; u.berth = b; };
@@ -547,35 +582,41 @@ function compute(day, events){
         text = `Shoretender on service · ${berthName(u.berth)} · max ${u.cap}`;
         break;
       case "activate":
-        Object.assign(u, {active:true, pax:0, since:e.t, lastShipDep:null}); atBerth(u, e.berth || "SB");
+        Object.assign(u, {active:true, pax:0, since:e.t, lastShipDep:null, flag:null}); atBerth(u, e.berth || "SB"); changes.push(e.t);
         if (e.cap) u.cap = e.cap; if (!u.cap) u.cap = u.kind === "shore" ? SHORE_CAP : DEFAULT_CAP;
         if (e.driver) u.driver = e.driver;
         if (u.kind === "tender"){ u.lowered = e.t; u.hoisted = null; if (firstLowered == null) firstLowered = e.t; kind = "lower"; text = `Lowered · ${berthName(u.berth)} · max ${u.cap}`; }
         else text = `Back on service · ${berthName(u.berth)}`;
         break;
       case "deactivate":
-        Object.assign(u, {active:false, loc:"stowed", berth:null, dir:null, pax:0, since:e.t, lastShipDep:null});
+        Object.assign(u, {active:false, loc:"stowed", berth:null, dir:null, pax:0, since:e.t, lastShipDep:null, flag:null}); changes.push(e.t);
         if (u.kind === "tender"){ u.hoisted = e.t; lastHoisted = e.t; kind = "hoist"; text = "Hoisted · not in service"; }
         else text = "Released from service";
         break;
       case "depart": {
         pax = Math.max(0, +e.pax || 0);
         if (e.driver) u.driver = e.driver;
+        trips.push({t:e.t, dir:e.dir, pax, cap:u.cap || DEFAULT_CAP});
         if (e.dir === "shore"){
+          if (u.tArrShip != null && e.t - u.tArrShip < 90*60000) legs.ship.push((e.t - u.tArrShip)/60000);
+          u.tDepShip = e.t;
           u.paxOut += pax; u.tripsOut++;
           if (u.lastShipDep != null) cycles.push({unit:u.id, t:e.t, min:(e.t - u.lastShipDep) / 60000});
           u.lastShipDep = e.t;
           text = `Departed ${u.berth && u.berth !== "SB" ? berthName(u.berth) + " " : ""}→ Shore`;
-        } else { ashore -= pax; u.paxBack += pax; u.tripsBack++; text = e.last ? "LAST TENDER departed → Ship" : "Departed → Ship";
+        } else { if (u.tArrShore != null && e.t - u.tArrShore < 90*60000) legs.pier.push((e.t - u.tArrShore)/60000); u.tDepShore = e.t;
+          ashore -= pax; u.paxBack += pax; u.tripsBack++; text = e.last ? "LAST TENDER departed → Ship" : "Departed → Ship";
           if (e.last){ lastDep = {unit:u.id, name:u.name, t:e.t, pax, arrived:null}; kind = "last"; } }
         Object.assign(u, {loc:"transit", berth:null, dir:e.dir, pax, since:e.t});
         break;
       }
       case "arrive":
         if (e.at === "shore"){
+          if (u.tDepShip != null && e.t - u.tDepShip < 90*60000) legs.tOut.push((e.t - u.tDepShip)/60000); u.tArrShore = e.t;
           pax = u.pax; ashore += u.pax; text = `Alongside Shore · ${u.pax} landed`;
           Object.assign(u, {loc:"shore", berth:null, dir:null, pax:0, since:e.t});
         } else {
+          if (u.tDepShore != null && e.t - u.tDepShore < 90*60000) legs.tIn.push((e.t - u.tDepShore)/60000); u.tArrShip = e.t;
           const b = e.berth || "SB"; atBerth(u, b); u.since = e.t;
           if (b === "SB"){ text = `Stand-by at ship · ${u.pax} waiting on board`; }
           else { pax = u.pax; text = `Alongside ${berthName(b)} · ${u.pax} back on board`; u.pax = 0;
@@ -597,6 +638,8 @@ function compute(day, events){
       case "recovery": recovery = {on: !!e.on, since: e.on ? e.t : null}; kind = "pont"; text = e.on ? "Recovery started" : "Recovery ended"; break;
       case "cap": u.cap = e.cap; text = `Max load set to ${e.cap}`; break;
       case "driver": u.driver = e.driver; text = `Driver changed to ${e.driver}`; break;
+      case "status": u.flag = e.status === "ok" ? null : {status:e.status, text:e.text || "", since:e.t}; kind = e.status === "emergency" ? "em" : "status";
+        text = e.status === "ok" ? "Status cleared · back to normal" : `${STATUS[e.status] || e.status}${e.text ? " · " + e.text : ""}`; changes.push(e.t); break;
       case "note": u.note = e.text || ""; text = e.text ? `Note: ${e.text}` : "Note cleared"; break;
       case "sync": { const prev = ashore; ashore = +e.value; const d = ashore - prev; text = `Ashore synced to ${num(ashore)} (count was ${num(prev)}, Δ ${d >= 0 ? "+" : "−"}${num(Math.abs(d))})`; break; }
       default: continue;
@@ -617,13 +660,15 @@ function compute(day, events){
     cycleAvg = keep.reduce((a,b) => a+b, 0) / keep.length; cycleN = keep.length;
   }
   const s = (k) => list.reduce((a,u) => a + u[k], 0);
-  return {units, list, ashore, onTenders, aboard: total - ashore - onTenders, total, pont, occ, cycles, cycleAvg, cycleN, recovery, lastDep, openTender, log, drivers:[...drivers],
+  return {units, list, ashore, onTenders, aboard: total - ashore - onTenders, total, pont, occ, cycles, cycleAvg, cycleN, recovery, lastDep, openTender, legs, trips, changes, log, drivers:[...drivers],
     tripsOut:s("tripsOut"), tripsBack:s("tripsBack"), paxOut:s("paxOut"), paxBack:s("paxBack"), firstLowered, lastHoisted};
 }
+const inService = u => u.active && !(u.flag && u.flag.status === "pvi");
+const STATUS = {tech:"Technical issue", pvi:"PVI/PDI · out of service", emergency:"EMERGENCY"};
 const freeBerths = st => ["FWD","MID"].filter(b => st.pont[b] && !st.occ[b]);
 
 function estimate(day, st, now){
-  const active = st.list.filter(u => u.active);
+  const active = st.list.filter(inService);
   const caps = active.map(u => u.cap).filter(Boolean);
   const avgCap = caps.length ? caps.reduce((a,b) => a+b, 0) / caps.length : null;
   // round trip: today's logged average → previous tender day's average → 30 min default
@@ -639,12 +684,76 @@ function estimate(day, st, now){
   const A = Math.max(0, st.ashore);
   const r = {A, avgCap, cycle, cycleSrc, cycleN: st.cycleN || 0, last, remain, inRecovery, activeCount: active.length, trips:null, needed:null, recoverable:null, perUnit:null};
   if (!avgCap) return r;
-  r.trips = Math.ceil(A / avgCap);
-  if (A === 0) r.needed = 0;
-  else if (remain != null && remain > 0){ r.perUnit = Math.floor(remain / cycle) + 1; r.needed = Math.min(active.length, Math.ceil(r.trips / r.perUnit)); }
-  else r.needed = Math.min(active.length, r.trips);
+  // Trips run at ~85% of max load on average (guests reach the pier a few at a time).
+  r.load = Math.round(avgCap * LOAD_FACTOR);
+  r.trips = Math.ceil(A / r.load);
+  r.maxWait = +day.maxWait || DEFAULT_MAX_WAIT;
+  if (A === 0){ r.needed = 0; r.reason = "none"; }
+  else if (remain != null && remain > 0){
+    r.perUnit = Math.max(1, Math.floor(remain / cycle));                 // full round trips still possible per tender
+    r.capNeed = Math.ceil(r.trips / r.perUnit);                            // enough lift for everyone ashore
+    r.waitNeed = Math.min(Math.ceil(cycle / r.maxWait), Math.max(2, r.trips)); // a tender at the pier every maxWait min, but never more tenders than there are loads to lift (min 2)
+    r.peak = remain > 90 && A > 2 * r.load * (60 / cycle);                 // more ashore than 2 tenders can lift in an hour: the return peak is still to come
+    r.final = remain < cycle;                                              // last round trip: hoisting a tender now saves nothing and leaves late arrivals waiting
+    if (r.final) r.capNeed = A <= r.load ? 2 : r.trips + 1;                // final round: one trip each plus a sweep; one load or less ashore = 2 tenders
+    const n = r.peak ? active.length : Math.max(r.capNeed, r.waitNeed);
+    r.reason = r.peak ? "peak" : r.final ? "final" : r.capNeed >= r.waitNeed ? "lift" : "wait";
+    r.needed = Math.min(active.length, n);
+  } else { r.needed = Math.min(active.length, r.trips); r.reason = "late"; }
   r.recoverable = Math.max(0, active.length - r.needed);
   return r;
+}
+
+/* ---------------- capacity: demand vs lift, with a brake on hoisting ---------------- */
+function capacity(day, st, now, est){
+  const avg = a => a.length ? a.slice(-8).reduce((x,y) => x+y, 0) / Math.min(8, a.length) : null;
+  const L = {tOut:avg(st.legs.tOut), pier:avg(st.legs.pier), tIn:avg(st.legs.tIn), ship:avg(st.legs.ship)};
+  let cycle = (L.tOut && L.pier != null && L.tIn && L.ship != null) ? L.tOut + L.pier + L.tIn + L.ship : (st.cycleAvg || est.cycle || 30);
+  const rec = st.trips.filter(x => x.pax > 0).slice(-10).map(x => x.pax / x.cap).sort((a,b) => a-b);
+  const fill = rec.length >= 3 ? Math.min(1, Math.max(.5, rec[Math.floor(rec.length * .8)])) : .9;   // loads achieved when busy (80th percentile)
+  const svc = st.list.filter(inService), n = svc.length;
+  const lift = svc.reduce((a,u) => a + (u.cap || DEFAULT_CAP) * fill * 60 / cycle, 0);              // pax/h each way
+  const win = (dir, from, to) => st.trips.filter(x => x.dir === dir && x.t > now - from*60000 && x.t <= now - to*60000);
+  const sum = a => a.reduce((x,y) => x + y.pax, 0);
+  const full = a => a.length >= 2 && a.filter(x => x.pax >= .9 * x.cap).length / a.length > .5;
+  const o30 = win("shore",30,0), i30 = win("ship",30,0);
+  const dOut = sum(o30) * 2 * (full(o30) ? 1.25 : 1), dIn = sum(i30) * 2 * (full(i30) ? 1.25 : 1);
+  const d15 = Math.max(sum(win("shore",15,0)), sum(win("ship",15,0))) * 4, dPrev = Math.max(sum(win("shore",30,15)), sum(win("ship",30,15))) * 4;
+  const demand = Math.max(dOut, dIn), sat = full(o30) || full(i30);
+  const stowedOwn = st.list.filter(u => u.kind === "tender" && !u.active).length;
+  const ownSvc = svc.filter(u => u.kind === "tender").length;
+  const first = st.trips.length ? st.trips[0].t : null, lastChange = st.changes.length ? Math.max(...st.changes) : 0;
+  const remain = est.remain;
+  let sug = null;
+  if (n && !est.inRecovery){
+    if (stowedOwn && (demand >= .9 * lift || sat || (d15 > 1.3 * dPrev && d15 >= .7 * lift)) && !(remain != null && remain < 30))
+      sug = {k:"up", t:"Demand rising · lower 1 tender"};
+    else if (n > 2 && ownSvc > 1 && first && now - first >= 30*60000 && now - lastChange >= 30*60000 && !sat
+      && demand <= .7 * lift * (n-1) / n && d15 <= .7 * lift * (n-1) / n && !(remain != null && remain < 120))
+      sug = {k:"down", t:"Low demand for 30 min · 1 tender can be hoisted"};
+  }
+  return {L, cycle, fill, n, lift, dOut, dIn, demand, sat, sug, headway: n ? cycle / n : null};
+}
+function capHTML(cap){
+  if (!cap.n) return "";
+  const r = x => Math.round(x / 10) * 10, pct = Math.min(100, Math.round(cap.demand / Math.max(1, cap.lift) * 100));
+  const parts = cap.L.tOut ? `${Math.round(cap.L.tOut)} + ${Math.round(cap.L.pier)} + ${Math.round(cap.L.tIn)} + ${Math.round(cap.L.ship)}` : "";
+  return `<section class="capbar ${pct >= 90 ? "hi" : pct >= 70 ? "mid" : ""}">
+    <div class="cb1"><span class="l">Demand</span><b>${r(cap.dOut)}</b><i>to shore</i><b>${r(cap.dIn)}</b><i>to ship</i><span class="u">pax/h</span></div>
+    <div class="cb2"><span class="l">Lift</span><b>${r(cap.lift)}</b><span class="u">pax/h each way · ${cap.n} boats</span><span class="meter"><span style="width:${pct}%"></span></span></div>
+    <div class="cb3"><span class="l">Round trip</span><b>${Math.round(cap.cycle)}′</b>${parts ? `<span class="u" title="run to shore + at pier + run to ship + at ship">${parts}</span>` : ""}</div>
+    <div class="cb3"><span class="l">Loads</span><b>${Math.round(cap.fill * 100)}%</b></div>
+    <div class="cb3"><span class="l">Boat at pier</span><b>every ${Math.round(cap.headway)}′</b></div>
+    ${cap.sug ? `<div class="sug ${cap.sug.k}">${cap.sug.k === "up" ? "▲" : "▼"} ${cap.sug.t}</div>` : ""}</section>`;
+}
+function recoverList(st, k){
+  if (k <= 0) return [];
+  const order = {ship:0, transit:1, shore:2};
+  const own = st.list.filter(u => inService(u) && u.kind === "tender").sort((a,b) => (order[a.loc] - order[b.loc]) || ((a.loc === "transit" && a.dir === "ship") ? -1 : 1));
+  const shore = st.list.filter(u => inService(u) && u.kind === "shore");
+  const out = own.slice(0, Math.max(0, Math.min(k, own.length - 1)));              // keep at least one of our tenders for the shore party
+  if (out.length < k) out.push(...shore.slice(0, k - out.length));               // shoretenders only if nothing else is left
+  return out;
 }
 
 function statusHTML(day, st, est, lastSync){
@@ -686,7 +795,9 @@ function statusHTML(day, st, est, lastSync){
     else if (!est.avgCap) head = "Set max loads to estimate";
     else if (est.A === 0) head = `Nobody ashore · <b>${est.activeCount}</b> can be recovered`;
     else if (est.remain != null && est.remain <= 0){ cls = "crit"; head = `Past last tender · <b>${est.trips}</b> trip${est.trips === 1 ? "" : "s"} still needed`; }
-    else { cls = est.needed >= est.activeCount ? "warn" : "ok"; head = `Keep <b>${est.needed}</b> of ${est.activeCount} in service · <b>${est.recoverable}</b> can be recovered`; }
+    else if (est.peak){ cls = "warn"; head = `Keep all <b>${est.activeCount}</b> · return peak still to come`; }
+    else { cls = est.needed >= est.activeCount ? "warn" : "ok"; head = `Keep <b>${est.needed}</b> of ${est.activeCount} in service · <b>${est.recoverable}</b> can be recovered`;
+      const rl = recoverList(st, est.recoverable); if (rl.length) head += `<span class="rl">Recover first: ${rl.map(u => esc(u.full)).join(", ")} · shoretenders stay, one tender kept for the shore party</span>`; }
     rec = `<div class="sec rec ${cls}"><div class="sh"><span>Recovery</span><span class="phase on">Active since ${fmtT(st.recovery.since)}</span>
         ${ld ? "" : `<button class="btn small" data-act="rec" aria-expanded="${S.recOpen}">${S.recOpen ? "Hide" : "How"}</button>`}</div>
       ${head ? `<p class="big">${head}</p>` : ""}
@@ -694,12 +805,14 @@ function statusHTML(day, st, est, lastSync){
       ${lastBox}
       ${S.recOpen && !ld ? `<ol class="how">
         <li>People ashore: <b>${num(est.A)}</b></li>
-        <li>Load per trip: <b>${est.avgCap ? Math.round(est.avgCap) : "—"}</b> (max load of the boats in service)</li>
-        <li>Trips still needed: ${num(est.A)} ÷ ${est.avgCap ? Math.round(est.avgCap) : "—"} → <b>${est.trips ?? "—"}</b></li>
+        <li>Load per trip: <b>${est.load ?? "—"}</b> (85% of the average max load ${est.avgCap ? Math.round(est.avgCap) : "—"}: guests reach the pier a few at a time)</li>
+        <li>Trips still needed: ${num(est.A)} ÷ ${est.load ?? "—"} → <b>${est.trips ?? "—"}</b></li>
         <li>Round trip: <b>${Math.round(est.cycle)} min</b>, ${cycleTxt}</li>
-        <li>Time to last tender ${esc(day.lastTender || "")}: <b>${fmtDur(est.remain)}</b> → each tender can still make <b>${est.perUnit ?? "—"}</b> round trips</li>
-        <li>Tenders needed: ${est.trips ?? "—"} trips ÷ ${est.perUnit ?? "—"} per tender → <b>${est.needed ?? "—"}</b> of ${est.activeCount}</li></ol>
-        <p class="hint">Advisory. Counts only people already ashore.</p>` : ""}
+        <li>Time to last tender ${esc(day.lastTender || "")}: <b>${fmtDur(est.remain)}</b> → each tender can still make <b>${est.perUnit ?? "—"}</b> full round trips</li>
+        <li>For the lift: ${est.final ? `${est.trips} trips + 1 sweep` : `${est.trips ?? "—"} trips ÷ ${est.perUnit ?? "—"} per tender`} → <b>${est.capNeed ?? "—"}</b> tenders</li>
+        <li>For waiting time: a tender at the pier at least every ${est.maxWait} min (${Math.round(est.cycle)} ÷ ${est.maxWait}), never more than the loads left ashore (min 2) → <b>${est.waitNeed ?? "—"}</b> tenders</li>
+        <li>${est.final ? `Final round (less than one round trip left): one trip per tender plus one sweep for late arrivals → keep the larger figure, <b>${est.needed}</b> of ${est.activeCount}` : est.peak ? `Return peak still to come: more people ashore than 2 tenders can lift in an hour, so keep all <b>${est.activeCount}</b>` : `Keep the larger of the two → <b>${est.needed ?? "—"}</b> of ${est.activeCount}`}</li></ol>
+        <p class="hint">Advisory. Max wait at the pier is set in Edit day (now ${est.maxWait} min).</p>` : ""}
       ${isAdmin() ? `<button class="linkish" data-act="rec-stop">End recovery</button>` : ""}</div>`;
   }
   return `<section class="deck" aria-label="Tender status">${people}${pont}${rec}</section>`;
@@ -707,7 +820,7 @@ function statusHTML(day, st, est, lastSync){
 
 /* ---------------- stores ---------------- */
 function createLocalStore(){
-  const KEY = "tom.demo.v5";
+  const KEY = "tom.demo.v6";
   let mem = null; const listeners = [];
   const read = () => { const s = lsGet(KEY); if (s){ try { return JSON.parse(s); } catch(e){} } return mem; };
   const db = () => read() || {days:{}, events:{}, issues:{}};
@@ -716,7 +829,7 @@ function createLocalStore(){
     const d = db();
     const days = Object.values(d.days).sort((a,b) => (b.date || "").localeCompare(a.date || "") || (b.openedAt||0) - (a.openedAt||0));
     const currentDay = days.find(x => x.status === "open") || null;
-    return {days, currentDay, events: currentDay ? (d.events[currentDay.id] || []) : [], issues: Object.values(d.issues).sort((a,b) => b.t - a.t), messages: Object.values(d.messages || {}).sort((a,b) => a.t - b.t), offline:false, pending:false};
+    return {days, currentDay, events: currentDay ? (d.events[currentDay.id] || []) : [], issues: Object.values(d.issues).sort((a,b) => b.t - a.t), messages: Object.values(d.messages || {}).sort((a,b) => a.t - b.t), feedback: Object.values(d.feedback || {}), offline:false, pending:false};
   }
   function emit(){ const s = snap(); listeners.forEach(f => f(s)); }
   window.addEventListener("storage", e => { if (e.key === KEY) emit(); });
@@ -734,6 +847,7 @@ function createLocalStore(){
     deleteIssue: id => mut(d => { delete d.issues[id]; }),
     resetDay: dayId => mut(d => { d.events[dayId] = []; }),
     saveMessage: m => mut(d => { (d.messages = d.messages || {})[m.id] = clean(m); }),
+    saveFeedback: f => mut(d => { d.feedback = d.feedback || {}; d.feedback[f.id] = Object.assign({}, d.feedback[f.id], clean(f)); }),
     deleteDay: dayId => mut(d => { delete d.events[dayId]; delete d.days[dayId]; }),
     getEvents: async dayId => (db().events[dayId] || []).slice()
   };
@@ -746,9 +860,9 @@ async function createFirebaseStore(){
   const fs = firebase.firestore();
   try { await fs.enablePersistence({synchronizeTabs:true}); } catch(e){}
   const auth = firebase.auth();
-  let days = [], events = [], issues = [], messages = [], curId = null, unsubEv = null, unsubs = [], offline = !navigator.onLine, pending = false;
+  let days = [], events = [], issues = [], messages = [], feedback = [], curId = null, unsubEv = null, unsubs = [], offline = !navigator.onLine, pending = false;
   const listeners = [];
-  const emit = () => { const currentDay = days.find(d => d.status === "open") || null; const s = {days, currentDay, events: currentDay && currentDay.id === curId ? events : [], issues, messages, offline, pending}; listeners.forEach(f => f(s)); };
+  const emit = () => { const currentDay = days.find(d => d.status === "open") || null; const s = {days, currentDay, events: currentDay && currentDay.id === curId ? events : [], issues, messages, feedback, offline, pending}; listeners.forEach(f => f(s)); };
   const fail = err => { console.error(err); toast(err.code === "permission-denied" ? "Access denied by the server" : "Sync error: " + (err.message || err)); };
   const dayRef = id => fs.collection("days").doc(id);
   function watchEvents(id){
@@ -766,9 +880,10 @@ async function createFirebaseStore(){
       emit();
     }, fail));
     unsubs.push(fs.collection("issues").orderBy("t","desc").limit(1000).onSnapshot(s => { issues = s.docs.map(d => d.data()); emit(); }, fail));
+    unsubs.push(fs.collection("feedback").orderBy("t","desc").limit(300).onSnapshot(s => { feedback = s.docs.map(d => d.data()); emit(); }, fail));
     unsubs.push(fs.collection("messages").orderBy("t","desc").limit(300).onSnapshot(s => { messages = s.docs.map(d => d.data()).reverse(); emit(); }, fail));
   }
-  function stop(){ unsubs.forEach(u => u()); unsubs = []; if (unsubEv) unsubEv(); unsubEv = null; curId = null; days = []; events = []; issues = []; messages = []; }
+  function stop(){ unsubs.forEach(u => u()); unsubs = []; if (unsubEv) unsubEv(); unsubEv = null; curId = null; days = []; events = []; issues = []; messages = []; feedback = []; }
   addEventListener("online", () => { offline = false; emit(); });
   addEventListener("offline", () => { offline = true; emit(); });
   const w = p => { p.catch(fail); return Promise.resolve(); };
@@ -785,6 +900,7 @@ async function createFirebaseStore(){
     saveIssue: is => w(fs.collection("issues").doc(is.id).set(clean(is), {merge:true})),
     deleteIssue: id => w(fs.collection("issues").doc(id).delete()),
     saveMessage: m => w(fs.collection("messages").doc(m.id).set(clean(m))),
+    saveFeedback: f => w(fs.collection("feedback").doc(f.id).set(clean(f), {merge:true})),
     resetDay: async dayId => { const snap = await dayRef(dayId).collection("events").get(); const docs = snap.docs;
       for (let i = 0; i < docs.length; i += 400){ const b = fs.batch(); docs.slice(i, i + 400).forEach(d => b.delete(d.ref)); await b.commit().catch(fail); } },
     deleteDay: async dayId => { const snap = await dayRef(dayId).collection("events").get(); const docs = snap.docs;
@@ -873,6 +989,7 @@ function makeSample(){
   ev.push(mk("pontoons", null, now - 40*M, {side:"STBD", fwd:true, mid:false}));
   ev.push(mk("recovery", null, now - 25*M, {on:true}));
   ev.push(mk("opentender", null, now - 150*M, {on:true, by:"HOTEL"}));
+  ev.push(mk("status", "T14", now - 20*M, {status:"tech", text:"Bilge alarm intermittent, returning after this run"}));
   out.messages = {};
   [[now - 140*M, "HOTEL", "Anna", "Shore Excursion Mgr", "Last excursion back at the pier 16:45, two coaches."],
    [now - 128*M, "DECK", "Marco", "2/O", "Copied. We keep 3 tenders running until then."],
@@ -898,12 +1015,12 @@ function summaryOf(st){
 }
 
 /* ---------------- app state ---------------- */
-const S = {store:null, role:null, data:{days:[], currentDay:null, events:[], issues:[], messages:[]}, view:"board", logUnit:"all", issueUnit:"all", issueStatus:"all", hist:null, histEvents:null, recOpen:false};
+const S = {store:null, role:null, data:{days:[], currentDay:null, events:[], issues:[], messages:[], feedback:[]}, view:"board", logUnit:"all", issueUnit:"all", issueStatus:"all", hist:null, histEvents:null, recOpen:false};
 const isAdmin = () => S.role === "deck";
 const canIssues = () => S.role === "deck" || S.role === "tech";
 const canOpenTender = () => S.role === "deck" || S.role === "hotel";
 const DEPT = {deck:"DECK", hotel:"HOTEL", tech:"TECH"};
-const VIEWS = ["board","log","issues","chat","history"];
+const VIEWS = ["board","log","issues","chat","feedback","history"];
 let ST = null;
 function setData(d){
   const me = deviceId(), prevMax = S.msgMax;
@@ -921,6 +1038,7 @@ function render(){
   else if (S.view === "log") body = logHTML();
   else if (S.view === "issues") body = issuesHTML();
   else if (S.view === "chat") body = chatHTML();
+  else if (S.view === "feedback") body = feedbackHTML();
   else body = historyHTML();
   const ta = $("#chatText"), keep = ta ? {v: ta.value, f: document.activeElement === ta, s: ta.selectionStart} : null;
   app.innerHTML = headerHTML() + `<main class="wrap">${body}</main>`;
@@ -938,11 +1056,11 @@ function headerHTML(){
     <span class="seg" role="group" aria-label="View as">${["deck","hotel","tech"].map(r => `<button data-act="demo-role" data-r="${r}" aria-pressed="${S.role === r}">${DEPT[r][0] + DEPT[r].slice(1).toLowerCase()}</button>`).join("")}</span>
     <button class="linkish" data-act="demo-reset">Reset sample</button></div></div>` : "";
   return `<header class="top"><div class="wrap">
-    <div class="brand">${boatSVG(false)}<div><b>Tendering Operations</b><span>${esc(CONFIG.shipName)}</span></div></div>
-    <nav class="tabs">${tab("board","Board")}${tab("log","Log")}${tab("issues","Issues" + (openIssues ? ` <i class="badge warnb">${openIssues}</i>` : ""))}${tab("chat","Chat" + (unreadCount() ? ` <i class="badge">${unreadCount()}</i>` : ""))}${tab("history","History")}</nav>
-    <div class="who">${conn}${S.data.currentDay && ST && ST.openTender.on ? `<span class="chip ot">Open Tender</span>` : ""}<span class="chip role d-${S.role}">${DEPT[S.role]}</span>
-      <button class="icon-btn" data-act="theme" title="Switch light / dark">${themeLabel()}</button>
-      ${S.store.mode === "live" ? `<button class="icon-btn" data-act="signout">Sign out</button>` : ""}</div>
+    <div class="brand">${boatSVG(false)}<div><b>Tendering Operations</b><span>${esc(CONFIG.shipName)} · <i class="credit">made by Erio</i></span></div></div>
+    <nav class="tabs">${tab("board","Board")}${tab("log","Log")}${tab("issues","Issues" + (openIssues ? ` <i class="badge warnb">${openIssues}</i>` : ""))}${tab("chat","Chat" + (unreadCount() ? ` <i class="badge">${unreadCount()}</i>` : ""))}${tab("feedback","Feedback")}${tab("history","History")}</nav>
+    <div class="who">${conn}${S.data.currentDay && ST && ST.openTender.on ? `<span class="chip ot">Open Tender</span>` : ""}
+      <button class="icon-btn themebtn" data-act="theme" title="${isDark() ? "Switch to light" : "Switch to dark"}" aria-label="${isDark() ? "Switch to light" : "Switch to dark"}">${isDark() ? SUN : MOON}</button>
+      <span class="acct"><span class="chip role d-${S.role}">${DEPT[S.role]}</span>${S.store.mode === "live" ? `<button class="icon-btn" data-act="signout">Sign out</button>` : ""}</span></div>
   </div></header>${demo}${S.store.mode === "live" && d.offline ? `<div class="offbar"><div class="wrap">Offline since ${fmtT(S.offlineSince || Date.now())} · showing the data as of then. ${isAdmin() ? "Entries are saved on this device and sync when the connection is back." : "Numbers may be out of date."}</div></div>` : ""}`;
 }
 
@@ -994,6 +1112,28 @@ function identityModal(){
       lsSet("tom.id." + S.role, JSON.stringify({name, rank: f.querySelector("#mRank").value.trim()})); setTimeout(render, 0); }});
 }
 
+/* ---------------- feedback ---------------- */
+function feedbackHTML(){
+  const list = (S.data.feedback || []).slice().sort((a,b) => (a.status === "done") - (b.status === "done") || b.t - a.t);
+  return `<section class="panel"><div class="panel-head"><h2>Feedback</h2><button class="icon-btn hbtn" data-act="help" data-k="feedback" aria-label="Help">?</button>
+      <button class="btn primary" data-act="fb-new">Write feedback</button></div>
+    <div class="issues">${list.length ? list.map(f => `<div class="issue"><div class="who2"><span class="dept d-${String(f.dept).toLowerCase()}">${esc(f.dept)}</span></div>
+      <div class="body"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="cat">${esc(f.kind)}</span><span class="status ${f.status === "done" ? "resolved" : "open"}">${f.status === "done" ? "done" : "new"}</span></div>
+        <p>${esc(f.text)}</p><span class="when mono">${esc(f.name || "")}${f.rank ? " · " + esc(f.rank) : ""} · ${new Date(f.t).toLocaleDateString("en-GB",{day:"2-digit",month:"short"})} ${fmtT(f.t)}</span></div>
+      ${isAdmin() ? `<div class="side-acts"><button class="btn small" data-act="fb-toggle" data-id="${f.id}">${f.status === "done" ? "Reopen" : "Mark done"}</button></div>` : ""}</div>`).join("")
+      : `<div class="emptystate" style="padding:24px"><p>No feedback yet. Ideas, problems and requests about the app go here.</p></div>`}</div></section>`;
+}
+function feedbackModal(){
+  const id = identity() || {};
+  modal({title:"Write feedback", submit:"Send",
+    body:`<div class="choice" id="mFk" data-val="Idea" style="grid-template-columns:repeat(3,1fr)"><button type="button" data-berth="Idea" aria-pressed="true">Idea</button><button type="button" data-berth="Problem" aria-pressed="false">Problem</button><button type="button" data-berth="Other" aria-pressed="false">Other</button></div>
+      <label class="fld"><span>Feedback</span><textarea id="mFt" placeholder="What would make the app better, or what went wrong"></textarea></label>
+      <div class="two"><label class="fld"><span>Name</span><input id="mFn" value="${esc(id.name || "")}"></label><label class="fld"><span>Rank / position</span><input id="mFr" value="${esc(id.rank || "")}"></label></div><div id="mWarn"></div>`,
+    onOpen: f => bindChoice(f, "mFk"),
+    onSubmit: f => { const text = f.querySelector("#mFt").value.trim(); if (!text){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Write your feedback.</div>`; return false; }
+      S.store.saveFeedback({id:"f" + uid(), t:Date.now(), dept:DEPT[S.role], name:f.querySelector("#mFn").value.trim(), rank:f.querySelector("#mFr").value.trim(), kind:f.querySelector("#mFk").dataset.val, text, status:"new"}); toast("Thanks · feedback sent"); }});
+}
+
 function noDayHTML(){
   return `<div class="emptystate">${boatSVG(false)}<h2>No tender operation open</h2>
     <p>${isAdmin() ? "Open a tender day to start logging lowering times, trips and passengers." : "The board fills in as soon as the Bridge opens today’s tender operation."}</p>
@@ -1013,15 +1153,18 @@ function boardHTML(){
     <span class="sub">${fmtDate(day.date)}</span>
     <span class="dinfo"><span>Last tender <b class="mono">${esc(day.lastTender || "—")}</b>${lastInfo}</span>${day.allAboard ? `<span>All aboard <b class="mono">${esc(day.allAboard)}</b></span>` : ""}${day.departure ? `<span>Departure <b class="mono">${esc(day.departure)}</b></span>` : ""}${day.vhf ? `<span class="chn">VHF&nbsp;<b>${esc(day.vhf)}</b></span>` : ""}${day.uhf ? `<span class="chn">UHF&nbsp;<b>${esc(day.uhf)}</b></span>` : ""}</span>
     ${st.log.length ? `<span class="sub">· Last entry <b class="mono">${fmtT(Math.max(...st.log.map(l => l.e.t)))}</b></span>` : ""}
-    <span class="spacer"></span>${canOpenTender() && !st.openTender.on ? `<button class="btn small otbtn" data-act="ot-on">Open Tender…</button>` : ""}<button class="btn small" data-act="legend">? Legend</button>${isAdmin() ? `<button class="btn small" data-act="edit-day">Edit day</button><button class="btn small danger" data-act="close-day">Close day…</button>` : ""}</section>`;
+    <span class="spacer"></span>${canOpenTender() && !st.openTender.on ? `<button class="btn small otbtn" data-act="ot-on">Open Tender…</button>` : ""}${isAdmin() ? `<button class="btn small" data-act="edit-day">Edit day</button><button class="btn small danger" data-act="close-day">Close day…</button>` : ""}</section>`;
 
   const tenders = st.list.filter(u => u.kind === "tender"), shores = st.list.filter(u => u.kind === "shore" && u.active);
-  const head = `<div class="grow head"><div class="cb">Boat</div><div class="cs">${SHIP_ICON}Ship</div><div class="ct h-t">${SEA_ICON}In transit</div><div class="ch">${PIER_ICON}Shore</div><div class="ca"></div></div>`;
+  const head = `<div class="grow head"><div class="cb"><span class="hl">Boat</span><button class="icon-btn hbtn" data-act="legend" title="How to read the board" aria-label="How to read the board">?</button></div><div class="cs">${SHIP_ICON}Ship</div><div class="ct h-t">${SEA_ICON}In transit</div><div class="ch">${PIER_ICON}Shore</div><div class="ca"></div></div>`;
   const board = `<section class="board${isAdmin() ? "" : " ro"}" aria-label="Tender board">${head}${tenders.map(rowHTML).join("")}
     <div class="sep">Shoretenders ${isAdmin() ? `<button class="btn small" data-act="add-shore">+ Add shoretender</button>` : ""}</div>
     ${shores.length ? shores.map(rowHTML).join("") : `<div class="grow"><div class="cb"></div><div class="offc" style="grid-column:2 / -1;padding:12px;color:var(--muted);font-size:13.5px">No shoretenders today.</div></div>`}</section>`;
   const ot = st.openTender.on ? `<section class="otbar"><b>Open Tender</b><span>since <b class="mono">${fmtT(st.openTender.since)}</b> · ${esc(st.openTender.by)}</span>${canOpenTender() ? `<button class="btn small" data-act="ot-off">Cancel…</button>` : ""}</section>` : "";
-  return dayline + ot + statusPanel + board;
+  const cap = capacity(day, st, now, est);
+  const ems = st.list.filter(u => u.flag && u.flag.status === "emergency");
+  const em = ems.length ? `<section class="embar"><b>Emergency</b><span>${ems.map(u => `${esc(u.full)} since <b class="mono">${fmtT(u.flag.since)}</b>${u.flag.text ? " · " + esc(u.flag.text) : ""}`).join(" · ")}</span></section>` : "";
+  return dayline + em + ot + statusPanel + capHTML(cap) + board;
 }
 
 function rowHTML(u){
@@ -1030,6 +1173,7 @@ function rowHTML(u){
   const cb = `<button class="cb" data-act="sheet" data-u="${u.id}" aria-label="${esc(u.full)} details">
       <span class="bn${u.kind === "shore" && u.name.length > 4 ? " long" : ""}"><span class="nm">${nameHTML(u.name)}</span></span>
       <span class="drv"><span class="dl">Driver </span><b>${esc(u.driver || "—")}</b></span>
+      ${u.flag ? `<span class="flagl f-${u.flag.status}">${u.flag.status === "emergency" ? "■ EMERGENCY" : u.flag.status === "pvi" ? "■ PVI/PDI" : "■ Technical issue"}${u.flag.text ? `<em>${esc(u.flag.text)}</em>` : ""}</span>` : ""}
       ${openIs || u.note ? `<span class="marks">${openIs ? `<span class="iss">⚠ ${openIs} issue${openIs > 1 ? "s" : ""}</span>` : ""}${u.note ? `<span class="nt">✎ note</span>` : ""}</span>` : ""}</button>`;
   if (!u.active){
     return `<div class="grow off">${cb}<div class="offc">${boatSVG(false, "muted" + (u.kind === "shore" ? " shore" : ""), u.num)}<div><b>Not in service</b><div>${u.hoisted ? "Hoisted " + fmtT(u.hoisted) : u.kind === "tender" ? "Stowed" : "Released"}</div></div></div>
@@ -1053,7 +1197,8 @@ function rowHTML(u){
     else if (u.loc === "transit") acts = u.dir === "shore" ? B("arrive-shore", "Arrived Shore", "dark") : B("arrive-ship", "Arrived Ship", "dark");
     else if (u.loc === "shore") acts = B("depart-ship", "Depart → Ship", "primary");
   }
-  return `<div class="grow">${cb}<div class="cs">${cell("ship")}</div><div class="ct">${cell("transit")}</div><div class="ch">${cell("shore")}</div><div class="ca">${acts}</div></div>`;
+  if (isAdmin() && u.flag && u.flag.status === "pvi") acts = `<button class="btn" data-act="status-ok" data-u="${u.id}">Back in service</button>`;
+  return `<div class="grow${u.flag ? " fl-" + u.flag.status : ""}">${cb}<div class="cs">${cell("ship")}</div><div class="ct">${cell("transit")}</div><div class="ch">${cell("shore")}</div><div class="ca">${acts}</div></div>`;
 }
 
 function logRows(st, opts){
@@ -1131,7 +1276,7 @@ function loginHTML(){
     <div class="fld"><span>Password</span><input id="lgPw" type="password" autocomplete="current-password" required></div>
     <div class="err" id="lgErr" role="alert"></div>
     <button class="btn primary" type="submit">Sign in</button>
-    <span style="font-size:12.5px;color:var(--muted)">${esc(CONFIG.shipName)} · tender operations</span></form></div>`;
+    <span class="lgfoot">${esc(CONFIG.shipName)} · tendering operations<br><i class="credit">made by Erio</i></span></form></div>`;
 }
 function bindLogin(){
   const f = $("#loginForm"); if (!f) return;
@@ -1143,6 +1288,9 @@ function bindLogin(){
 }
 
 /* ---------------- theme, toast, wake lock ---------------- */
+const SUN = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></g></svg>`;
+const MOON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" fill="currentColor"/></svg>`;
+function isDark(){ const t = lsGet("tb.theme"); return t ? t === "dark" : (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches); }
 function themeLabel(){ const t = lsGet("tb.theme") || "auto"; return t === "auto" ? "Auto" : t === "dark" ? "Dark" : "Light"; }
 function applyTheme(){ const t = lsGet("tb.theme") || "auto"; if (t === "auto") document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", t); }
 let toastTimer = null, toastUndo = null;
@@ -1292,6 +1440,7 @@ function dayModal(existing){
       <label class="fld"><span>Last tender (24h)</span>${hmInput("mLast", d.lastTender || "")}</label></div>
       <div class="two"><label class="fld"><span>All aboard (24h)</span>${hmInput("mAA", d.allAboard || "")}</label><label class="fld"><span>Ship departure (24h)</span>${hmInput("mDep", d.departure || "")}</label></div>
       <div class="two"><label class="fld"><span>VHF channel</span><input id="mVhf" value="${esc(d.vhf || "")}" placeholder="e.g. 72"></label><label class="fld"><span>UHF channel</span><input id="mUhf" value="${esc(d.uhf || "")}" placeholder="e.g. 3"></label></div>
+      <label class="fld"><span>Max guest wait at the pier (min)</span><input id="mMw" type="number" inputmode="numeric" min="5" max="60" value="${esc(d.maxWait ?? DEFAULT_MAX_WAIT)}"><span class="hint">Recovery keeps enough tenders to have one at the pier at least this often.</span></label>
       <label class="fld"><span>Total on board (guests + crew)</span><input id="mTot" type="number" inputmode="numeric" min="0" value="${esc(d.total ?? "")}"><span class="hint">Reference only, from the ship’s system.</span></label>
       ${existing ? "" : `<div class="fld"><span>Pontoon side</span><div class="choice" id="mSide" data-val="${d.side}" style="grid-template-columns:1fr 1fr"><button type="button" data-berth="PORT" aria-pressed="false">Port</button><button type="button" data-berth="STBD" aria-pressed="true">Starboard</button></div></div>
       <div class="toggles"><label><input type="checkbox" id="mFwd" checked>FWD pontoon</label><label><input type="checkbox" id="mMid" checked>MIDSHIP pontoon</label></div>`}
@@ -1300,7 +1449,7 @@ function dayModal(existing){
     onSubmit: f => {
       const port = f.querySelector("#mPort").value.trim();
       if (!port){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Enter the port.</div>`; return false; }
-      const rec = {port, date: f.querySelector("#mDate").value || ymd(Date.now()), lastTender: normHM(f.querySelector("#mLast").value) || "", allAboard: normHM(f.querySelector("#mAA").value) || "", departure: normHM(f.querySelector("#mDep").value) || "", vhf: f.querySelector("#mVhf").value.trim(), uhf: f.querySelector("#mUhf").value.trim(), total: parseInt(f.querySelector("#mTot").value, 10) || 0};
+      const rec = {port, date: f.querySelector("#mDate").value || ymd(Date.now()), lastTender: normHM(f.querySelector("#mLast").value) || "", allAboard: normHM(f.querySelector("#mAA").value) || "", departure: normHM(f.querySelector("#mDep").value) || "", vhf: f.querySelector("#mVhf").value.trim(), uhf: f.querySelector("#mUhf").value.trim(), maxWait: Math.max(5, parseInt(f.querySelector("#mMw").value, 10) || DEFAULT_MAX_WAIT), total: parseInt(f.querySelector("#mTot").value, 10) || 0};
       if (existing) S.store.saveDay(Object.assign({id: existing.id}, rec));
       else S.store.saveDay(Object.assign({id: "d" + uid(), status:"open", openedAt: Date.now(), side: f.querySelector("#mSide").dataset.val, fwd: f.querySelector("#mFwd").checked, mid: f.querySelector("#mMid").checked}, rec));
       toast(existing ? "Day updated" : `Tender day open · ${port}`);
@@ -1343,6 +1492,7 @@ function sheetModal(u){
       ${isAdmin() && u.active ? `<div class="menu-list">
         ${u.loc === "ship" && u.berth === "SB" ? `<button type="button" class="btn" data-m="depart-shore">Depart → Shore from stand-by</button>` : ""}
         ${u.loc === "ship" ? `<button type="button" class="btn" data-m="move">Change berth (FWD / MIDSHIP / stand-by)</button>` : ""}
+        <button type="button" class="btn ${u.flag ? "danger" : ""}" data-m="status">${u.flag ? "Status: " + esc(STATUS[u.flag.status]) + " · change" : "Set status (technical issue, PVI/PDI, emergency)"}</button>
         <button type="button" class="btn" data-m="driver">Change driver</button>
         <button type="button" class="btn" data-m="cap">Set max load (now ${u.cap ?? "—"})</button>
         <button type="button" class="btn" data-m="issue">Report issue</button>
@@ -1359,6 +1509,7 @@ function sheetModal(u){
         if (m === "driver") simpleModal(`${u.full} · Driver`, "Driver", "text", u.driver, v => addEv("driver", u.id, {driver: v}), true);
         if (m === "cap") simpleModal(`${u.full} · Max load`, "Max load (pax)", "number", u.cap ?? "", v => addEv("cap", u.id, {cap: Math.max(1, parseInt(v, 10) || 1)}));
         if (m === "issue") issueModal(null, u.name);
+        if (m === "status") statusModal(u);
         if (m === "stow") modal({title: u.kind === "tender" ? `Hoist ${u.full}` : `Release ${u.full}`, submit: u.kind === "tender" ? "Log hoisting" : "Release",
           body: `<p style="margin:0;color:var(--muted)">${u.kind === "tender" ? "Logs the hoisting time. The row turns grey: Not in service." : "Takes the shoretender off the board."}</p>${timeField("mT")}`,
           onSubmit: f2 => { addEv("deactivate", u.id, {}, readTime(f2, "mT", day().date), `${u.full} ${u.kind === "tender" ? "hoisted" : "released"}`); }});
@@ -1377,6 +1528,9 @@ function legendModal(){
       <div><span class="mono lgtime">11:30 · 3′</span><p>Time it entered its current state, and minutes since.</p></div>
       <div><span class="offtag">Not in service</span><p>Stowed: not lowered today, or hoisted.</p></div>
       <div><span class="lgmarks"><span class="iss">⚠ 1 issue</span> <span class="nt">✎ note</span></span><p>Open defect or a note on that tender. Tap the tender’s name to read it.</p></div>
+      <div><span class="flagl f-tech">■ Technical issue</span><p>The tender has a defect but stays in service. Amber row, visible to all.</p></div>
+      <div><span class="flagl f-pvi">■ PVI/PDI</span><p>Out of service for cleaning. Not counted in lift or recovery. <b>Back in service</b> returns it.</p></div>
+      <div><span class="flagl f-emergency">■ EMERGENCY</span><p>Red row and red banner for everyone, with the time.</p></div>
       <h4>Status panel</h4>
       <div><b class="lgnum">Ashore</b><p>Pax landed minus pax brought back. <b>Sync</b> replaces it with the official security count; later trips continue from there.</p></div>
       <div><b class="lgnum">On tenders</b><p>Pax underway plus pax waiting on a tender in stand-by.</p></div>
@@ -1387,6 +1541,13 @@ function legendModal(){
       <div><span class="lgchip lt">Last tender</span><p>Ticked on the last departure from the pier. When it is alongside, the app checks that the tender count shows nobody ashore.</p></div>
       <div><span class="lgchip ot">Open Tender</span><p>Declared by Hotel or Deck: no tender tickets needed, guests go straight to the pontoon. Valid for the rest of the day.</p></div>
       <div><span class="lgchip off">Offline</span><p>Connection lost. Numbers may be out of date; Deck entries sync when the connection returns.</p></div>
+      <h4>Capacity bar</h4>
+      <div><b class="lgnum">Demand</b><p>Pax moved in the last 30 min, per hour, each way. +25% when most trips leave nearly full (more are waiting than the boats show).</p></div>
+      <div><b class="lgnum">Lift</b><p>What the boats in service can move per hour each way: seats × loads ÷ round trip. The bar shows demand against lift.</p></div>
+      <div><b class="lgnum">Round trip</b><p>Measured from the log: run to shore + time at the pier + run to ship + time at the ship.</p></div>
+      <div><b class="lgnum">Loads</b><p>How full the boats leave when busy, against the max load set.</p></div>
+      <div><span class="sug up">▲ Lower 1 tender</span><p>Demand is close to the lift, trips leave full, or demand is rising fast.</p></div>
+      <div><span class="sug down">▼ Can be hoisted</span><p>Shown only after 30 min of low demand and 30 min since the last change, and not in the last 2 h before the last tender. Slow to remove, quick to add.</p></div>
       <h4>Who can do what</h4>
       <div><b class="lgnum">Deck</b><p>Everything: the board, counts, pontoons, recovery, corrections, day info, issues, chat.</p></div>
       <div><b class="lgnum">Hotel</b><p>Sees everything. Declares Open Tender. Uses the chat.</p></div>
@@ -1407,11 +1568,26 @@ const HELP = {
     <ul><li>The first time on a device, enter your <b>name and rank</b>. Several people share each login, so every message shows department, name and rank. <b>Change</b> it when someone else uses the device.</li>
     <li><b>Enter</b> sends, <b>Shift+Enter</b> starts a new line.</li><li>A number on the Chat tab counts unread messages; a notice appears when one arrives on another page.</li>
     <li>For anything urgent or safety related use the radio: if the connection drops, messages arrive late.</li></ul>`},
+  feedback:{t:"Feedback", b:`<p>Ideas, problems and requests about the app, from every department.</p>
+    <ul><li><b>Write feedback</b>: choose Idea, Problem or Other and describe it. Your name and rank are filled in from the chat if set.</li>
+    <li>Deck marks items <b>done</b> when they are dealt with.</li></ul>`},
   history:{t:"History", b:`<p>Closed tender days, newest first, with trips, pax ashore and average round trip.</p>
     <ul><li>Open a day for its summary and full log.</li><li><b>Export CSV</b> downloads that day’s log.</li>
     <li><b>Deck</b>: <b>Delete day</b> removes a test or duplicate day (type DELETE). Issues are kept.</li></ul>`}
 };
 function helpModal(k){ const h = HELP[k]; if (h) modal({title: h.t, submit:null, body:`<div class="helptxt">${h.b}</div>`}); }
+function statusModal(u){
+  const cur = u.flag ? u.flag.status : "ok";
+  const opt = (v, l, d) => `<button type="button" data-berth="${v}" aria-pressed="${cur === v}">${l}<small>${d}</small></button>`;
+  modal({title:`${u.full} · Status`, submit:"Save status",
+    body:`<div class="choice" id="mSt" data-val="${cur}" style="grid-template-columns:1fr 1fr">${opt("ok","Normal","in service")}${opt("tech","Technical issue","stays in service, shown to all")}${opt("pvi","PVI/PDI","out of service")}${opt("emergency","Emergency","red alert to all")}</div>
+      <label class="fld"><span>Details</span><input id="mStx" value="${esc(u.flag ? u.flag.text : "")}" placeholder="e.g. port engine overheating, returning to ship"></label>
+      <label class="toggles"><label><input type="checkbox" id="mStLog" ${canIssues() ? "checked" : "disabled"}>Also add to the maintenance log (technical issue)</label></label>${timeField("mT")}`,
+    onOpen: f => { f.dataset.nofocus = 1; bindChoice(f, "mSt"); },
+    onSubmit: f => { const v = f.querySelector("#mSt").dataset.val, tx = f.querySelector("#mStx").value.trim(), t = readTime(f, "mT", day().date);
+      addEv("status", u.id, {status:v, text:tx}, t, v === "ok" ? `${u.full} back to normal` : `${u.full} · ${STATUS[v]}`);
+      if (v === "tech" && f.querySelector("#mStLog").checked && tx) S.store.saveIssue({id:"i" + uid(), unitName:u.name, category:"Other", text:tx, t, status:"open", port:day().port, dayId:day().id}); }});
+}
 function refreshSheet(){ /* keep an open sheet static; data refresh is shown on the board */ }
 function simpleModal(title, label, type, value, apply, drivers){
   modal({title, submit:"Save",
@@ -1487,7 +1663,7 @@ document.addEventListener("click", e => {
   const act = el.dataset.act, u = el.dataset.u && ST ? ST.units[el.dataset.u] : null;
   keepAwake();
   switch (act){
-    case "theme": { const cur = lsGet("tb.theme") || "auto"; lsSet("tb.theme", cur === "auto" ? "dark" : cur === "dark" ? "light" : "auto"); applyTheme(); render(); break; }
+    case "theme": { lsSet("tb.theme", isDark() ? "light" : "dark"); applyTheme(); render(); break; }
     case "signout": S.store.signOut(); break;
     case "demo-role": S.role = el.dataset.r; render(); break;
     case "demo-reset": S.store.reset(); toast("Sample data reloaded"); break;
@@ -1499,6 +1675,9 @@ document.addEventListener("click", e => {
     case "rec-stop": addEv("recovery", null, {on:false}, null, "Recovery ended"); break;
     case "legend": legendModal(); break;
     case "help": helpModal(el.dataset.k); break;
+    case "fb-new": feedbackModal(); break;
+    case "fb-toggle": { const f = (S.data.feedback || []).find(x => x.id === el.dataset.id); if (f) S.store.saveFeedback({id:f.id, status: f.status === "done" ? "new" : "done"}); break; }
+    case "status-ok": addEv("status", u.id, {status:"ok", text:""}, null, `${u.full} back in service`); break;
     case "chat-id": identityModal(); break;
     case "ot-on": modal({title:"Declare Open Tender", submit:"Declare Open Tender",
         body:`<p style="margin:0">Guests no longer need tender tickets and go straight to the pontoon. Open Tender stays on for the rest of the day.</p><p class="hint" style="margin:0">Declared by ${DEPT[S.role]}.</p>`,
