@@ -680,6 +680,8 @@ function createLocalStore(){
     deleteEvent: (dayId, id) => mut(d => { d.events[dayId] = (d.events[dayId] || []).filter(x => x.id !== id); }),
     saveIssue: is => mut(d => { d.issues[is.id] = Object.assign({}, d.issues[is.id], clean(is)); }),
     deleteIssue: id => mut(d => { delete d.issues[id]; }),
+    resetDay: dayId => mut(d => { d.events[dayId] = []; }),
+    deleteDay: dayId => mut(d => { delete d.events[dayId]; delete d.days[dayId]; }),
     getEvents: async dayId => (db().events[dayId] || []).slice()
   };
 }
@@ -728,6 +730,11 @@ async function createFirebaseStore(){
     deleteEvent: (dayId, id) => w(dayRef(dayId).collection("events").doc(id).delete()),
     saveIssue: is => w(fs.collection("issues").doc(is.id).set(clean(is), {merge:true})),
     deleteIssue: id => w(fs.collection("issues").doc(id).delete()),
+    resetDay: async dayId => { const snap = await dayRef(dayId).collection("events").get(); const docs = snap.docs;
+      for (let i = 0; i < docs.length; i += 400){ const b = fs.batch(); docs.slice(i, i + 400).forEach(d => b.delete(d.ref)); await b.commit().catch(fail); } },
+    deleteDay: async dayId => { const snap = await dayRef(dayId).collection("events").get(); const docs = snap.docs;
+      for (let i = 0; i < docs.length; i += 400){ const b = fs.batch(); docs.slice(i, i + 400).forEach(d => b.delete(d.ref)); await b.commit().catch(fail); }
+      await dayRef(dayId).delete().catch(fail); },
     getEvents: async dayId => (await dayRef(dayId).collection("events").get()).docs.map(d => d.data())
   };
 }
@@ -899,7 +906,7 @@ function rowHTML(u){
   const now = Date.now();
   const openIs = S.data.issues.filter(i => i.status === "open" && i.unitName === u.name).length;
   const cb = `<button class="cb" data-act="sheet" data-u="${u.id}" aria-label="${esc(u.full)} details">
-      <span class="bn${u.kind === "shore" && u.name.length > 4 ? " long" : ""}"><span class="nm">${nameHTML(u.name)}</span><span class="side ${u.side}">${u.side}</span></span>
+      <span class="bn${u.kind === "shore" && u.name.length > 4 ? " long" : ""}"><span class="nm">${nameHTML(u.name)}</span></span>
       <span class="drv"><span class="dl">Driver </span><b>${esc(u.driver || "—")}</b></span>
       ${openIs || u.note ? `<span class="marks">${openIs ? `<span class="iss">⚠ ${openIs} issue${openIs > 1 ? "s" : ""}</span>` : ""}${u.note ? `<span class="nt">✎ note</span>` : ""}</span>` : ""}</button>`;
   if (!u.active){
@@ -947,7 +954,7 @@ function logHTML(){
   const names = st.list.filter(u => u.tripsOut || u.lowered || u.active || u.kind === "shore").map(u => u.name);
   return `<section class="panel"><div class="panel-head"><h2>${esc(day.port)} · Today’s log</h2>
       <div class="filters"><select class="f" id="logUnit" data-act="log-unit" aria-label="Filter by unit"><option value="all">All units</option>${names.map(n => `<option value="${esc(n)}" ${S.logUnit === n ? "selected" : ""}>${esc(fullName(n))}</option>`).join("")}</select>
-      ${isAdmin() ? `<button class="btn" data-act="undo-last">Undo last</button>` : ""}<button class="btn" data-act="csv">Export CSV</button>${isAdmin() ? `<button class="btn danger" data-act="close-day">Close day</button>` : ""}</div></div>
+      ${isAdmin() ? `<button class="btn" data-act="undo-last">Undo last</button><button class="btn danger" data-act="reset-day">Reset board…</button>` : ""}<button class="btn" data-act="csv">Export CSV</button>${isAdmin() ? `<button class="btn danger" data-act="close-day">Close day</button>` : ""}</div></div>
     <div class="sumgrid">${sumTiles(summaryOf(st))}</div>
     <div class="tablebox"><table><thead><tr><th>Time</th><th>Unit</th><th>Event</th><th style="text-align:right">Pax</th><th>Driver</th>${isAdmin() ? "<th></th>" : ""}</tr></thead>
     <tbody>${logRows(st, {unit:S.logUnit, edit:isAdmin()})}</tbody></table></div></section>`;
@@ -983,7 +990,7 @@ function historyHTML(){
     if (!S.histEvents) return `<section class="panel"><p>Loading…</p></section>`;
     const st = compute(d, S.histEvents);
     return `<section class="panel"><div class="panel-head"><button class="btn" data-act="hist-back">← All days</button><h2>${esc(d.port)} · ${fmtDate(d.date)}</h2>
-      <span class="status ${d.status === "open" ? "open" : "resolved"}">${d.status === "open" ? "In progress" : "Closed"}</span><button class="btn" data-act="csv-hist">Export CSV</button></div>
+      <span class="status ${d.status === "open" ? "open" : "resolved"}">${d.status === "open" ? "In progress" : "Closed"}</span><button class="btn" data-act="csv-hist">Export CSV</button>${isAdmin() ? `<button class="btn danger" data-act="del-day">Delete day</button>` : ""}</div>
       <div class="sumgrid">${sumTiles(summaryOf(st))}<div><span>Total (ref)</span><b>${num(d.total)}</b></div></div>
       <div class="tablebox"><table><thead><tr><th>Time</th><th>Unit</th><th>Event</th><th style="text-align:right">Pax</th><th>Driver</th></tr></thead><tbody>${logRows(st, {unit:"all", edit:false})}</tbody></table></div></section>`;
   }
@@ -1111,12 +1118,12 @@ function activateModal(u){
     title: tender ? `Lower ${u.full}` : `Return ${u.full} to service`, submit: tender ? "Log lowering" : "Return to service",
     body: `<div class="two"><label class="fld"><span>Max load (pax)</span><input id="mCap" type="number" inputmode="numeric" min="1" value="${u.cap ?? (tender ? DEFAULT_CAP : SHORE_CAP)}" required></label>
       <label class="fld"><span>Driver</span><input id="mDrv" list="drvList" value="${esc(u.driver)}" autocomplete="off"></label></div>
-      ${berthChoice(ST, null)}${timeField("mT")}${driverList()}<div id="mWarn"></div>`,
-    onOpen: f => bindChoice(f),
+      <p class="hint" style="margin:0">${tender ? "The tender goes to Stand-by. Bring it alongside a pontoon from the board." : "The boat goes to Stand-by at the ship."}</p>
+      ${timeField("mT")}${driverList()}<div id="mWarn"></div>`,
     onSubmit: f => {
       const cap = parseInt(f.querySelector("#mCap").value, 10);
       if (!cap || cap < 1){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Set the max load.</div>`; return false; }
-      addEv("activate", u.id, {cap, driver: f.querySelector("#mDrv").value.trim(), berth: f.querySelector("#mBerth").dataset.val}, readTime(f, "mT", day().date), tender ? `${u.full} lowered` : `${u.full} back on service`);
+      addEv("activate", u.id, {cap, driver: f.querySelector("#mDrv").value.trim(), berth: "SB"}, readTime(f, "mT", day().date), tender ? `${u.full} lowered · stand-by` : `${u.full} back on service · stand-by`);
     }
   });
 }
@@ -1126,13 +1133,12 @@ function shoreModal(){
     body: `<label class="fld"><span>Boat name</span><input id="mName" placeholder="e.g. Kotor Star" required></label>
       <div class="two"><label class="fld"><span>Max load (pax)</span><input id="mCap" type="number" inputmode="numeric" min="1" value="${SHORE_CAP}" required></label>
       <label class="fld"><span>Driver / crew</span><input id="mDrv" autocomplete="off"></label></div>
-      ${berthChoice(ST, null)}${timeField("mT")}<div id="mWarn"></div>`,
-    onOpen: f => bindChoice(f),
+      <p class="hint" style="margin:0">The boat starts on Stand-by at the ship.</p>${timeField("mT")}<div id="mWarn"></div>`,
     onSubmit: f => {
       const name = f.querySelector("#mName").value.trim(), cap = parseInt(f.querySelector("#mCap").value, 10);
       if (!name || !cap){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Name and max load are required.</div>`; return false; }
       if (ST.list.some(u => u.name.toLowerCase() === name.toLowerCase())){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">${esc(name)} is already on the board.</div>`; return false; }
-      addEv("shore_add", "S" + uid(), {name, cap, berth: f.querySelector("#mBerth").dataset.val, driver: f.querySelector("#mDrv").value.trim()}, readTime(f, "mT", day().date), `${name} added`);
+      addEv("shore_add", "S" + uid(), {name, cap, berth: "SB", driver: f.querySelector("#mDrv").value.trim()}, readTime(f, "mT", day().date), `${name} added`);
     }
   });
 }
@@ -1158,6 +1164,7 @@ function syncModal(){
 function dayModal(existing){
   const d = existing || {side:"STBD", fwd:true, mid:true};
   modal({title: existing ? "Edit tender day" : "Open tender day", submit: existing ? "Save" : "Open day",
+    extra: existing ? `<button type="button" class="btn danger" id="mReset" style="margin-right:auto">Reset board…</button>` : "",
     body: `<label class="fld"><span>Port</span><input id="mPort" value="${esc(d.port || "")}" placeholder="e.g. Kotor" required></label>
       <div class="two"><label class="fld"><span>Date</span><input id="mDate" type="date" value="${esc(d.date || ymd(Date.now()))}"></label>
       <label class="fld"><span>Last tender (24h)</span>${hmInput("mLast", d.lastTender || "")}</label></div>
@@ -1165,7 +1172,7 @@ function dayModal(existing){
       ${existing ? "" : `<div class="fld"><span>Pontoon side</span><div class="choice" id="mSide" data-val="${d.side}" style="grid-template-columns:1fr 1fr"><button type="button" data-berth="PORT" aria-pressed="false">Port</button><button type="button" data-berth="STBD" aria-pressed="true">Starboard</button></div></div>
       <div class="toggles"><label><input type="checkbox" id="mFwd" checked>FWD pontoon</label><label><input type="checkbox" id="mMid" checked>MIDSHIP pontoon</label></div>`}
       <span class="hint">Round trip time is worked out automatically from the logged trips.</span><div id="mWarn"></div>`,
-    onOpen: f => bindChoice(f, "mSide"),
+    onOpen: f => { bindChoice(f, "mSide"); const r = f.querySelector("#mReset"); if (r) r.addEventListener("click", () => resetDayModal()); },
     onSubmit: f => {
       const port = f.querySelector("#mPort").value.trim();
       if (!port){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Enter the port.</div>`; return false; }
@@ -1174,6 +1181,21 @@ function dayModal(existing){
       else S.store.saveDay(Object.assign({id: "d" + uid(), status:"open", openedAt: Date.now(), side: f.querySelector("#mSide").dataset.val, fwd: f.querySelector("#mFwd").checked, mid: f.querySelector("#mMid").checked}, rec));
       toast(existing ? "Day updated" : `Tender day open · ${port}`);
     }});
+}
+function confirmTyped({title, text, word, button, onConfirm}){
+  modal({title, submit: button, danger:true,
+    body: `<div class="warnbox">${text}</div><label class="fld"><span>Type ${word} to confirm</span><input id="mConf" autocomplete="off" autocapitalize="characters"></label><div id="mWarn"></div>`,
+    onSubmit: f => { if (f.querySelector("#mConf").value.trim().toUpperCase() !== word){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Type ${word} exactly to confirm.</div>`; return false; } onConfirm(); }});
+}
+function resetDayModal(){
+  confirmTyped({title:"Reset today’s board", word:"RESET", button:"Reset board",
+    text:`This deletes every entry logged today in ${esc(day().port)}: lowerings, trips, pax, syncs, notes and pontoon changes. All tenders go back to <b>Stowed</b> and the counts go back to zero. Port, date, last tender and total stay. The issue log is not touched. This cannot be undone.`,
+    onConfirm: () => { S.store.resetDay(day().id); toast("Board reset · all tenders stowed"); }});
+}
+function deleteDayModal(d){
+  confirmTyped({title:`Delete ${d.port} · ${fmtDate(d.date)}`, word:"DELETE", button:"Delete day",
+    text:`This permanently deletes this tender day and its full log from History. The issue log is not touched. This cannot be undone.`,
+    onConfirm: () => { S.store.deleteDay(d.id); S.hist = null; S.histEvents = null; toast("Day deleted"); render(); }});
 }
 function closeDayModal(){
   const st = ST, active = st.list.filter(u => u.active);
@@ -1192,7 +1214,7 @@ function sheetModal(u){
   const status = !u.active ? "Not in service" : u.loc === "ship" ? berthName(u.berth) : u.loc === "transit" ? (u.dir === "shore" ? "→ Shore" : "← Ship") : "Shore";
   modal({title:`${u.full}`, submit:null,
     body: `<div class="kv"><div><span>Status</span><b>${status}</b></div><div><span>Pax</span><b>${u.pax} / ${u.cap ?? "—"}</b></div><div><span>Driver</span><b>${esc(u.driver || "—")}</b></div>
-        <div><span>${u.kind === "tender" ? "Lowered" : "On service"}</span><b class="mono">${fmtT(u.kind === "tender" ? u.lowered : u.since)}</b></div><div><span>Trips out / back</span><b>${u.tripsOut} / ${u.tripsBack}</b></div><div><span>Side</span><b>${u.side}</b></div></div>
+        <div><span>${u.kind === "tender" ? "Lowered" : "On service"}</span><b class="mono">${fmtT(u.kind === "tender" ? u.lowered : u.since)}</b></div><div><span>Trips out / back</span><b>${u.tripsOut} / ${u.tripsBack}</b></div><div><span>Max load</span><b>${u.cap ?? "—"}</b></div></div>
       <label class="fld"><span>Note</span><textarea id="mNote" placeholder="e.g. Refuel at 15:30" ${isAdmin() ? "" : "readonly"}>${esc(u.note)}</textarea></label>
       ${isAdmin() ? `<button type="button" class="btn" id="mSaveNote">Save note</button>` : ""}
       ${isIss.length ? `<div class="fld"><span>Open issues</span>${isIss.map(i => `<div class="warnbox"><b>${esc(i.category)}</b> · ${esc(i.text)}</div>`).join("")}</div>` : ""}
@@ -1228,7 +1250,6 @@ function legendModal(){
       <div>${boatSVG(false, "", "")}<p><b>Bow direction</b> shows where the boat is heading. At the ship it points to shore, at the pier it points back to the ship.</p></div>
       <div><span class="tag berth">Forward Pontoon</span><p><b>Alongside</b> the ship at that pontoon. Pax have disembarked.</p></div>
       <div><span class="tag sb">Stand-by</span><p><b>Waiting off the ship</b> for a free pontoon. Its pax are still on the tender and count in “On tenders”.</p></div>
-      <div><span class="side STBD">STBD</span><p>Where the tender is stowed (STBD / PORT). Shoretenders are local boats.</p></div>
       <div><span class="offtag">Not in service</span><p>Tender hoisted or not lowered today.</p></div>
       <div><b class="lgnum">Ashore</b><p>Counted from tender trips (out − back), corrected by <b>Sync</b> with the security count. <b>Aboard</b> = Total − Ashore − On tenders.</p></div>
       <div><b class="lgnum">Recovery</b><p>Started by the Bridge when guests begin returning. It estimates how many tenders are still needed before the last tender.</p></div></div>`});
@@ -1340,6 +1361,8 @@ document.addEventListener("click", e => {
     case "reopen": S.store.saveIssue({id: el.dataset.id, status:"open", resolvedAt:null}); toast("Issue reopened"); break;
     case "edit-issue": { const i = S.data.issues.find(x => x.id === el.dataset.id); if (i) issueModal(i); break; }
     case "hist-open": openHist(el.dataset.id); break;
+    case "reset-day": resetDayModal(); break;
+    case "del-day": { const d = S.data.days.find(x => x.id === S.hist); if (d) deleteDayModal(d); break; }
     case "hist-back": S.hist = null; S.histEvents = null; render(); break;
     case "csv-hist": { const d = S.data.days.find(x => x.id === S.hist); if (d && S.histEvents) csvFor(d, compute(d, S.histEvents)); break; }
   }
