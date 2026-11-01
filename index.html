@@ -25,7 +25,7 @@
   --accent:#e4570f; --accent-ink:#ffffff; --accent-soft:#fde8dc;
   --sea:#1f6391; --sea-tint:#e3eef6; --hull:#fbfcfd; --fender:#1d2329; --glass:#1b2733;
   --ok:#2b8a3e; --warn:#d97706; --crit:#d63031; --track:#e2e7ed; --off:#eceff3;
-  --stbd:#1f9d55; --port:#d63031;
+  --stbd:#1f9d55; --port:#d63031; --dk:#1f6391; --ht:#7c4dcc; --tc:#b26a00;
   --shadow:0 1px 2px rgba(19,33,47,.06),0 2px 8px rgba(19,33,47,.05);
   --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
   --f-body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -37,7 +37,7 @@
     --accent:#ff7a33; --accent-ink:#1a0d04; --accent-soft:#3a2214;
     --sea:#5aaee0; --sea-tint:#0f2638; --hull:#dfe7ee; --fender:#05080b; --glass:#0b1117;
     --ok:#51cf66; --warn:#fcc419; --crit:#ff6b6b; --track:#1d3245; --off:#0c1621;
-    --stbd:#51cf66; --port:#ff6b6b; --shadow:none; color-scheme:dark;
+    --stbd:#51cf66; --port:#ff6b6b; --dk:#2f7fb5; --ht:#8f63dd; --tc:#c17a10; --shadow:none; color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
@@ -45,7 +45,7 @@
   --accent:#ff7a33; --accent-ink:#1a0d04; --accent-soft:#3a2214;
   --sea:#5aaee0; --sea-tint:#0f2638; --hull:#dfe7ee; --fender:#05080b; --glass:#0b1117;
   --ok:#51cf66; --warn:#fcc419; --crit:#ff6b6b; --track:#1d3245; --off:#0c1621;
-  --stbd:#51cf66; --port:#ff6b6b; --shadow:none; color-scheme:dark;
+  --stbd:#51cf66; --port:#ff6b6b; --dk:#2f7fb5; --ht:#8f63dd; --tc:#c17a10; --shadow:none; color-scheme:dark;
 }
 *{box-sizing:border-box}
 html,body{background:var(--bg)}
@@ -146,6 +146,28 @@ main{padding-block:12px 70px;display:flex;flex-direction:column;gap:12px}
 .rec .chk{background:color-mix(in srgb,var(--warn) 15%,transparent);border:1px solid color-mix(in srgb,var(--warn) 45%,var(--line))}
 .rec .done{background:color-mix(in srgb,var(--ok) 14%,transparent);border:1px solid color-mix(in srgb,var(--ok) 40%,var(--line));font-weight:600}
 .rec .linkish{align-self:flex-start;color:var(--muted);font-size:12.5px}
+.otbar{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;background:var(--ok);color:#fff;border-radius:12px;padding:10px 16px}
+.otbar > b{font-family:var(--f-display);font-size:24px;letter-spacing:.1em;text-transform:uppercase}
+.otbar span{font-size:14px;opacity:.95}
+.otbar .btn{margin-left:auto;background:transparent;color:#fff;border-color:rgba(255,255,255,.55)}
+.otbtn{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 50%,var(--line))}
+.chip.ot{background:var(--ok);color:#fff;border-color:var(--ok)}
+.chip.role.d-hotel{background:var(--ht);border-color:var(--ht)} .chip.role.d-tech{background:var(--tc);border-color:var(--tc)}
+.badge{font-style:normal;background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:0 6px;font-size:12px;font-family:var(--f-body);font-weight:700;margin-left:2px}
+.chat .panel-head .hint{font-size:13.5px;color:var(--muted)}
+.chat .radio{margin:0;font-size:12.5px;color:var(--muted);border-left:3px solid var(--warn);padding-left:8px}
+.mlist{display:flex;flex-direction:column;gap:8px;max-height:min(62vh,640px);min-height:240px;overflow-y:auto;padding:4px 2px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.msg{align-self:flex-start;max-width:min(560px,86%);background:var(--surface-2);border:1px solid var(--line);border-radius:12px 12px 12px 4px;padding:7px 11px;display:flex;flex-direction:column;gap:2px}
+.msg.mine{align-self:flex-end;background:color-mix(in srgb,var(--sea) 12%,var(--surface));border-radius:12px 12px 4px 12px}
+.msg .mh{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:13px}
+.msg .rk{color:var(--muted)} .msg .mt{margin-left:auto;color:var(--muted);font-size:11.5px}
+.msg p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.dept{font-size:10.5px;font-weight:700;letter-spacing:.08em;padding:1px 6px;border-radius:4px;color:#fff;background:var(--dk)}
+.dept.d-hotel{background:var(--ht)} .dept.d-tech{background:var(--tc)}
+.msep{align-self:center;font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:4px 0}
+.mempty{margin:auto;color:var(--muted);font-size:14px;padding:30px 0}
+.composer{display:flex;gap:8px;align-items:flex-end}
+.composer textarea{flex:1;min-width:0;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:10px 12px;resize:none;min-height:44px;max-height:140px}
 .offbar{background:var(--warn);color:#1a1200;font-weight:600;font-size:13.5px}
 .offbar .wrap{padding-block:6px}
 .board.ro .grow{grid-template-columns:minmax(170px,220px) repeat(3,minmax(0,1fr));grid-template-areas:"b s t h"}
@@ -377,7 +399,8 @@ tr.k-lower td,tr.k-hoist td{background:color-mix(in srgb,var(--accent) 8%,transp
   .grow.off .offc{grid-area:o;grid-column:auto;font-size:12.5px;gap:8px}
   .grow.off .offc .boat{width:60px}
   .tabs{width:100%;order:3}
-  .tabs a{flex:1;text-align:center;padding:5px 3px;font-size:14px}
+  .tabs a{flex:1;text-align:center;padding:5px 2px;font-size:13px;letter-spacing:.03em}
+  .mlist{max-height:58vh}
   .brand b{font-size:18px}
   .issue{grid-template-columns:auto minmax(0,1fr)}
   .issue .side-acts{grid-column:1/-1;flex-direction:row;justify-content:flex-end;flex-wrap:wrap}
@@ -404,7 +427,7 @@ const CONFIG = {
     messagingSenderId: "852203755618",
     appId: "1:852203755618:web:412e12fcc24a63e7ab993b"
   },
-  accounts: { bridge: "bridgeteam@tender-ops.app", view: "tenderview@tender-ops.app" },
+  accounts: { deck: "rpdeck@tender-ops.app", hotel: "rphotel@tender-ops.app", tech: "rptech@tender-ops.app" },
   shipName: "Royal Princess"
 };
 
@@ -483,12 +506,12 @@ function compute(day, events){
   let ashore = 0;
   const pont = pontoonsOf(day);
   const cycles = [], log = [], drivers = new Set();
-  let firstLowered = null, lastHoisted = null, recovery = {on:false, since:null}, lastDep = null;
+  let firstLowered = null, lastHoisted = null, recovery = {on:false, since:null}, lastDep = null, openTender = {on:false, since:null, by:""};
   const evs = (events || []).slice().sort((a,b) => a.t - b.t || a.c - b.c);
   const atBerth = (u, b) => { u.loc = "ship"; u.dir = null; u.berth = b; };
   for (const e of evs){
     let u = units[e.unit], text = "", kind = e.type, pax = null;
-    if (!u && !["sync","shore_add","pontoons","recovery"].includes(e.type)) continue;
+    if (!u && !["sync","shore_add","pontoons","recovery","opentender"].includes(e.type)) continue;
     switch (e.type){
       case "shore_add":
         units[e.unit] = u = mkUnit({id:e.unit, name:e.name, full:e.name, num:"", kind:"shore", side:"SHORE", active:true, cap:e.cap || SHORE_CAP, driver:e.driver || "", since:e.t});
@@ -542,6 +565,7 @@ function compute(day, events){
         pont.side = e.side || pont.side; pont.FWD = !!e.fwd; pont.MID = !!e.mid; kind = "pont";
         text = `Pontoons: ${pont.side} · FWD ${pont.FWD ? "open" : "closed"} · MIDSHIP ${pont.MID ? "open" : "closed"}`;
         break;
+      case "opentender": openTender = {on: !!e.on, since: e.on ? e.t : null, by: e.by || ""}; kind = "ot"; text = e.on ? `OPEN TENDER declared · ${e.by || ""}` : `Open Tender cancelled · ${e.by || ""}`; break;
       case "recovery": recovery = {on: !!e.on, since: e.on ? e.t : null}; kind = "pont"; text = e.on ? "Recovery started" : "Recovery ended"; break;
       case "cap": u.cap = e.cap; text = `Max load set to ${e.cap}`; break;
       case "driver": u.driver = e.driver; text = `Driver changed to ${e.driver}`; break;
@@ -565,7 +589,7 @@ function compute(day, events){
     cycleAvg = keep.reduce((a,b) => a+b, 0) / keep.length; cycleN = keep.length;
   }
   const s = (k) => list.reduce((a,u) => a + u[k], 0);
-  return {units, list, ashore, onTenders, aboard: total - ashore - onTenders, total, pont, occ, cycles, cycleAvg, cycleN, recovery, lastDep, log, drivers:[...drivers],
+  return {units, list, ashore, onTenders, aboard: total - ashore - onTenders, total, pont, occ, cycles, cycleAvg, cycleN, recovery, lastDep, openTender, log, drivers:[...drivers],
     tripsOut:s("tripsOut"), tripsBack:s("tripsBack"), paxOut:s("paxOut"), paxBack:s("paxBack"), firstLowered, lastHoisted};
 }
 const freeBerths = st => ["FWD","MID"].filter(b => st.pont[b] && !st.occ[b]);
@@ -655,7 +679,7 @@ function statusHTML(day, st, est, lastSync){
 
 /* ---------------- stores ---------------- */
 function createLocalStore(){
-  const KEY = "tom.demo.v2";
+  const KEY = "tom.demo.v3";
   let mem = null; const listeners = [];
   const read = () => { const s = lsGet(KEY); if (s){ try { return JSON.parse(s); } catch(e){} } return mem; };
   const db = () => read() || {days:{}, events:{}, issues:{}};
@@ -664,7 +688,7 @@ function createLocalStore(){
     const d = db();
     const days = Object.values(d.days).sort((a,b) => (b.date || "").localeCompare(a.date || "") || (b.openedAt||0) - (a.openedAt||0));
     const currentDay = days.find(x => x.status === "open") || null;
-    return {days, currentDay, events: currentDay ? (d.events[currentDay.id] || []) : [], issues: Object.values(d.issues).sort((a,b) => b.t - a.t), offline:false, pending:false};
+    return {days, currentDay, events: currentDay ? (d.events[currentDay.id] || []) : [], issues: Object.values(d.issues).sort((a,b) => b.t - a.t), messages: Object.values(d.messages || {}).sort((a,b) => a.t - b.t), offline:false, pending:false};
   }
   function emit(){ const s = snap(); listeners.forEach(f => f(s)); }
   window.addEventListener("storage", e => { if (e.key === KEY) emit(); });
@@ -681,6 +705,7 @@ function createLocalStore(){
     saveIssue: is => mut(d => { d.issues[is.id] = Object.assign({}, d.issues[is.id], clean(is)); }),
     deleteIssue: id => mut(d => { delete d.issues[id]; }),
     resetDay: dayId => mut(d => { d.events[dayId] = []; }),
+    saveMessage: m => mut(d => { (d.messages = d.messages || {})[m.id] = clean(m); }),
     deleteDay: dayId => mut(d => { delete d.events[dayId]; delete d.days[dayId]; }),
     getEvents: async dayId => (db().events[dayId] || []).slice()
   };
@@ -693,9 +718,9 @@ async function createFirebaseStore(){
   const fs = firebase.firestore();
   try { await fs.enablePersistence({synchronizeTabs:true}); } catch(e){}
   const auth = firebase.auth();
-  let days = [], events = [], issues = [], curId = null, unsubEv = null, unsubs = [], offline = !navigator.onLine, pending = false;
+  let days = [], events = [], issues = [], messages = [], curId = null, unsubEv = null, unsubs = [], offline = !navigator.onLine, pending = false;
   const listeners = [];
-  const emit = () => { const currentDay = days.find(d => d.status === "open") || null; const s = {days, currentDay, events: currentDay && currentDay.id === curId ? events : [], issues, offline, pending}; listeners.forEach(f => f(s)); };
+  const emit = () => { const currentDay = days.find(d => d.status === "open") || null; const s = {days, currentDay, events: currentDay && currentDay.id === curId ? events : [], issues, messages, offline, pending}; listeners.forEach(f => f(s)); };
   const fail = err => { console.error(err); toast(err.code === "permission-denied" ? "Access denied by the server" : "Sync error: " + (err.message || err)); };
   const dayRef = id => fs.collection("days").doc(id);
   function watchEvents(id){
@@ -713,8 +738,9 @@ async function createFirebaseStore(){
       emit();
     }, fail));
     unsubs.push(fs.collection("issues").orderBy("t","desc").limit(1000).onSnapshot(s => { issues = s.docs.map(d => d.data()); emit(); }, fail));
+    unsubs.push(fs.collection("messages").orderBy("t","desc").limit(300).onSnapshot(s => { messages = s.docs.map(d => d.data()).reverse(); emit(); }, fail));
   }
-  function stop(){ unsubs.forEach(u => u()); unsubs = []; if (unsubEv) unsubEv(); unsubEv = null; curId = null; days = []; events = []; issues = []; }
+  function stop(){ unsubs.forEach(u => u()); unsubs = []; if (unsubEv) unsubEv(); unsubEv = null; curId = null; days = []; events = []; issues = []; messages = []; }
   addEventListener("online", () => { offline = false; emit(); });
   addEventListener("offline", () => { offline = true; emit(); });
   const w = p => { p.catch(fail); return Promise.resolve(); };
@@ -730,6 +756,7 @@ async function createFirebaseStore(){
     deleteEvent: (dayId, id) => w(dayRef(dayId).collection("events").doc(id).delete()),
     saveIssue: is => w(fs.collection("issues").doc(is.id).set(clean(is), {merge:true})),
     deleteIssue: id => w(fs.collection("issues").doc(id).delete()),
+    saveMessage: m => w(fs.collection("messages").doc(m.id).set(clean(m))),
     resetDay: async dayId => { const snap = await dayRef(dayId).collection("events").get(); const docs = snap.docs;
       for (let i = 0; i < docs.length; i += 400){ const b = fs.batch(); docs.slice(i, i + 400).forEach(d => b.delete(d.ref)); await b.commit().catch(fail); } },
     deleteDay: async dayId => { const snap = await dayRef(dayId).collection("events").get(); const docs = snap.docs;
@@ -806,7 +833,7 @@ function makeSample(){
   out.days[pastId].summary = summaryOf(compute(out.days[pastId], pastEv));
 
   const start = now - 5.5 * 3600e3, last = now + 2 * 3600e3 + 10*M;
-  const id = "d" + uid();
+  const id = "d" + uid(); const id_ = id;
   out.days[id] = {id, port:"Kotor", date:ymd(start), total:4280, lastTender:fmtT(last), plannedCycle:32, side:"STBD", fwd:true, mid:true, status:"open", openedAt:start - 20*M};
   const ev = buildDay({total:4280, start, lastTender:last, end:now, complete:false, units:[
     {id:"T11", cap:170, driver:"Jeffery", off:0}, {id:"T14", cap:170, driver:"Said", off:5},
@@ -817,6 +844,11 @@ function makeSample(){
   // a realistic moment: MIDSHIP closed for swell, T11 alongside FWD, the shoretender waiting off the ship
   ev.push(mk("pontoons", null, now - 40*M, {side:"STBD", fwd:true, mid:false}));
   ev.push(mk("recovery", null, now - 25*M, {on:true}));
+  ev.push(mk("opentender", null, now - 150*M, {on:true, by:"HOTEL"}));
+  out.messages = {};
+  [[now - 140*M, "HOTEL", "Anna", "Shore Excursion Mgr", "Last excursion back at the pier 16:45, two coaches."],
+   [now - 128*M, "DECK", "Marco", "2/O", "Copied. We keep 3 tenders running until then."],
+   [now - 70*M, "TECH", "Paolo", "1st Engineer", "Tender 15 steering: will check at the next stop alongside."]].forEach(([t, dept, name, rank, text]) => { const id = "m" + uid() + Math.round(t); out.messages[id] = {id, t, dept, name, rank, text, dayId:id_, dev:"sample"}; });
   const lastOf = id => ev.filter(e => e.unit === id).sort((a,b) => a.t - b.t).pop();
   const l11 = lastOf("T11"); if (l11 && l11.type === "depart" && l11.dir === "ship") ev.push(mk("arrive", "T11", Math.max(l11.t + 8*M, now - 3*M), {at:"ship", berth:"FWD"}));
   const lS1 = lastOf("S1"); if (lS1 && lS1.type === "depart" && lS1.dir === "ship") ev.push(mk("arrive", "S1", Math.max(lS1.t + 8*M, now - 1*M), {at:"ship", berth:"SB"}));
@@ -838,10 +870,19 @@ function summaryOf(st){
 }
 
 /* ---------------- app state ---------------- */
-const S = {store:null, role:null, data:{days:[], currentDay:null, events:[], issues:[]}, view:"board", logUnit:"all", issueUnit:"all", issueStatus:"all", hist:null, histEvents:null, recOpen:false};
-const isAdmin = () => S.role === "admin";
+const S = {store:null, role:null, data:{days:[], currentDay:null, events:[], issues:[], messages:[]}, view:"board", logUnit:"all", issueUnit:"all", issueStatus:"all", hist:null, histEvents:null, recOpen:false};
+const isAdmin = () => S.role === "deck";
+const canIssues = () => S.role === "deck" || S.role === "tech";
+const canOpenTender = () => S.role === "deck" || S.role === "hotel";
+const DEPT = {deck:"DECK", hotel:"HOTEL", tech:"TECH"};
+const VIEWS = ["board","log","issues","chat","history"];
 let ST = null;
-function setData(d){ if (d.offline && !S.data.offline) S.offlineSince = Date.now(); if (!d.offline) S.offlineSince = null; S.data = d; ST = d.currentDay ? compute(d.currentDay, d.events) : null; render(); refreshSheet(); }
+function setData(d){
+  const me = deviceId(), prevMax = S.msgMax;
+  const ms = (d.messages || []); const max = ms.length ? ms[ms.length - 1].t : 0;
+  if (prevMax != null && S.view !== "chat"){ const nw = ms.filter(m => m.t > prevMax && m.dev !== me); if (nw.length){ const m = nw[nw.length - 1]; setTimeout(() => toast(`Message · ${m.dept} ${m.name}: ${m.text.slice(0, 60)}`), 0); } }
+  S.msgMax = max;
+  if (d.offline && !S.data.offline) S.offlineSince = Date.now(); if (!d.offline) S.offlineSince = null; S.data = d; ST = d.currentDay ? compute(d.currentDay, d.events) : null; render(); refreshSheet(); }
 
 /* ---------------- rendering ---------------- */
 function render(){
@@ -851,8 +892,11 @@ function render(){
   if (S.view === "board") body = boardHTML();
   else if (S.view === "log") body = logHTML();
   else if (S.view === "issues") body = issuesHTML();
+  else if (S.view === "chat") body = chatHTML();
   else body = historyHTML();
+  const ta = $("#chatText"), keep = ta ? {v: ta.value, f: document.activeElement === ta, s: ta.selectionStart} : null;
   app.innerHTML = headerHTML() + `<main class="wrap">${body}</main>`;
+  if (S.view === "chat") afterChatRender(keep);
 }
 
 function headerHTML(){
@@ -863,15 +907,63 @@ function headerHTML(){
   const tab = (id, label) => `<a href="#${id}" ${S.view === id ? 'aria-current="page"' : ""}>${label}</a>`;
   const openIssues = d.issues.filter(i => i.status === "open").length;
   const demo = S.store.mode === "demo" ? `<div class="demo"><div class="wrap"><span><b>Demo mode</b> · sample data on this device only.</span>
-    <span class="seg" role="group" aria-label="View as"><button data-act="demo-role" data-r="admin" aria-pressed="${S.role === "admin"}">Bridge</button><button data-act="demo-role" data-r="viewer" aria-pressed="${S.role === "viewer"}">Crew View</button></span>
+    <span class="seg" role="group" aria-label="View as">${["deck","hotel","tech"].map(r => `<button data-act="demo-role" data-r="${r}" aria-pressed="${S.role === r}">${DEPT[r][0] + DEPT[r].slice(1).toLowerCase()}</button>`).join("")}</span>
     <button class="linkish" data-act="demo-reset">Reset sample</button></div></div>` : "";
   return `<header class="top"><div class="wrap">
     <div class="brand">${boatSVG(false)}<div><b>Tender Ops Monitor</b><span>${esc(CONFIG.shipName)}</span></div></div>
-    <nav class="tabs">${tab("board","Board")}${tab("log","Log")}${tab("issues","Issues" + (openIssues ? " · " + openIssues : ""))}${tab("history","History")}</nav>
-    <div class="who">${conn}<span class="chip role">${isAdmin() ? "Bridge" : "Crew View"}</span>
+    <nav class="tabs">${tab("board","Board")}${tab("log","Log")}${tab("issues","Issues" + (openIssues ? " · " + openIssues : ""))}${tab("chat","Chat" + (unreadCount() ? ` <i class="badge">${unreadCount()}</i>` : ""))}${tab("history","History")}</nav>
+    <div class="who">${conn}${S.data.currentDay && ST && ST.openTender.on ? `<span class="chip ot">Open Tender</span>` : ""}<span class="chip role d-${S.role}">${DEPT[S.role]}</span>
       <button class="icon-btn" data-act="theme" title="Switch light / dark">${themeLabel()}</button>
       ${S.store.mode === "live" ? `<button class="icon-btn" data-act="signout">Sign out</button>` : ""}</div>
   </div></header>${demo}${S.store.mode === "live" && d.offline ? `<div class="offbar"><div class="wrap">Offline since ${fmtT(S.offlineSince || Date.now())} · showing the data as of then. ${isAdmin() ? "Entries are saved on this device and sync when the connection is back." : "Numbers may be out of date."}</div></div>` : ""}`;
+}
+
+/* ---------------- chat ---------------- */
+function deviceId(){ let d = lsGet("tom.dev"); if (!d){ d = "v" + uid(); lsSet("tom.dev", d); } return d; }
+function identity(){ try { return JSON.parse(lsGet("tom.id." + S.role) || "null"); } catch(e){ return null; } }
+function chatMsgs(){
+  const day = S.data.currentDay, since = Date.now() - 24 * 3600e3;
+  return (S.data.messages || []).filter(m => day ? m.dayId === day.id : m.t > since);
+}
+function unreadCount(){ const seen = +(lsGet("tom.seen") || 0), me = deviceId(); return chatMsgs().filter(m => m.t > seen && m.dev !== me).length; }
+function chatHTML(){
+  const id = identity(), me = deviceId(), msgs = chatMsgs();
+  let lastDate = "";
+  const list = msgs.length ? msgs.map(m => { const dt = new Date(m.t).toDateString(); const sep = dt !== lastDate ? `<div class="msep">${new Date(m.t).toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"})}</div>` : ""; lastDate = dt;
+      return `${sep}<div class="msg ${m.dev === me ? "mine" : ""}"><div class="mh"><span class="dept d-${String(m.dept).toLowerCase()}">${esc(m.dept)}</span><b>${esc(m.name)}</b>${m.rank ? `<span class="rk">${esc(m.rank)}</span>` : ""}<span class="mt mono">${fmtT(m.t)}</span></div><p>${esc(m.text)}</p></div>`; }).join("")
+    : `<div class="mempty">No messages yet${S.data.currentDay ? " today" : ""}.</div>`;
+  return `<section class="panel chat"><div class="panel-head"><h2>Chat</h2>
+      <span class="hint">${id ? `Writing as <b>${esc(id.name)}</b>${id.rank ? " · " + esc(id.rank) : ""} · ${DEPT[S.role]}` : `Set your name to write`}</span>
+      <button class="btn small" data-act="chat-id">${id ? "Change" : "Set name"}</button></div>
+    <p class="radio">For urgent or safety messages use the radio. Messages may arrive late if the connection drops.</p>
+    <div class="mlist" id="mlist">${list}</div>
+    <form class="composer" id="composer"><textarea id="chatText" rows="1" maxlength="500" placeholder="${id ? "Message" : "Set your name and rank first"}" ${id ? "" : "disabled"}></textarea><button class="btn primary" type="submit" ${id ? "" : "disabled"}>Send</button></form></section>`;
+}
+function afterChatRender(keep){
+  const ml = $("#mlist"); if (ml) ml.scrollTop = ml.scrollHeight;
+  const ta = $("#chatText");
+  if (ta && keep){ ta.value = keep.v; if (keep.f){ ta.focus(); try { ta.setSelectionRange(keep.s, keep.s); } catch(e){} } }
+  const last = chatMsgs().slice(-1)[0]; if (last && +(lsGet("tom.seen") || 0) < last.t){ lsSet("tom.seen", String(last.t)); }
+  const f = $("#composer");
+  if (f && !f.dataset.b){ f.dataset.b = 1;
+    f.addEventListener("submit", e => { e.preventDefault(); sendChat(); });
+    ta && ta.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey){ e.preventDefault(); sendChat(); } }); }
+  if (!identity()) setTimeout(() => { if (S.view === "chat" && !identity() && !$("#modal-root").innerHTML) identityModal(); }, 50);
+}
+function sendChat(){
+  const ta = $("#chatText"), id = identity(); if (!ta || !id) return;
+  const text = ta.value.trim(); if (!text) return;
+  ta.value = "";
+  S.store.saveMessage({id:"m" + uid(), t:Date.now(), dept:DEPT[S.role], name:id.name, rank:id.rank || "", text, dayId: S.data.currentDay ? S.data.currentDay.id : null, dev:deviceId()});
+}
+function identityModal(){
+  const id = identity() || {};
+  modal({title:"Who is writing?", submit:"Save",
+    body:`<p class="hint" style="margin:0">Several people share the ${DEPT[S.role]} login, so each message carries your name and rank. This device remembers them.</p>
+      <label class="fld"><span>Name</span><input id="mName" value="${esc(id.name || "")}" autocomplete="name" required></label>
+      <label class="fld"><span>Rank / position</span><input id="mRank" value="${esc(id.rank || "")}" placeholder="e.g. 2/O, Hotel Director, 1st Engineer"></label><div id="mWarn"></div>`,
+    onSubmit: f => { const name = f.querySelector("#mName").value.trim(); if (!name){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Enter your name.</div>`; return false; }
+      lsSet("tom.id." + S.role, JSON.stringify({name, rank: f.querySelector("#mRank").value.trim()})); setTimeout(render, 0); }});
 }
 
 function noDayHTML(){
@@ -892,14 +984,15 @@ function boardHTML(){
   const dayline = `<section class="dayline"><h1>${esc(day.port || "Tender day")}</h1>
     <span class="sub">${fmtDate(day.date)} · Last tender <b class="mono">${esc(day.lastTender || "—")}</b>${lastInfo}</span>
     ${st.log.length ? `<span class="sub">· Last entry <b class="mono">${fmtT(Math.max(...st.log.map(l => l.e.t)))}</b></span>` : ""}
-    <span class="spacer"></span><button class="btn small" data-act="legend">? Legend</button>${isAdmin() ? `<button class="btn small" data-act="edit-day">Edit day</button>` : ""}</section>`;
+    <span class="spacer"></span>${canOpenTender() && !st.openTender.on ? `<button class="btn small otbtn" data-act="ot-on">Open Tender…</button>` : ""}<button class="btn small" data-act="legend">? Legend</button>${isAdmin() ? `<button class="btn small" data-act="edit-day">Edit day</button>` : ""}</section>`;
 
   const tenders = st.list.filter(u => u.kind === "tender"), shores = st.list.filter(u => u.kind === "shore" && u.active);
   const head = `<div class="grow head"><div class="cb">Boat</div><div class="cs">${SHIP_ICON}Ship</div><div class="ct h-t">${SEA_ICON}In transit</div><div class="ch">${PIER_ICON}Shore</div><div class="ca"></div></div>`;
   const board = `<section class="board${isAdmin() ? "" : " ro"}" aria-label="Tender board">${head}${tenders.map(rowHTML).join("")}
     <div class="sep">Shoretenders ${isAdmin() ? `<button class="btn small" data-act="add-shore">+ Add shoretender</button>` : ""}</div>
     ${shores.length ? shores.map(rowHTML).join("") : `<div class="grow"><div class="cb"></div><div class="offc" style="grid-column:2 / -1;padding:12px;color:var(--muted);font-size:13.5px">No shoretenders today.</div></div>`}</section>`;
-  return dayline + statusPanel + board;
+  const ot = st.openTender.on ? `<section class="otbar"><b>Open Tender</b><span>since <b class="mono">${fmtT(st.openTender.since)}</b> · ${esc(st.openTender.by)}</span>${canOpenTender() ? `<button class="btn small" data-act="ot-off">Cancel…</button>` : ""}</section>` : "";
+  return dayline + ot + statusPanel + board;
 }
 
 function rowHTML(u){
@@ -969,18 +1062,18 @@ function issuesHTML(){
   const all = S.data.issues;
   const list = all.filter(i => (S.issueUnit === "all" || i.unitName === S.issueUnit) && (S.issueStatus === "all" || i.status === S.issueStatus));
   const units = issueUnits();
-  return `<section class="panel"><div class="panel-head"><h2>Tender issues</h2>
+  return `<section class="panel"><div class="panel-head"><h2>Tender issues · maintenance log</h2>
       <div class="filters">
         <select class="f" id="issueUnit" data-act="issue-unit" aria-label="Filter by unit"><option value="all">All units</option>${units.map(n => `<option value="${esc(n)}" ${S.issueUnit === n ? "selected" : ""}>${esc(fullName(n))}</option>`).join("")}</select>
         <select class="f" id="issueStatus" data-act="issue-status" aria-label="Filter by status">${[["all","Open + resolved"],["open","Open"],["resolved","Resolved"]].map(([v,l]) => `<option value="${v}" ${S.issueStatus === v ? "selected" : ""}>${l}</option>`).join("")}</select>
-        ${isAdmin() ? `<button class="btn primary" data-act="new-issue">Report issue</button>` : ""}</div></div>
+        ${canIssues() ? `<button class="btn primary" data-act="new-issue">Report issue</button>` : ""}</div></div>
     <div class="issues">${list.length ? list.map(i => {
       const repeat = all.filter(x => x.unitName === i.unitName && x.category === i.category && x.id !== i.id && x.t < i.t).length;
       return `<div class="issue"><div class="who2">${nameHTML(i.unitName)}</div>
       <div class="body"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="cat">${esc(i.category)}</span><span class="status ${i.status}">${i.status}</span>${repeat ? `<span class="pill warn">Seen ${repeat}× before on ${esc(fullName(i.unitName))}</span>` : ""}</div>
         <p>${esc(i.text)}</p><span class="when mono">${new Date(i.t).toLocaleDateString("en-GB", {day:"2-digit", month:"short", year:"numeric"})} · ${fmtT(i.t)}${i.port ? " · " + esc(i.port) : ""}</span>
         ${i.status === "resolved" && (i.resolution || i.resolvedAt) ? `<div class="res">${i.resolvedAt ? `<span class="mono">${fmtT(i.resolvedAt)}</span> ` : ""}${esc(i.resolution || "Resolved")}</div>` : ""}</div>
-      ${isAdmin() ? `<div class="side-acts">${i.status === "open" ? `<button class="btn small" data-act="resolve" data-id="${i.id}">Resolve</button>` : `<button class="btn small" data-act="reopen" data-id="${i.id}">Reopen</button>`}<button class="btn small" data-act="edit-issue" data-id="${i.id}">Edit</button></div>` : ""}</div>`;
+      ${canIssues() ? `<div class="side-acts">${i.status === "open" ? `<button class="btn small" data-act="resolve" data-id="${i.id}">Resolve</button>` : `<button class="btn small" data-act="reopen" data-id="${i.id}">Reopen</button>`}<button class="btn small" data-act="edit-issue" data-id="${i.id}">Edit</button></div>` : ""}</div>`;
     }).join("") : `<div class="emptystate" style="padding:24px"><p>No issues match this filter.</p></div>`}</div></section>`;
 }
 function historyHTML(){
@@ -1005,7 +1098,7 @@ function historyHTML(){
 function loginHTML(){
   return `<div class="wrap login"><form id="loginForm" autocomplete="on">
     <div style="display:flex;gap:10px;align-items:center">${boatSVG(false).replace('class="boat ', 'style="width:80px" class="boat ')}<h1>Tender Ops<br>Monitor</h1></div>
-    <div class="fld"><span>Access</span><select id="lgRole"><option value="bridge">Bridge (edit)</option><option value="view">Crew View (read only)</option></select></div>
+    <div class="fld"><span>Access</span><select id="lgRole"><option value="deck">Deck / Bridge (full access)</option><option value="hotel">Hotel (view, Open Tender, chat)</option><option value="tech">Tech (view, maintenance log, chat)</option></select></div>
     <div class="fld"><span>Password</span><input id="lgPw" type="password" autocomplete="current-password" required></div>
     <div class="err" id="lgErr" role="alert"></div>
     <button class="btn primary" type="submit">Sign in</button>
@@ -1225,7 +1318,7 @@ function sheetModal(u){
         <button type="button" class="btn" data-m="cap">Set max load (now ${u.cap ?? "—"})</button>
         <button type="button" class="btn" data-m="issue">Report issue</button>
         ${canHoist ? `<button type="button" class="btn danger" data-m="stow">${u.kind === "tender" ? "Hoist · not in service" : "Release from service"}</button>` : `<span class="hint">${u.kind === "tender" ? "Hoist" : "Release"} is available when the boat is at the ship and empty.</span>`}</div>`
-      : isAdmin() ? `<div class="menu-list"><button type="button" class="btn" data-m="issue">Report issue</button></div>` : ""}`,
+      : canIssues() ? `<div class="menu-list"><button type="button" class="btn" data-m="issue">Report issue</button></div>` : ""}`,
     onOpen: f => {
       f.dataset.nofocus = 1;
       const sn = f.querySelector("#mSaveNote"); if (sn) sn.addEventListener("click", () => { addEv("note", u.id, {text: f.querySelector("#mNote").value.trim()}, Date.now()); closeModal(); toast("Note saved"); });
@@ -1340,6 +1433,13 @@ document.addEventListener("click", e => {
     case "rec-start": addEv("recovery", null, {on:true}, null, "Recovery started"); break;
     case "rec-stop": addEv("recovery", null, {on:false}, null, "Recovery ended"); break;
     case "legend": legendModal(); break;
+    case "chat-id": identityModal(); break;
+    case "ot-on": modal({title:"Declare Open Tender", submit:"Declare Open Tender",
+        body:`<p style="margin:0">Guests no longer need tender tickets and go straight to the pontoon. Open Tender stays on for the rest of the day.</p><p class="hint" style="margin:0">Declared by ${DEPT[S.role]}.</p>`,
+        onSubmit: () => { addEv("opentender", null, {on:true, by: DEPT[S.role]}); toast("Open Tender declared"); }}); break;
+    case "ot-off": modal({title:"Cancel Open Tender?", submit:"Cancel Open Tender", danger:true,
+        body:`<div class="warnbox">Open Tender is normally valid for the whole day. Cancel it only if it was declared by mistake or tender tickets are needed again.</div>`,
+        onSubmit: () => { addEv("opentender", null, {on:false, by: DEPT[S.role]}); toast("Open Tender cancelled"); }}); break;
     case "pontoons": pontoonModal(); break;
     case "sheet": sheetModal(u); break;
     case "depart-shore": departModal(u, "shore"); break;
@@ -1381,7 +1481,7 @@ async function openHist(id){
 }
 function route(){
   const h = (location.hash || "").replace("#", "");
-  S.view = ["board","log","issues","history"].includes(h) ? h : "board";
+  S.view = VIEWS.includes(h) ? h : "board";
   if (S.view !== "history"){ S.hist = null; S.histEvents = null; }
   render(); window.scrollTo(0, 0);
 }
@@ -1392,20 +1492,21 @@ setInterval(() => { if (S.role && !$("#modal-root").innerHTML && S.view === "boa
 (async function boot(){
   applyTheme();
   const h = (location.hash || "").replace("#", "");
-  S.view = ["board","log","issues","history"].includes(h) ? h : "board";
+  S.view = VIEWS.includes(h) ? h : "board";
   if (CONFIG.firebase){
     $("#app").innerHTML = `<div class="wrap login"><p>Connecting…</p></div>`;
     try { S.store = await createFirebaseStore(); }
     catch(e){ $("#app").innerHTML = `<div class="wrap login"><div class="emptystate"><h2>Cannot reach the server</h2><p>${esc(e.message)}. Check the ship’s internet connection and reload.</p></div></div>`; return; }
     S.store.onChange(setData);
     S.store.onAuth(user => {
-      S.role = user ? (user.email === CONFIG.accounts.bridge ? "admin" : "viewer") : null;
-      if (!user){ S.data = {days:[], currentDay:null, events:[], issues:[]}; ST = null; }
+      S.role = user ? (Object.keys(CONFIG.accounts).find(k => CONFIG.accounts[k] === user.email) || null) : null;
+      if (user && !S.role){ toast("This account has no access"); S.store.signOut(); }
+      if (!user){ S.data = {days:[], currentDay:null, events:[], issues:[], messages:[]}; ST = null; }
       render(); if (user) keepAwake();
     });
   } else {
     S.store = createLocalStore();
-    S.role = "admin";
+    S.role = "deck";
     S.store.seedIfEmpty();
     S.store.onChange(setData);
   }
