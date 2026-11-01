@@ -102,6 +102,11 @@ main{padding-block:12px 70px;display:flex;flex-direction:column;gap:12px}
 .dayline .sub{color:var(--muted);font-size:14px}
 .dayline .sub b{color:var(--ink);font-weight:600}
 .dayline .spacer{flex:1}
+.dinfo{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.dinfo > span{font-size:13.5px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 10px;white-space:nowrap;color:var(--muted)}
+.dinfo b{color:var(--ink);font-weight:700}
+.dinfo .chn{background:var(--ink);color:color-mix(in srgb,var(--surface) 75%,transparent);border-color:var(--ink)}
+.dinfo .chn b{color:var(--surface)}
 .dayline .btn{align-self:center}
 
 /* status panel: people | pontoons | recovery */
@@ -702,7 +707,7 @@ function statusHTML(day, st, est, lastSync){
 
 /* ---------------- stores ---------------- */
 function createLocalStore(){
-  const KEY = "tom.demo.v4";
+  const KEY = "tom.demo.v5";
   let mem = null; const listeners = [];
   const read = () => { const s = lsGet(KEY); if (s){ try { return JSON.parse(s); } catch(e){} } return mem; };
   const db = () => read() || {days:{}, events:{}, issues:{}};
@@ -857,10 +862,7 @@ function makeSample(){
 
   const start = now - 5.5 * 3600e3, last = now + 2 * 3600e3 + 10*M;
   const id = "d" + uid(); const id_ = id;
-  out.days[id] = {id, port:"Kotor", date:ymd(start), total:4280, lastTender:fmtT(last), plannedCycle:32, side:"STBD", fwd:true, mid:true, status:"open", openedAt:start - 20*M,
-    brief:{firstTender:"08:00", allAboard:"17:00", departure:"17:30", anchorage:"Inner bay, 0.6 nm off Kotor old town", landing:"Kotor main pier, tender berths 1–2", route:"Straight run from anchorage to the pier, about 0.6 nm, 10–12 min. Keep clear of the ferry lane on the east side.", hazards:"Shallow patch marked by yellow buoy north of the route. Ferry traffic every 30 min.",
-      vhfTenders:"Ch 72", vhfShore:"Ch 72", vhfPort:"Ch 16 / 12 Kotor Port Control", shoreParty:"2/O Marco + 2 deck crew", weather:"NW 8–12 kn, sea slight, good visibility. Afternoon gusts to 18 kn possible.", tide:"Negligible", sun:"Sunset 16:52",
-      tickets:"Tender tickets from 07:30 in the Theatre until Open Tender is declared.", excursions:"Last excursion coaches back at the pier 16:45.", notes:"Port requires tenders at 5 kn max inside the breakwater.", updatedAt: start, by:"Marco · 2/O"}};
+  out.days[id] = {id, port:"Kotor", date:ymd(start), total:4280, lastTender:fmtT(last), plannedCycle:32, side:"STBD", fwd:true, mid:true, status:"open", openedAt:start - 20*M, allAboard:fmtT(last - 30*M), departure:fmtT(last), vhf:"72", uhf:"3"};
   const ev = buildDay({total:4280, start, lastTender:last, end:now, complete:false, units:[
     {id:"T11", cap:170, driver:"Jeffery", off:0}, {id:"T14", cap:170, driver:"Said", off:5},
     {id:"T15", cap:170, driver:"John", off:10}, {id:"T17", cap:170, driver:"Tesorio", off:16},
@@ -901,7 +903,7 @@ const isAdmin = () => S.role === "deck";
 const canIssues = () => S.role === "deck" || S.role === "tech";
 const canOpenTender = () => S.role === "deck" || S.role === "hotel";
 const DEPT = {deck:"DECK", hotel:"HOTEL", tech:"TECH"};
-const VIEWS = ["board","brief","log","issues","chat","history"];
+const VIEWS = ["board","log","issues","chat","history"];
 let ST = null;
 function setData(d){
   const me = deviceId(), prevMax = S.msgMax;
@@ -919,7 +921,6 @@ function render(){
   else if (S.view === "log") body = logHTML();
   else if (S.view === "issues") body = issuesHTML();
   else if (S.view === "chat") body = chatHTML();
-  else if (S.view === "brief") body = briefHTML(S.data.currentDay, true);
   else body = historyHTML();
   const ta = $("#chatText"), keep = ta ? {v: ta.value, f: document.activeElement === ta, s: ta.selectionStart} : null;
   app.innerHTML = headerHTML() + `<main class="wrap">${body}</main>`;
@@ -938,7 +939,7 @@ function headerHTML(){
     <button class="linkish" data-act="demo-reset">Reset sample</button></div></div>` : "";
   return `<header class="top"><div class="wrap">
     <div class="brand">${boatSVG(false)}<div><b>Tendering Operations</b><span>${esc(CONFIG.shipName)}</span></div></div>
-    <nav class="tabs">${tab("board","Board")}${tab("brief","Brief")}${tab("log","Log")}${tab("issues","Issues" + (openIssues ? ` <i class="badge warnb">${openIssues}</i>` : ""))}${tab("chat","Chat" + (unreadCount() ? ` <i class="badge">${unreadCount()}</i>` : ""))}${tab("history","History")}</nav>
+    <nav class="tabs">${tab("board","Board")}${tab("log","Log")}${tab("issues","Issues" + (openIssues ? ` <i class="badge warnb">${openIssues}</i>` : ""))}${tab("chat","Chat" + (unreadCount() ? ` <i class="badge">${unreadCount()}</i>` : ""))}${tab("history","History")}</nav>
     <div class="who">${conn}${S.data.currentDay && ST && ST.openTender.on ? `<span class="chip ot">Open Tender</span>` : ""}<span class="chip role d-${S.role}">${DEPT[S.role]}</span>
       <button class="icon-btn" data-act="theme" title="Switch light / dark">${themeLabel()}</button>
       ${S.store.mode === "live" ? `<button class="icon-btn" data-act="signout">Sign out</button>` : ""}</div>
@@ -993,42 +994,6 @@ function identityModal(){
       lsSet("tom.id." + S.role, JSON.stringify({name, rank: f.querySelector("#mRank").value.trim()})); setTimeout(render, 0); }});
 }
 
-/* ---------------- port brief ---------------- */
-const BRIEF = [
-  {g:"Times", f:[["firstTender","First tender to shore","time"],["allAboard","All aboard","time"],["departure","Ship departure","time"]]},
-  {g:"Anchorage & landing", f:[["anchorage","Anchorage / position"],["landing","Landing point (pier, jetty)"],["route","Tender route, distance, transit time","area"],["hazards","Hazards, no-go areas, marks","area"]]},
-  {g:"Communications", f:[["vhfTenders","VHF tenders"],["vhfShore","VHF shore party"],["vhfPort","VHF port / pilot"],["shoreParty","Shore party in charge"]]},
-  {g:"Weather & sea", f:[["weather","Forecast (wind, sea, visibility)","area"],["tide","Tide / current"],["sun","Sunrise / sunset"]]},
-  {g:"Hotel & guests", f:[["tickets","Tender tickets / guest flow","area"],["excursions","Excursions and last coach back","area"]]},
-  {g:"Notes", f:[["local","Local regulations & environmental notes","area"],["notes","Other notes","area"]]}
-];
-function briefHTML(d, page){
-  if (!d) return page ? noDayHTML() : "";
-  const b = d.brief || {};
-  const filled = BRIEF.map(g => ({g:g.g, f:g.f.filter(([k]) => (b[k] || "").trim())})).filter(g => g.f.length);
-  const head = page ? `<div class="panel-head"><h2>Port brief · ${esc(d.port)}</h2><button class="icon-btn hbtn" data-act="help" data-k="brief" aria-label="Help">?</button>
-      ${isAdmin() && d.status === "open" ? `<button class="btn primary" data-act="edit-brief">Edit brief</button>` : ""}</div>` : `<h3 class="bh">Port brief</h3>`;
-  const top = `<div class="bkey"><div><span>Port</span><b>${esc(d.port)}</b></div><div><span>Date</span><b>${fmtDate(d.date)}</b></div>
-      <div><span>Last tender</span><b class="mono">${esc(d.lastTender || "—")}</b></div><div><span>Pontoon side</span><b>${d.side === "PORT" ? "Port" : "Starboard"}</b></div>
-      ${(b.firstTender || "") ? `<div><span>First tender</span><b class="mono">${esc(b.firstTender)}</b></div>` : ""}${(b.allAboard || "") ? `<div><span>All aboard</span><b class="mono">${esc(b.allAboard)}</b></div>` : ""}${(b.departure || "") ? `<div><span>Departure</span><b class="mono">${esc(b.departure)}</b></div>` : ""}</div>`;
-  const groups = filled.filter(g => g.g !== "Times").map(g => `<div class="bgroup"><h4>${g.g}</h4>${g.f.map(([k, l]) => `<div class="bf"><span>${esc(l)}</span><p>${esc(b[k])}</p></div>`).join("")}</div>`).join("");
-  const empty = !groups ? `<p class="hint" style="margin:0">${isAdmin() && d.status === "open" ? "No brief yet. Tap <b>Edit brief</b> to add anchorage, route, VHF channels, weather and notes for the day." : "The Deck has not written a brief for today yet."}</p>` : "";
-  return page ? `<section class="panel brief">${head}${top}${empty}<div class="bgrid">${groups}</div>
-      ${b.updatedAt ? `<p class="hint" style="margin:0">Updated ${fmtT(b.updatedAt)}${b.by ? " · " + esc(b.by) : ""}</p>` : ""}</section>`
-    : (groups || b.firstTender ? `<div class="brief">${head}${top}<div class="bgrid">${groups}</div></div>` : "");
-}
-function briefModal(){
-  const d = day(), b = d.brief || {};
-  const fld = ([k, l, t]) => t === "area" ? `<label class="fld"><span>${esc(l)}</span><textarea id="b_${k}" rows="2">${esc(b[k] || "")}</textarea></label>`
-    : t === "time" ? `<label class="fld"><span>${esc(l)} (24h)</span>${hmInput("b_" + k, b[k] || "")}</label>` : `<label class="fld"><span>${esc(l)}</span><input id="b_${k}" value="${esc(b[k] || "")}"></label>`;
-  modal({title:`Port brief · ${d.port}`, submit:"Save brief",
-    body: BRIEF.map(g => `<h4 class="mg">${g.g}</h4>${g.g === "Times" ? `<div class="three">${g.f.map(fld).join("")}</div>` : g.f.map(fld).join("")}`).join(""),
-    onOpen: f => { f.dataset.nofocus = 1; },
-    onSubmit: f => { const nb = {}; BRIEF.forEach(g => g.f.forEach(([k, , t]) => { const v = f.querySelector("#b_" + k).value.trim(); nb[k] = t === "time" ? (normHM(v) || v) : v; }));
-      const id = identity(); nb.updatedAt = Date.now(); nb.by = id ? id.name + (id.rank ? " · " + id.rank : "") : "Deck";
-      S.store.saveDay({id: d.id, brief: nb}); toast("Brief saved"); }});
-}
-
 function noDayHTML(){
   return `<div class="emptystate">${boatSVG(false)}<h2>No tender operation open</h2>
     <p>${isAdmin() ? "Open a tender day to start logging lowering times, trips and passengers." : "The board fills in as soon as the Bridge opens today’s tender operation."}</p>
@@ -1045,7 +1010,8 @@ function boardHTML(){
   const statusPanel = statusHTML(day, st, est, lastSync);
   const lastInfo = est.remain != null ? (est.remain > 0 ? ` (in ${fmtDur(est.remain)})` : " (passed)") : "";
   const dayline = `<section class="dayline"><h1>${esc(day.port || "Tender day")}</h1>
-    <span class="sub">${fmtDate(day.date)} · Last tender <b class="mono">${esc(day.lastTender || "—")}</b>${lastInfo}</span>
+    <span class="sub">${fmtDate(day.date)}</span>
+    <span class="dinfo"><span>Last tender <b class="mono">${esc(day.lastTender || "—")}</b>${lastInfo}</span>${day.allAboard ? `<span>All aboard <b class="mono">${esc(day.allAboard)}</b></span>` : ""}${day.departure ? `<span>Departure <b class="mono">${esc(day.departure)}</b></span>` : ""}${day.vhf ? `<span class="chn">VHF&nbsp;<b>${esc(day.vhf)}</b></span>` : ""}${day.uhf ? `<span class="chn">UHF&nbsp;<b>${esc(day.uhf)}</b></span>` : ""}</span>
     ${st.log.length ? `<span class="sub">· Last entry <b class="mono">${fmtT(Math.max(...st.log.map(l => l.e.t)))}</b></span>` : ""}
     <span class="spacer"></span>${canOpenTender() && !st.openTender.on ? `<button class="btn small otbtn" data-act="ot-on">Open Tender…</button>` : ""}<button class="btn small" data-act="legend">? Legend</button>${isAdmin() ? `<button class="btn small" data-act="edit-day">Edit day</button><button class="btn small danger" data-act="close-day">Close day…</button>` : ""}</section>`;
 
@@ -1148,7 +1114,6 @@ function historyHTML(){
     return `<section class="panel"><div class="panel-head"><button class="btn" data-act="hist-back">← All days</button><h2>${esc(d.port)} · ${fmtDate(d.date)}</h2>
       <span class="status ${d.status === "open" ? "open" : "resolved"}">${d.status === "open" ? "In progress" : "Closed"}</span><button class="btn" data-act="csv-hist">Export CSV</button>${isAdmin() ? `<button class="btn danger" data-act="del-day">Delete day</button>` : ""}</div>
       <div class="sumgrid">${sumTiles(summaryOf(st))}<div><span>Total (ref)</span><b>${num(d.total)}</b></div></div>
-      ${briefHTML(d, false)}
       <div class="tablebox"><table><thead><tr><th>Time</th><th>Unit</th><th>Event</th><th style="text-align:right">Pax</th><th>Driver</th></tr></thead><tbody>${logRows(st, {unit:"all", edit:false})}</tbody></table></div></section>`;
   }
   const days = S.data.days;
@@ -1325,6 +1290,8 @@ function dayModal(existing){
     body: `<label class="fld"><span>Port</span><input id="mPort" value="${esc(d.port || "")}" placeholder="e.g. Kotor" required></label>
       <div class="two"><label class="fld"><span>Date</span><input id="mDate" type="date" value="${esc(d.date || ymd(Date.now()))}"></label>
       <label class="fld"><span>Last tender (24h)</span>${hmInput("mLast", d.lastTender || "")}</label></div>
+      <div class="two"><label class="fld"><span>All aboard (24h)</span>${hmInput("mAA", d.allAboard || "")}</label><label class="fld"><span>Ship departure (24h)</span>${hmInput("mDep", d.departure || "")}</label></div>
+      <div class="two"><label class="fld"><span>VHF channel</span><input id="mVhf" value="${esc(d.vhf || "")}" placeholder="e.g. 72"></label><label class="fld"><span>UHF channel</span><input id="mUhf" value="${esc(d.uhf || "")}" placeholder="e.g. 3"></label></div>
       <label class="fld"><span>Total on board (guests + crew)</span><input id="mTot" type="number" inputmode="numeric" min="0" value="${esc(d.total ?? "")}"><span class="hint">Reference only, from the ship’s system.</span></label>
       ${existing ? "" : `<div class="fld"><span>Pontoon side</span><div class="choice" id="mSide" data-val="${d.side}" style="grid-template-columns:1fr 1fr"><button type="button" data-berth="PORT" aria-pressed="false">Port</button><button type="button" data-berth="STBD" aria-pressed="true">Starboard</button></div></div>
       <div class="toggles"><label><input type="checkbox" id="mFwd" checked>FWD pontoon</label><label><input type="checkbox" id="mMid" checked>MIDSHIP pontoon</label></div>`}
@@ -1333,7 +1300,7 @@ function dayModal(existing){
     onSubmit: f => {
       const port = f.querySelector("#mPort").value.trim();
       if (!port){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Enter the port.</div>`; return false; }
-      const rec = {port, date: f.querySelector("#mDate").value || ymd(Date.now()), lastTender: normHM(f.querySelector("#mLast").value) || "", total: parseInt(f.querySelector("#mTot").value, 10) || 0};
+      const rec = {port, date: f.querySelector("#mDate").value || ymd(Date.now()), lastTender: normHM(f.querySelector("#mLast").value) || "", allAboard: normHM(f.querySelector("#mAA").value) || "", departure: normHM(f.querySelector("#mDep").value) || "", vhf: f.querySelector("#mVhf").value.trim(), uhf: f.querySelector("#mUhf").value.trim(), total: parseInt(f.querySelector("#mTot").value, 10) || 0};
       if (existing) S.store.saveDay(Object.assign({id: existing.id}, rec));
       else S.store.saveDay(Object.assign({id: "d" + uid(), status:"open", openedAt: Date.now(), side: f.querySelector("#mSide").dataset.val, fwd: f.querySelector("#mFwd").checked, mid: f.querySelector("#mMid").checked}, rec));
       toast(existing ? "Day updated" : `Tender day open · ${port}`);
@@ -1357,7 +1324,7 @@ function deleteDayModal(d){
 function closeDayModal(){
   const st = ST, active = st.list.filter(u => u.active);
   confirmTyped({title:"Close tender day", word:"CONFIRM", button:"Close day",
-    text:`${active.length ? `<b>${active.map(u => esc(u.full)).join(", ")}</b> still in service. ` : ""}${st.ashore > 0 ? `<b>${num(st.ashore)}</b> still counted ashore. ` : ""}The day of ${esc(day().port)} moves to History with its full log, brief and chat. The board stays empty until a new day is opened.`,
+    text:`${active.length ? `<b>${active.map(u => esc(u.full)).join(", ")}</b> still in service. ` : ""}${st.ashore > 0 ? `<b>${num(st.ashore)}</b> still counted ashore. ` : ""}The day of ${esc(day().port)} moves to History with its full log and chat. The board stays empty until a new day is opened.`,
     onConfirm: () => { S.store.saveDay({id: day().id, status:"closed", closedAt: Date.now(), summary: summaryOf(st)}); toast("Day closed and saved to History"); location.hash = "history"; }});
 }
 
@@ -1421,7 +1388,7 @@ function legendModal(){
       <div><span class="lgchip ot">Open Tender</span><p>Declared by Hotel or Deck: no tender tickets needed, guests go straight to the pontoon. Valid for the rest of the day.</p></div>
       <div><span class="lgchip off">Offline</span><p>Connection lost. Numbers may be out of date; Deck entries sync when the connection returns.</p></div>
       <h4>Who can do what</h4>
-      <div><b class="lgnum">Deck</b><p>Everything: the board, counts, pontoons, recovery, corrections, brief, issues, chat.</p></div>
+      <div><b class="lgnum">Deck</b><p>Everything: the board, counts, pontoons, recovery, corrections, day info, issues, chat.</p></div>
       <div><b class="lgnum">Hotel</b><p>Sees everything. Declares Open Tender. Uses the chat.</p></div>
       <div><b class="lgnum">Tech</b><p>Sees everything. Writes and resolves entries in the maintenance log (Issues). Uses the chat.</p></div></div>`});
 }
@@ -1441,11 +1408,8 @@ const HELP = {
     <li><b>Enter</b> sends, <b>Shift+Enter</b> starts a new line.</li><li>A number on the Chat tab counts unread messages; a notice appears when one arrives on another page.</li>
     <li>For anything urgent or safety related use the radio: if the connection drops, messages arrive late.</li></ul>`},
   history:{t:"History", b:`<p>Closed tender days, newest first, with trips, pax ashore and average round trip.</p>
-    <ul><li>Open a day for its summary, brief and full log.</li><li><b>Export CSV</b> downloads that day’s log.</li>
-    <li><b>Deck</b>: <b>Delete day</b> removes a test or duplicate day (type DELETE). Issues are kept.</li></ul>`},
-  brief:{t:"Port brief", b:`<p>The key information for today’s tender port, in one place for Deck, Hotel and Tech.</p>
-    <ul><li><b>Deck</b> fills it in with <b>Edit brief</b>: times, anchorage and landing, route, communications, weather, tide, hazards, shore party and notes. Empty fields are not shown.</li>
-    <li>Port, date, last tender and pontoon side come from the tender day.</li><li>The brief is kept with the day in History.</li></ul>`}
+    <ul><li>Open a day for its summary and full log.</li><li><b>Export CSV</b> downloads that day’s log.</li>
+    <li><b>Deck</b>: <b>Delete day</b> removes a test or duplicate day (type DELETE). Issues are kept.</li></ul>`}
 };
 function helpModal(k){ const h = HELP[k]; if (h) modal({title: h.t, submit:null, body:`<div class="helptxt">${h.b}</div>`}); }
 function refreshSheet(){ /* keep an open sheet static; data refresh is shown on the board */ }
@@ -1535,7 +1499,6 @@ document.addEventListener("click", e => {
     case "rec-stop": addEv("recovery", null, {on:false}, null, "Recovery ended"); break;
     case "legend": legendModal(); break;
     case "help": helpModal(el.dataset.k); break;
-    case "edit-brief": briefModal(); break;
     case "chat-id": identityModal(); break;
     case "ot-on": modal({title:"Declare Open Tender", submit:"Declare Open Tender",
         body:`<p style="margin:0">Guests no longer need tender tickets and go straight to the pontoon. Open Tender stays on for the rest of the day.</p><p class="hint" style="margin:0">Declared by ${DEPT[S.role]}.</p>`,
