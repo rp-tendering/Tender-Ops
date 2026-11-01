@@ -53,6 +53,7 @@ body{color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.4;-
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
 button,input,select,textarea{font:inherit;color:inherit}
 .mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.sn{display:none}
 .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:1500px;margin:0 auto}
 :focus-visible{outline:2px solid var(--sea);outline-offset:2px}
 
@@ -60,7 +61,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
 .top .wrap{display:flex;align-items:center;gap:10px 14px;padding-block:8px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:10px;margin-right:auto;min-width:0}
-.brand svg{width:54px;height:20px;flex:none}
+.brand svg{width:56px;height:22px;flex:none}
 .brand b{font-family:var(--f-display);font-weight:700;font-size:21px;letter-spacing:.03em;text-transform:uppercase;line-height:1;white-space:nowrap}
 .brand span{display:block;font-size:11px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
 .tabs{display:flex;gap:2px;background:var(--surface-2);border:1px solid var(--line);border-radius:9px;padding:3px}
@@ -101,33 +102,67 @@ main{padding-block:12px 70px;display:flex;flex-direction:column;gap:12px}
 .dayline .sub{color:var(--muted);font-size:14px}
 .dayline .sub b{color:var(--ink);font-weight:600}
 .dayline .spacer{flex:1}
+.dayline .btn{align-self:center}
 
-/* status strip */
-.strip{display:flex;align-items:stretch;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-.m{display:flex;flex-direction:column;justify-content:center;padding:7px 14px;border-right:1px solid var(--line);min-width:0}
-.m .l{font-family:var(--f-display);font-weight:600;font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
-.m .l small{font-family:var(--f-body);font-size:10.5px;letter-spacing:.03em;text-transform:none;font-weight:500;margin-left:4px}
-.m .v{font-family:var(--f-display);font-weight:700;font-size:25px;line-height:1.05;font-variant-numeric:tabular-nums;white-space:nowrap}
-.m.ashore{background:var(--ink);color:var(--surface);flex-direction:row;align-items:center;gap:12px}
+/* status panel: people | pontoons | recovery */
+.deck{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr) minmax(0,1.15fr);background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.sec{min-width:0;border-left:1px solid var(--line)}
+.sec:first-child{border-left:0}
+.sh{display:flex;align-items:center;gap:8px;font-family:var(--f-display);font-weight:700;font-size:13.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);min-height:26px}
+.sh .btn{margin-left:auto;font-family:var(--f-body);letter-spacing:0;text-transform:none;min-height:26px;padding:3px 10px}
+.people{display:grid;grid-template-columns:1.35fr 1fr 1fr 1fr}
+.m{display:flex;flex-direction:column;justify-content:center;padding:9px 14px;border-left:1px solid var(--line);min-width:0}
+.m:first-child{border-left:0}
+.m .l{font-family:var(--f-display);font-weight:600;font-size:13px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.m .v{font-family:var(--f-display);font-weight:700;font-size:28px;line-height:1.05;font-variant-numeric:tabular-nums;white-space:nowrap}
+.m .q{font-size:11px;color:var(--muted)}
+.m.ashore{background:var(--ink);color:var(--surface);flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
 .m.ashore .l{color:color-mix(in srgb,var(--surface) 70%,transparent)}
-.m.ashore .v{color:var(--accent);font-size:32px}
+.m.ashore .v{color:var(--accent);font-size:34px}
 .m.ashore .sync{background:transparent;color:inherit;border-color:color-mix(in srgb,var(--surface) 35%,transparent)}
 .m.ashore .sync:hover{background:color-mix(in srgb,var(--surface) 12%,transparent)}
 .m .s{font-size:11px;color:color-mix(in srgb,var(--surface) 65%,transparent);white-space:nowrap}
-.m.rec{flex:1;flex-direction:row;align-items:center;gap:10px;border-right:0;flex-wrap:wrap}
-.recbtn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface-2);border-radius:999px;padding:5px 12px;font-weight:600;cursor:pointer;font-size:14px;text-align:left}
-.recbtn .dotc{width:9px;height:9px;border-radius:50%;flex:none}
-.recbtn .dotc.ok{background:var(--ok)} .recbtn .dotc.warn{background:var(--warn)} .recbtn .dotc.crit{background:var(--crit)} .recbtn .dotc.none{background:var(--muted)}
-.recbtn .chev{color:var(--muted);font-size:12px}
-.recd{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;display:flex;gap:10px 22px;flex-wrap:wrap;align-items:center;font-size:14px}
-.recd div{display:flex;flex-direction:column}
-.recd span{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
-.recd b{font-family:var(--f-display);font-size:21px;font-weight:700;font-variant-numeric:tabular-nums}
-.recd p{margin:0;flex-basis:100%;color:var(--muted)}
-
-/* pontoons */
-.pont{display:flex;align-items:center;gap:8px 10px;flex-wrap:wrap;font-size:14px}
-.pont .ttl{font-family:var(--f-display);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:14px;color:var(--muted)}
+.pont,.rec{padding:8px 14px;display:flex;flex-direction:column;gap:4px;justify-content:center}
+.prow{display:grid;grid-template-columns:10px minmax(0,1fr) auto;align-items:center;gap:8px;font-size:14.5px;padding:2px 0}
+.prow i{width:10px;height:10px;border-radius:50%;background:var(--ok)}
+.prow.occ i{background:var(--accent)} .prow.closed i{background:var(--line)} .prow.sb i{background:var(--warn)}
+.prow .pn{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prow.closed .pn{color:var(--muted)}
+.prow b{font-family:var(--f-display);font-size:18px;font-weight:700;white-space:nowrap}
+.prow em{font-style:normal;font-size:13px;font-weight:600}
+.prow em.free{color:var(--ok)} .prow em.closed{color:var(--muted)}
+.phase{font-family:var(--f-body);font-size:11px;font-weight:700;letter-spacing:.06em;padding:2px 8px;border-radius:999px}
+.phase.out{background:var(--surface-2);border:1px solid var(--line);color:var(--muted)}
+.phase.on{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)}
+.rec p{margin:0}
+.rec .big{font-size:16px;line-height:1.3}
+.rec .big b{font-family:var(--f-display);font-size:22px}
+.rec.ok .big b{color:var(--ok)} .rec.warn .big b{color:var(--warn)} .rec.crit .big b{color:var(--crit)}
+.rec .btn{align-self:flex-start}
+.rec .remind{background:color-mix(in srgb,var(--accent) 12%,transparent);border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line));border-radius:8px;padding:5px 9px;font-size:13.5px;font-weight:600}
+.rec .lastt,.rec .chk,.rec .done{border-radius:8px;padding:6px 9px;font-size:13.5px}
+.rec .lastt{background:var(--ink);color:var(--surface)}
+.rec .lastt b{color:var(--accent)}
+.rec .chk{background:color-mix(in srgb,var(--warn) 15%,transparent);border:1px solid color-mix(in srgb,var(--warn) 45%,var(--line))}
+.rec .done{background:color-mix(in srgb,var(--ok) 14%,transparent);border:1px solid color-mix(in srgb,var(--ok) 40%,var(--line));font-weight:600}
+.rec .linkish{align-self:flex-start;color:var(--muted);font-size:12.5px}
+.offbar{background:var(--warn);color:#1a1200;font-weight:600;font-size:13.5px}
+.offbar .wrap{padding-block:6px}
+.board.ro .grow{grid-template-columns:minmax(170px,220px) repeat(3,minmax(0,1fr));grid-template-areas:"b s t h"}
+.board.ro .grow.off{grid-template-columns:minmax(170px,220px) repeat(3,minmax(0,1fr))}
+.board.ro .ca{display:none}
+.board.ro .grow.off .offc{grid-column:2 / 5}
+.legend{display:flex;flex-direction:column;gap:10px}
+.legend > div{display:grid;grid-template-columns:128px minmax(0,1fr);gap:12px;align-items:center}
+.legend > div > :first-child{justify-self:center}
+.legend p{margin:0;font-size:14px}
+.legend .boat{width:92px}
+.offtag{font-family:var(--f-display);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--off);border:1px solid var(--line);border-radius:5px;padding:2px 6px;font-size:12px}
+.lgnum{font-family:var(--f-display);font-size:16px;text-transform:uppercase;letter-spacing:.06em}
+.toggles label.lastchk{border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+tr.k-last td{background:color-mix(in srgb,var(--accent) 16%,transparent);font-weight:600}
+.how{margin:4px 0 0;padding-left:20px;font-size:13.5px;display:flex;flex-direction:column;gap:2px}
+.how b{font-family:var(--f-display);font-size:16px}
 .side{font-size:11px;font-weight:700;letter-spacing:.1em;padding:2px 6px;border-radius:5px;border:1.5px solid currentColor;white-space:nowrap;line-height:1.2}
 .side.STBD{color:var(--stbd)} .side.PORT{color:var(--port)} .side.SHORE{color:var(--sea)}
 .pchip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:4px 11px;background:var(--surface);font-weight:600;font-size:13.5px;white-space:nowrap}
@@ -138,7 +173,7 @@ main{padding-block:12px 70px;display:flex;flex-direction:column;gap:12px}
 
 /* board grid */
 .board{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
-.grow{display:grid;grid-template-columns:minmax(150px,200px) repeat(3,minmax(0,1fr)) 176px;grid-template-areas:"b s t h a";border-top:1px solid var(--line)}
+.grow{display:grid;grid-template-columns:minmax(170px,220px) repeat(3,minmax(0,1fr)) 176px;grid-template-areas:"b s t h a";border-top:1px solid var(--line)}
 .grow.head{border-top:0;background:var(--surface-2)}
 .grow.head > div{min-height:0}
 .grow.head > div{padding:9px 12px;font-family:var(--f-display);font-weight:700;font-size:16px;letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;gap:8px;color:var(--muted)}
@@ -150,8 +185,8 @@ main{padding-block:12px 70px;display:flex;flex-direction:column;gap:12px}
 .grow.head .ct{background:color-mix(in srgb,var(--sea-tint) 70%,var(--surface-2))}
 .cb{padding:10px 12px;display:flex;flex-direction:column;justify-content:center;gap:3px;min-width:0;text-align:left;background:none;border:0;cursor:pointer;color:inherit}
 .cb:hover .bn{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
-.bn{font-family:var(--f-display);font-weight:700;font-size:28px;line-height:1;display:flex;align-items:center;gap:8px;white-space:nowrap}
-.bn .nm{overflow:hidden;text-overflow:ellipsis}
+.bn{font-family:var(--f-display);font-weight:700;font-size:26px;line-height:1;display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;white-space:nowrap}
+.bn .nm{flex:none}
 .bn.long{font-size:21px}
 .bn.long .nm{white-space:normal;line-height:1.05}
 .drv{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -165,7 +200,7 @@ main{padding-block:12px 70px;display:flex;flex-direction:column;gap:12px}
 .tok{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;max-width:100%}
 .tok .vis{display:flex;align-items:center;gap:6px;max-width:100%}
 .tok .boat{width:136px;max-width:100%;height:auto;flex:0 1 auto;min-width:0}
-.tok .tag{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:5px;white-space:nowrap}
+.tag{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:5px;white-space:nowrap}
 .tag.berth{background:var(--ink);color:var(--surface)}
 .tag.sb{background:color-mix(in srgb,var(--warn) 22%,transparent);color:var(--warn);border:1px solid color-mix(in srgb,var(--warn) 45%,transparent)}
 .tag.dir{color:var(--sea);font-family:var(--f-display);font-size:13px;letter-spacing:.06em;padding:0}
@@ -189,20 +224,21 @@ main{padding-block:12px 70px;display:flex;flex-direction:column;gap:12px}
 /* boat drawing */
 .boat .hull{fill:var(--hull);stroke:var(--ink);stroke-width:1.1;stroke-linejoin:round}
 .boat .can{fill:var(--accent);stroke:var(--ink);stroke-width:1.1;stroke-linejoin:round}
-.boat .stripe{fill:none;stroke:var(--ink);stroke-width:.9;opacity:.55}
-.boat .win{fill:var(--glass);stroke:var(--hull);stroke-width:.8}
-.boat .door{fill:var(--glass);stroke:var(--hull);stroke-width:.8}
+.boat .stripe{fill:none;stroke:var(--ink);stroke-width:1.2}
+.boat .win{fill:var(--glass);stroke:var(--hull);stroke-width:1}
+.boat .door{fill:var(--glass);stroke:var(--hull);stroke-width:1}
 .boat .fend{fill:var(--fender)}
-.boat .fsep{stroke:var(--hull);stroke-width:.6;opacity:.5}
 .boat .post{fill:var(--accent);stroke:var(--ink);stroke-width:.9}
-.boat .num{font-family:var(--f-display);font-weight:700;font-size:7.5px;fill:var(--ink)}
+.boat .rim{fill:none;stroke:var(--ink);stroke-width:1}
+.boat .dome{fill:var(--hull);stroke:var(--ink);stroke-width:.8}
+.boat .num{font-family:var(--f-display);font-weight:700;font-size:10px;fill:var(--ink)}
 .boat .wave{fill:none;stroke:var(--sea);stroke-width:1.3;stroke-linecap:round}
 .boat.shore .can,.boat.shore .post{fill:var(--sea)}
 .boat.muted .can,.boat.muted .post{fill:var(--track)}
 .boat.muted .wave{stroke:var(--line)}
 .boat.muted .win,.boat.muted .door{fill:var(--muted)}
 @media (prefers-reduced-motion: no-preference){
-  .ct .boat .hullg{animation:bob 3.2s ease-in-out infinite;transform-origin:80px 40px}
+  .ct .boat .hullg{animation:bob 3.2s ease-in-out infinite;transform-origin:100px 45px}
   @keyframes bob{50%{transform:translateY(1.2px) rotate(-.5deg)}}
 }
 
@@ -298,18 +334,27 @@ tr.k-lower td,tr.k-hoist td{background:color-mix(in srgb,var(--accent) 8%,transp
 .toast button{background:var(--accent);color:var(--accent-ink);border:0;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer}
 
 @media (max-width:1100px){
+  .deck{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .people{grid-column:1 / -1;border-bottom:1px solid var(--line)}
+  .sec.pont{border-left:0}
   .grow{grid-template-columns:minmax(120px,160px) repeat(3,minmax(0,1fr)) 150px}
   .tok .boat{width:96px}
 }
 @media (max-width:760px){
-  .strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
-  .m{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:6px 10px}
-  .m.ashore{grid-column:1 / -1;justify-content:space-between;border-right:0}
-  .m.rec{grid-column:1 / -1;border-bottom:0}
-  .m:nth-child(4){border-right:0}
-  .m .v{font-size:21px}
+  .ln{display:none} .sn{display:inline}
+  .deck{grid-template-columns:minmax(0,1fr)}
+  .sec{border-left:0;border-top:1px solid var(--line)}
+  .sec:first-child{border-top:0}
+  .people{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .m{padding:6px 10px}
+  .m.ashore{grid-column:1 / -1}
+  .m:nth-child(2){border-left:0}
+  .people .m:not(.ashore){border-top:1px solid var(--line)}
+  .m .v{font-size:22px}
   .grow{grid-template-columns:62px repeat(3,minmax(0,1fr));grid-template-areas:"b s t h" "a a a a"}
   .grow.head{grid-template-areas:"b s t h"}
+  .board.ro .grow{grid-template-columns:62px repeat(3,minmax(0,1fr))}
+  .board.ro .grow.off{grid-template-areas:"b o o o"}
   .grow.head .ca,.grow.head .cb{display:none}
   .grow.head > div{font-size:13px;padding:7px 4px;justify-content:center}
   .grow.head svg{display:none}
@@ -364,7 +409,7 @@ const CONFIG = {
 };
 
 const TENDERS = [11, 14, 15, 16, 17].map(n => ({id:"T"+n, num:n, side: n % 2 ? "STBD" : "PORT"}));
-const DEFAULT_CAP = 170, SHORE_CAP = 100;
+const DEFAULT_CAP = 170, SHORE_CAP = 100, RECOVERY_LEAD_H = 3;
 const PONTOONS = {FWD:"FWD", MID:"MIDSHIP"};
 const CATEGORIES = ["Engine","Steering","Propulsion","Release hooks / falls","Electrical","Communications","Hull / canopy","Fenders / mooring","Other"];
 
@@ -386,26 +431,29 @@ const clean = o => JSON.parse(JSON.stringify(o));
 function loadScript(src){ return new Promise((res, rej) => { const s = document.createElement("script"); s.src = src; s.onload = res; s.onerror = () => rej(new Error("Could not load " + src)); document.head.appendChild(s); }); }
 function lsGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
 function lsSet(k, v){ try { localStorage.setItem(k, v); } catch(e){} }
-const berthName = b => b === "FWD" ? "FWD" : b === "MID" ? "MIDSHIP" : "STAND-BY";
+const berthName = b => b === "FWD" ? "Forward Pontoon" : b === "MID" ? "Midship Pontoon" : "Stand-by";
+const berthShort = b => b === "FWD" ? "Forward" : b === "MID" ? "Midship" : "Stand-by";
+const fullName = n => /^T\d+$/.test(n || "") ? "Tender " + n.slice(1) : (n || "");
+const nameHTML = n => /^T\d+$/.test(n || "") ? `<span class="ln">Tender ${n.slice(1)}</span><span class="sn">${n}</span>` : esc(n);
 
 /* ---------------- graphics ---------------- */
 function boatSVG(flip=false, cls="", number=""){
-  // Side view after the Hatecke tender: orange enclosed canopy, glazed door, black fender band, white hull. Bow to the right.
-  const wins = [16, 27, 38, 75, 86, 97, 108].map(x => `<rect class="win" x="${x}" y="15.5" width="8.5" height="7.5" rx="1"/>`).join("");
-  return `<svg class="boat ${cls}" viewBox="0 0 160 56" aria-hidden="true"><g ${flip ? 'transform="translate(160 0) scale(-1 1)"' : ""}>
-  <path class="wave" d="M4 53 q7 -3 14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0"/>
+  // Side view traced from the Royal Princess Hatecke tenders: flat roof, mast two-thirds forward, helmsman's cockpit
+  // at the forward end of the roof, rounded sloping nose, raked rounded stern, deep white hull rising aft. Bow to the right.
+  const w = (x, y, wd, h) => `<rect class="win" x="${x}" y="${y}" width="${wd}" height="${h}" rx="1.2"/>`;
+  return `<svg class="boat ${cls}" viewBox="0 0 200 70" aria-hidden="true"><g ${flip ? 'transform="translate(200 0) scale(-1 1)"' : ""}>
+  <path class="wave" d="M2 68 q7 -3 14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0"/>
   <g class="hullg">
-  <path class="hull" d="M5 31 H143 Q154 31.5 156 35 Q153 45 140 49.5 Q131 51 118 51 H22 Q11 51 8 46 Z"/>
-  <path class="stripe" d="M9 44.5 Q60 46 118 45.5 Q137 45 150 39"/>
-  <path class="can" d="M6 31 V15 Q6 11 10.5 11 H118 L123 6 H136 Q141 6 143 9 L150 21 Q153 27 151 31 Z"/>
-  <rect class="post" x="128" y="1.2" width="3.4" height="5.2" rx="1"/>
-  <path class="win" d="M125 8.5 H135 L139 15 H125 Z"/>
-  ${wins}
-  <rect class="door" x="51" y="13" width="17" height="18" rx="1"/>
-  <line class="stripe" x1="59.5" y1="13" x2="59.5" y2="31" style="stroke:var(--hull);opacity:.6"/>
-  <rect class="fend" x="34" y="31.5" width="88" height="7" rx="3.5"/>
-  <line class="fsep" x1="63" y1="32" x2="63" y2="38"/><line class="fsep" x1="93" y1="32" x2="93" y2="38"/>
-  ${number ? `<text class="num" x="138" y="43" text-anchor="middle" ${flip ? 'transform="translate(276 0) scale(-1 1)"' : ""}>${esc(number)}</text>` : ""}
+  <path class="hull" d="M6 38 L190 35.5 Q197 36 196.5 42 Q195.5 55 185 61 Q176 64.5 158 64.5 L42 64.5 Q16 63.5 6.5 52 Q3.5 46 6 38 Z"/>
+  <path class="stripe" d="M140 44.5 Q170 43.5 195.5 40"/><path class="stripe" d="M6 45.5 H32"/>
+  <path class="can" d="M6 38 Q7 16 28 14 H164 Q181 15 186 27 Q188.5 32 190 35.5 Z"/>
+  <path class="rim" d="M142 14 V12.6 H170 Q173 12.6 174 14"/>
+  <path class="win" d="M146 16.2 H156 V21 H145.5 Z"/><path class="win" d="M158 16.2 H167 Q171 16.8 173 21 H158 Z"/>
+  <path class="post" d="M129 14 L125.2 5.2 L127.4 4.2 L131.6 13 Z"/><circle class="post" cx="126.3" cy="4.4" r="1.6"/>
+  <path class="dome" d="M133 14 Q133 10.5 136 10.5 Q139 10.5 139 14 Z"/>
+  ${w(23,21,13,10)}${w(41,21,12.5,10)}${w(58,21,11.5,10)}<rect class="door" x="73" y="16" width="21" height="21.5" rx="1"/>${w(98,21,11.5,10)}${w(114,21,12.5,10)}${w(131,21,12.5,10)}${w(149,22.5,12.5,7)}
+  <rect class="fend" x="34" y="38.5" width="37" height="8.5" rx="4.2"/><rect class="fend" x="71.5" y="38.5" width="22.5" height="8.5" rx="2"/><rect class="fend" x="94.5" y="38.5" width="45.5" height="8.5" rx="4.2"/>
+  ${number ? `<text class="num" x="186" y="47.5" text-anchor="middle" ${flip ? 'transform="translate(372 0) scale(-1 1)"' : ""}>${esc(number)}</text>` : ""}
   </g></g></svg>`;
 }
 function ringSVG(p, cap, size=56){
@@ -430,19 +478,19 @@ function pontoonsOf(day, evs){
 function compute(day, events){
   const units = {}, order = [];
   const mkUnit = (o) => Object.assign({active:false, loc:"stowed", berth:null, dir:null, pax:0, cap:null, driver:"", note:"", since:null, lowered:null, hoisted:null, tripsOut:0, tripsBack:0, paxOut:0, paxBack:0, lastShipDep:null}, o);
-  for (const t of TENDERS){ units[t.id] = mkUnit({id:t.id, name:"T"+t.num, num:String(t.num), kind:"tender", side:t.side}); order.push(t.id); }
+  for (const t of TENDERS){ units[t.id] = mkUnit({id:t.id, name:"T"+t.num, full:"Tender "+t.num, num:String(t.num), kind:"tender", side:t.side}); order.push(t.id); }
   let ashore = 0;
   const pont = pontoonsOf(day);
   const cycles = [], log = [], drivers = new Set();
-  let firstLowered = null, lastHoisted = null;
+  let firstLowered = null, lastHoisted = null, recovery = {on:false, since:null}, lastDep = null;
   const evs = (events || []).slice().sort((a,b) => a.t - b.t || a.c - b.c);
   const atBerth = (u, b) => { u.loc = "ship"; u.dir = null; u.berth = b; };
   for (const e of evs){
     let u = units[e.unit], text = "", kind = e.type, pax = null;
-    if (!u && !["sync","shore_add","pontoons"].includes(e.type)) continue;
+    if (!u && !["sync","shore_add","pontoons","recovery"].includes(e.type)) continue;
     switch (e.type){
       case "shore_add":
-        units[e.unit] = u = mkUnit({id:e.unit, name:e.name, num:"", kind:"shore", side:"SHORE", active:true, cap:e.cap || SHORE_CAP, driver:e.driver || "", since:e.t});
+        units[e.unit] = u = mkUnit({id:e.unit, name:e.name, full:e.name, num:"", kind:"shore", side:"SHORE", active:true, cap:e.cap || SHORE_CAP, driver:e.driver || "", since:e.t});
         order.push(e.unit); atBerth(u, e.berth || "SB");
         text = `Shoretender on service · ${berthName(u.berth)} · max ${u.cap}`;
         break;
@@ -466,7 +514,8 @@ function compute(day, events){
           if (u.lastShipDep != null) cycles.push({unit:u.id, t:e.t, min:(e.t - u.lastShipDep) / 60000});
           u.lastShipDep = e.t;
           text = `Departed ${u.berth && u.berth !== "SB" ? berthName(u.berth) + " " : ""}→ Shore`;
-        } else { ashore -= pax; u.paxBack += pax; u.tripsBack++; text = "Departed → Ship"; }
+        } else { ashore -= pax; u.paxBack += pax; u.tripsBack++; text = e.last ? "LAST TENDER departed → Ship" : "Departed → Ship";
+          if (e.last){ lastDep = {unit:u.id, name:u.name, t:e.t, pax, arrived:null}; kind = "last"; } }
         Object.assign(u, {loc:"transit", berth:null, dir:e.dir, pax, since:e.t});
         break;
       }
@@ -477,20 +526,22 @@ function compute(day, events){
         } else {
           const b = e.berth || "SB"; atBerth(u, b); u.since = e.t;
           if (b === "SB"){ text = `Stand-by at ship · ${u.pax} waiting on board`; }
-          else { pax = u.pax; text = `Alongside ${berthName(b)} · ${u.pax} back on board`; u.pax = 0; }
+          else { pax = u.pax; text = `Alongside ${berthName(b)} · ${u.pax} back on board`; u.pax = 0;
+            if (lastDep && lastDep.unit === u.id && !lastDep.arrived) lastDep.arrived = e.t; }
         }
         break;
       case "berth": {
         const b = e.berth;
         if (b !== "SB" && u.pax > 0){ pax = u.pax; text = `Alongside ${berthName(b)} · ${u.pax} back on board`; }
         else text = b === "SB" ? "Moved to stand-by" : `Alongside ${berthName(b)}`;
-        atBerth(u, b); u.since = e.t; if (b !== "SB") u.pax = 0;
+        atBerth(u, b); u.since = e.t; if (b !== "SB"){ u.pax = 0; if (lastDep && lastDep.unit === u.id && !lastDep.arrived) lastDep.arrived = e.t; }
         break;
       }
       case "pontoons":
         pont.side = e.side || pont.side; pont.FWD = !!e.fwd; pont.MID = !!e.mid; kind = "pont";
         text = `Pontoons: ${pont.side} · FWD ${pont.FWD ? "open" : "closed"} · MIDSHIP ${pont.MID ? "open" : "closed"}`;
         break;
+      case "recovery": recovery = {on: !!e.on, since: e.on ? e.t : null}; kind = "pont"; text = e.on ? "Recovery started" : "Recovery ended"; break;
       case "cap": u.cap = e.cap; text = `Max load set to ${e.cap}`; break;
       case "driver": u.driver = e.driver; text = `Driver changed to ${e.driver}`; break;
       case "note": u.note = e.text || ""; text = e.text ? `Note: ${e.text}` : "Note cleared"; break;
@@ -505,15 +556,15 @@ function compute(day, events){
   const total = day ? (+day.total || 0) : 0;
   const occ = {FWD:null, MID:null};
   list.forEach(u => { if (u.active && u.loc === "ship" && (u.berth === "FWD" || u.berth === "MID")) occ[u.berth] = u; });
-  let cycleAvg = null;
+  let cycleAvg = null, cycleN = 0;
   const recent = cycles.slice(-8).map(c => c.min).filter(m => m > 3);
   if (recent.length >= 2){
     const sorted = recent.slice().sort((a,b) => a-b), med = sorted[Math.floor(sorted.length/2)];
     const keep = recent.filter(m => m <= med * 2.2);
-    cycleAvg = keep.reduce((a,b) => a+b, 0) / keep.length;
+    cycleAvg = keep.reduce((a,b) => a+b, 0) / keep.length; cycleN = keep.length;
   }
   const s = (k) => list.reduce((a,u) => a + u[k], 0);
-  return {units, list, ashore, onTenders, aboard: total - ashore - onTenders, total, pont, occ, cycles, cycleAvg, log, drivers:[...drivers],
+  return {units, list, ashore, onTenders, aboard: total - ashore - onTenders, total, pont, occ, cycles, cycleAvg, cycleN, recovery, lastDep, log, drivers:[...drivers],
     tripsOut:s("tripsOut"), tripsBack:s("tripsBack"), paxOut:s("paxOut"), paxBack:s("paxBack"), firstLowered, lastHoisted};
 }
 const freeBerths = st => ["FWD","MID"].filter(b => st.pont[b] && !st.occ[b]);
@@ -522,13 +573,18 @@ function estimate(day, st, now){
   const active = st.list.filter(u => u.active);
   const caps = active.map(u => u.cap).filter(Boolean);
   const avgCap = caps.length ? caps.reduce((a,b) => a+b, 0) / caps.length : null;
-  const cycle = st.cycleAvg ?? (+day.plannedCycle || 30);
-  const cycleSrc = st.cycleAvg != null ? "measured" : "planned";
+  // round trip: today's logged average → previous tender day's average → 30 min default
+  let cycle = st.cycleAvg, cycleSrc = "today";
+  if (cycle == null){
+    const prev = (S.data.days || []).find(d => d.id !== day.id && d.summary && d.summary.cycleAvg);
+    if (prev){ cycle = prev.summary.cycleAvg; cycleSrc = "prev:" + prev.port; } else { cycle = 30; cycleSrc = "default"; }
+  }
   let last = hmToMs(day.date, day.lastTender);
   if (last != null && day.openedAt && last < day.openedAt - 3600e3) last += 864e5;
   const remain = last != null ? (last - now) / 60000 : null;
+  const inRecovery = !!(st.recovery && st.recovery.on);
   const A = Math.max(0, st.ashore);
-  const r = {A, avgCap, cycle, cycleSrc, last, remain, activeCount: active.length, trips:null, needed:null, recoverable:null, perUnit:null};
+  const r = {A, avgCap, cycle, cycleSrc, cycleN: st.cycleN || 0, last, remain, inRecovery, activeCount: active.length, trips:null, needed:null, recoverable:null, perUnit:null};
   if (!avgCap) return r;
   r.trips = Math.ceil(A / avgCap);
   if (A === 0) r.needed = 0;
@@ -536,6 +592,64 @@ function estimate(day, st, now){
   else r.needed = Math.min(active.length, r.trips);
   r.recoverable = Math.max(0, active.length - r.needed);
   return r;
+}
+
+function statusHTML(day, st, est, lastSync){
+  const people = `<div class="sec people">
+    <div class="m ashore"><div><div class="l">Ashore</div><div class="v">${num(st.ashore)}</div><div class="s">${lastSync ? "synced " + fmtT(lastSync.e.t) : "tender count"}</div></div>
+      ${isAdmin() ? `<button class="btn small sync" data-act="sync">Sync</button>` : ""}</div>
+    <div class="m"><div class="l">On tenders</div><div class="v">${num(st.onTenders)}</div></div>
+    <div class="m"><div class="l">Aboard</div><div class="v">${num(st.aboard)}</div><div class="q">calculated</div></div>
+    <div class="m"><div class="l">Total</div><div class="v">${num(st.total)}</div><div class="q">reference</div></div></div>`;
+
+  const prow = b => { const open = st.pont[b], o = st.occ[b];
+    const state = !open ? `<em class="closed">Closed</em>` : o ? `<b>${nameHTML(o.name)}</b>` : `<em class="free">Free</em>`;
+    return `<div class="prow ${!open ? "closed" : o ? "occ" : "free"}"><i></i><span class="pn">${berthName(b)}</span>${state}</div>`; };
+  const sb = st.list.filter(u => u.active && u.loc === "ship" && u.berth === "SB");
+  const pont = `<div class="sec pont"><div class="sh"><span>Pontoons</span><span class="side ${st.pont.side}">${st.pont.side === "PORT" ? "Port side" : "Starboard side"}</span>
+      ${isAdmin() ? `<button class="btn small" data-act="pontoons">Change</button>` : ""}</div>
+    ${prow("FWD")}${prow("MID")}
+    ${sb.length ? `<div class="prow sb"><i></i><span class="pn">Stand-by</span><b>${sb.map(u => nameHTML(u.name)).join(", ")}</b></div>` : ""}</div>`;
+
+  const cycleTxt = est.cycleSrc === "today" ? `average of the last ${est.cycleN} round trips today`
+    : est.cycleSrc === "default" ? "default until today’s first round trips are logged" : `from the last tender day (${esc(est.cycleSrc.slice(5))}) until today’s are logged`;
+  let rec;
+  const ld = st.lastDep;
+  const lastBox = ld ? (ld.arrived
+      ? (st.ashore <= 0 ? `<p class="done">✓ Last tender back · tender count shows nobody ashore</p>`
+         : `<p class="chk">Last tender back, but the tender count still shows <b>${num(st.ashore)}</b> ashore. Check with security${isAdmin() ? " or Sync Ashore" : ""}.</p>`)
+      : `<p class="lastt">Last tender left shore <b class="mono">${fmtT(ld.t)}</b> · ${nameHTML(ld.name)} · ${ld.pax} pax</p>`) : "";
+  if (!est.inRecovery){
+    const remind = isAdmin() && est.remain != null && est.remain > 0 && est.remain <= RECOVERY_LEAD_H * 60;
+    rec = `<div class="sec rec"><div class="sh"><span>Recovery</span><span class="phase out">Not started</span></div>
+      <p class="big">Outbound · last tender <b class="mono">${esc(day.lastTender || "—")}</b>${est.remain != null && est.remain > 0 ? ` <span class="hint">in ${fmtDur(est.remain)}</span>` : ""}</p>
+      ${remind ? `<p class="remind">Last tender in ${fmtDur(est.remain)}. Start recovery?</p>` : ""}
+      ${isAdmin() ? `<button class="btn small ${remind ? "primary" : ""}" data-act="rec-start">Start recovery</button>` : `<p class="hint">The Bridge starts recovery when guests begin returning.</p>`}
+      ${lastBox}</div>`;
+  } else {
+    let head, cls = "ok";
+    if (ld) head = "";
+    else if (!est.activeCount) head = "No tenders in service";
+    else if (!est.avgCap) head = "Set max loads to estimate";
+    else if (est.A === 0) head = `Nobody ashore · <b>${est.activeCount}</b> can be recovered`;
+    else if (est.remain != null && est.remain <= 0){ cls = "crit"; head = `Past last tender · <b>${est.trips}</b> trip${est.trips === 1 ? "" : "s"} still needed`; }
+    else { cls = est.needed >= est.activeCount ? "warn" : "ok"; head = `Keep <b>${est.needed}</b> of ${est.activeCount} in service · <b>${est.recoverable}</b> can be recovered`; }
+    rec = `<div class="sec rec ${cls}"><div class="sh"><span>Recovery</span><span class="phase on">Active since ${fmtT(st.recovery.since)}</span>
+        ${ld ? "" : `<button class="btn small" data-act="rec" aria-expanded="${S.recOpen}">${S.recOpen ? "Hide" : "How"}</button>`}</div>
+      ${head ? `<p class="big">${head}</p>` : ""}
+      ${!ld && est.avgCap && est.A > 0 ? `<p class="hint">${num(est.A)} ashore → ${est.trips} full trip${est.trips === 1 ? "" : "s"} · ${est.remain > 0 ? `each tender can make ${est.perUnit} more before ${esc(day.lastTender)}` : "time is up"}</p>` : ""}
+      ${lastBox}
+      ${S.recOpen && !ld ? `<ol class="how">
+        <li>People ashore: <b>${num(est.A)}</b></li>
+        <li>Load per trip: <b>${est.avgCap ? Math.round(est.avgCap) : "—"}</b> (max load of the boats in service)</li>
+        <li>Trips still needed: ${num(est.A)} ÷ ${est.avgCap ? Math.round(est.avgCap) : "—"} → <b>${est.trips ?? "—"}</b></li>
+        <li>Round trip: <b>${Math.round(est.cycle)} min</b>, ${cycleTxt}</li>
+        <li>Time to last tender ${esc(day.lastTender || "")}: <b>${fmtDur(est.remain)}</b> → each tender can still make <b>${est.perUnit ?? "—"}</b> round trips</li>
+        <li>Tenders needed: ${est.trips ?? "—"} trips ÷ ${est.perUnit ?? "—"} per tender → <b>${est.needed ?? "—"}</b> of ${est.activeCount}</li></ol>
+        <p class="hint">Advisory. Counts only people already ashore.</p>` : ""}
+      ${isAdmin() ? `<button class="linkish" data-act="rec-stop">End recovery</button>` : ""}</div>`;
+  }
+  return `<section class="deck" aria-label="Tender status">${people}${pont}${rec}</section>`;
 }
 
 /* ---------------- stores ---------------- */
@@ -694,6 +808,7 @@ function makeSample(){
   ev.push(mk("note", "T15", now - 70*M, {text:"Refuel before the next run"}));
   // a realistic moment: MIDSHIP closed for swell, T11 alongside FWD, the shoretender waiting off the ship
   ev.push(mk("pontoons", null, now - 40*M, {side:"STBD", fwd:true, mid:false}));
+  ev.push(mk("recovery", null, now - 25*M, {on:true}));
   const lastOf = id => ev.filter(e => e.unit === id).sort((a,b) => a.t - b.t).pop();
   const l11 = lastOf("T11"); if (l11 && l11.type === "depart" && l11.dir === "ship") ev.push(mk("arrive", "T11", Math.max(l11.t + 8*M, now - 3*M), {at:"ship", berth:"FWD"}));
   const lS1 = lastOf("S1"); if (lS1 && lS1.type === "depart" && lS1.dir === "ship") ev.push(mk("arrive", "S1", Math.max(lS1.t + 8*M, now - 1*M), {at:"ship", berth:"SB"}));
@@ -718,7 +833,7 @@ function summaryOf(st){
 const S = {store:null, role:null, data:{days:[], currentDay:null, events:[], issues:[]}, view:"board", logUnit:"all", issueUnit:"all", issueStatus:"all", hist:null, histEvents:null, recOpen:false};
 const isAdmin = () => S.role === "admin";
 let ST = null;
-function setData(d){ S.data = d; ST = d.currentDay ? compute(d.currentDay, d.events) : null; render(); refreshSheet(); }
+function setData(d){ if (d.offline && !S.data.offline) S.offlineSince = Date.now(); if (!d.offline) S.offlineSince = null; S.data = d; ST = d.currentDay ? compute(d.currentDay, d.events) : null; render(); refreshSheet(); }
 
 /* ---------------- rendering ---------------- */
 function render(){
@@ -748,7 +863,7 @@ function headerHTML(){
     <div class="who">${conn}<span class="chip role">${isAdmin() ? "Bridge" : "Crew View"}</span>
       <button class="icon-btn" data-act="theme" title="Switch light / dark">${themeLabel()}</button>
       ${S.store.mode === "live" ? `<button class="icon-btn" data-act="signout">Sign out</button>` : ""}</div>
-  </div></header>${demo}`;
+  </div></header>${demo}${S.store.mode === "live" && d.offline ? `<div class="offbar"><div class="wrap">Offline since ${fmtT(S.offlineSince || Date.now())} · showing the data as of then. ${isAdmin() ? "Entries are saved on this device and sync when the connection is back." : "Numbers may be out of date."}</div></div>` : ""}`;
 }
 
 function noDayHTML(){
@@ -764,58 +879,26 @@ function boardHTML(){
   const syncs = st.log.filter(l => l.e.type === "sync");
   const lastSync = syncs.length ? syncs[syncs.length - 1] : null;
 
-  // recovery summary sentence
-  let rc = "none", rtext = "No tenders in service";
-  if (est.activeCount){
-    if (!est.avgCap) rtext = "Set max loads to estimate";
-    else if (est.A === 0){ rc = "ok"; rtext = `Nobody ashore · all ${est.activeCount} recoverable`; }
-    else if (est.remain != null && est.remain <= 0){ rc = "crit"; rtext = `Past last tender · ${est.trips} trips still needed`; }
-    else { rc = est.needed >= est.activeCount ? "warn" : "ok"; rtext = `Need ${est.needed} of ${est.activeCount}` + (est.recoverable ? ` · ${est.recoverable} recoverable` : " · none recoverable"); }
-  }
-  const strip = `<section class="strip" aria-label="People count">
-    <div class="m ashore"><div><div class="l">Ashore</div><div class="v">${num(st.ashore)}</div><div class="s">${lastSync ? "synced " + fmtT(lastSync.e.t) : "tender count"}</div></div>
-      ${isAdmin() ? `<button class="btn small sync" data-act="sync">Sync</button>` : ""}</div>
-    <div class="m"><div class="l">On tenders</div><div class="v">${num(st.onTenders)}</div></div>
-    <div class="m"><div class="l">Aboard<small>calc.</small></div><div class="v">${num(st.aboard)}</div></div>
-    <div class="m"><div class="l">Total<small>ref.</small></div><div class="v">${num(st.total)}</div></div>
-    <div class="m rec"><span class="l">Recovery</span><button class="recbtn" data-act="rec" aria-expanded="${S.recOpen}"><span class="dotc ${rc}"></span>${rtext}<span class="chev">${S.recOpen ? "▲" : "▼"}</span></button></div>
-  </section>`;
-  const recd = S.recOpen ? `<section class="recd">
-      <div><span>Ashore</span><b>${num(est.A)}</b></div>
-      <div><span>Load per trip</span><b>${est.avgCap ? Math.round(est.avgCap) : "—"}</b></div>
-      <div><span>Trips needed</span><b>${est.trips ?? "—"}</b></div>
-      <div><span>Round trip</span><b>${Math.round(est.cycle)} min</b></div>
-      <div><span>Trips per tender left</span><b>${est.perUnit ?? "—"}</b></div>
-      <div><span>Tenders needed</span><b>${est.needed ?? "—"}</b></div>
-      <div><span>Recoverable</span><b>${est.recoverable ?? "—"}</b></div>
-      <p>Round trip is ${est.cycleSrc === "measured" ? "measured from today’s ship departures" : "the planned value until two round trips are logged"}. Advisory only.</p></section>` : "";
-
-  const pc = (b) => { const open = st.pont[b], o = st.occ[b];
-    if (!open) return `<span class="pchip closed"><i></i>${PONTOONS[b]} <em>closed</em></span>`;
-    return o ? `<span class="pchip occ"><i></i>${PONTOONS[b]} <em>${esc(o.name)}</em></span>` : `<span class="pchip"><i></i>${PONTOONS[b]} <em>free</em></span>`; };
-  const sbCount = st.list.filter(u => u.active && u.loc === "ship" && u.berth === "SB").length;
-  const pont = `<section class="pont"><span class="ttl">Pontoons</span><span class="side ${st.pont.side}">${st.pont.side}</span>${pc("FWD")}${pc("MID")}
-      ${sbCount ? `<span class="pchip" style="border-color:color-mix(in srgb,var(--warn) 45%,var(--line))"><i style="background:var(--warn)"></i>Stand-by <em>${sbCount}</em></span>` : ""}
-      ${isAdmin() ? `<button class="btn small" data-act="pontoons">Change</button>` : ""}</section>`;
-
+  const statusPanel = statusHTML(day, st, est, lastSync);
   const lastInfo = est.remain != null ? (est.remain > 0 ? ` (in ${fmtDur(est.remain)})` : " (passed)") : "";
   const dayline = `<section class="dayline"><h1>${esc(day.port || "Tender day")}</h1>
     <span class="sub">${fmtDate(day.date)} · Last tender <b class="mono">${esc(day.lastTender || "—")}</b>${lastInfo}</span>
-    <span class="spacer"></span>${isAdmin() ? `<button class="btn small" data-act="edit-day">Edit day</button>` : ""}</section>`;
+    ${st.log.length ? `<span class="sub">· Last entry <b class="mono">${fmtT(Math.max(...st.log.map(l => l.e.t)))}</b></span>` : ""}
+    <span class="spacer"></span><button class="btn small" data-act="legend">? Legend</button>${isAdmin() ? `<button class="btn small" data-act="edit-day">Edit day</button>` : ""}</section>`;
 
   const tenders = st.list.filter(u => u.kind === "tender"), shores = st.list.filter(u => u.kind === "shore" && u.active);
   const head = `<div class="grow head"><div class="cb">Boat</div><div class="cs">${SHIP_ICON}Ship</div><div class="ct h-t">${SEA_ICON}In transit</div><div class="ch">${PIER_ICON}Shore</div><div class="ca"></div></div>`;
-  const board = `<section class="board" aria-label="Tender board">${head}${tenders.map(rowHTML).join("")}
+  const board = `<section class="board${isAdmin() ? "" : " ro"}" aria-label="Tender board">${head}${tenders.map(rowHTML).join("")}
     <div class="sep">Shoretenders ${isAdmin() ? `<button class="btn small" data-act="add-shore">+ Add shoretender</button>` : ""}</div>
     ${shores.length ? shores.map(rowHTML).join("") : `<div class="grow"><div class="cb"></div><div class="offc" style="grid-column:2 / -1;padding:12px;color:var(--muted);font-size:13.5px">No shoretenders today.</div></div>`}</section>`;
-  return dayline + strip + recd + pont + board;
+  return dayline + statusPanel + board;
 }
 
 function rowHTML(u){
   const now = Date.now();
   const openIs = S.data.issues.filter(i => i.status === "open" && i.unitName === u.name).length;
-  const cb = `<button class="cb" data-act="sheet" data-u="${u.id}" aria-label="${esc(u.name)} details">
-      <span class="bn${u.name.length > 4 ? " long" : ""}"><span class="nm">${esc(u.name)}</span><span class="side ${u.side}">${u.side}</span></span>
+  const cb = `<button class="cb" data-act="sheet" data-u="${u.id}" aria-label="${esc(u.full)} details">
+      <span class="bn${u.kind === "shore" && u.name.length > 4 ? " long" : ""}"><span class="nm">${nameHTML(u.name)}</span><span class="side ${u.side}">${u.side}</span></span>
       <span class="drv"><span class="dl">Driver </span><b>${esc(u.driver || "—")}</b></span>
       ${openIs || u.note ? `<span class="marks">${openIs ? `<span class="iss">⚠ ${openIs} issue${openIs > 1 ? "s" : ""}</span>` : ""}${u.note ? `<span class="nt">✎ note</span>` : ""}</span>` : ""}</button>`;
   if (!u.active){
@@ -825,7 +908,7 @@ function rowHTML(u){
   const since = u.since ? `${fmtT(u.since)} · ${fmtShort((now - u.since) / 60000)}` : "";
   // bow faces the next move: at ship → shore (right), at shore → ship (left), stand-by waits facing the ship
   const flip = (u.loc === "transit" && u.dir === "ship") || u.loc === "shore" || (u.loc === "ship" && u.berth === "SB");
-  const tag = u.loc === "ship" ? (u.berth === "SB" ? `<span class="tag sb">Stand-by</span>` : `<span class="tag berth">${berthName(u.berth)}</span>`)
+  const tag = u.loc === "ship" ? (u.berth === "SB" ? `<span class="tag sb">Stand-by</span>` : `<span class="tag berth"><span class="ln">${berthName(u.berth)}</span><span class="sn">${berthShort(u.berth)}</span></span>`)
     : u.loc === "transit" ? `<span class="tag dir">${u.dir === "shore" ? "→ to shore" : "← to ship"}</span>` : "";
   const tok = `<div class="tok"><div class="vis">${ringSVG(u.pax, u.cap)}${boatSVG(flip, u.kind === "shore" ? "shore" : "", u.num)}</div>${tag}<span class="since mono">${since}</span></div>`;
   const cell = loc => u.loc === loc ? tok : "";
@@ -835,7 +918,7 @@ function rowHTML(u){
     if (u.loc === "ship" && u.berth !== "SB") acts = B("depart-shore", "Depart → Shore", "primary");
     else if (u.loc === "ship"){
       const fb = freeBerths(ST);
-      acts = fb.length ? fb.map(b => B("berth", "Alongside " + berthName(b), "sea", `data-b="${b}"`)).join("") : `<span class="wait">Waiting for a free pontoon</span>`;
+      acts = fb.length ? fb.map(b => B("berth", `→ <span class="ln">${berthName(b)}</span><span class="sn">${berthShort(b)}</span>`, "sea", `data-b="${b}"`)).join("") : `<span class="wait">Waiting for a free pontoon</span>`;
     }
     else if (u.loc === "transit") acts = u.dir === "shore" ? B("arrive-shore", "Arrived Shore", "dark") : B("arrive-ship", "Arrived Ship", "dark");
     else if (u.loc === "shore") acts = B("depart-ship", "Depart → Ship", "primary");
@@ -846,7 +929,7 @@ function rowHTML(u){
 function logRows(st, opts){
   const rows = st.log.filter(l => opts.unit === "all" || l.unitName === opts.unit).slice().reverse();
   if (!rows.length) return `<tr><td colspan="6" style="color:var(--muted)">Nothing logged yet.</td></tr>`;
-  return rows.map(l => `<tr class="k-${l.kind}"><td class="t">${fmtT(l.e.t)}</td><td class="u">${esc(l.unitName)}</td><td>${esc(l.text)}</td>
+  return rows.map(l => `<tr class="k-${l.kind}"><td class="t">${fmtT(l.e.t)}</td><td class="u">${esc(fullName(l.unitName))}</td><td>${esc(l.text)}</td>
     <td class="num">${l.pax != null ? l.pax : ""}</td><td>${esc(l.driver || "")}</td>
     ${opts.edit ? `<td class="ra"><button class="btn small" data-act="edit-ev" data-id="${l.e.id}">Edit</button></td>` : ""}</tr>`).join("");
 }
@@ -862,7 +945,7 @@ function logHTML(){
   const st = ST;
   const names = st.list.filter(u => u.tripsOut || u.lowered || u.active || u.kind === "shore").map(u => u.name);
   return `<section class="panel"><div class="panel-head"><h2>${esc(day.port)} · Today’s log</h2>
-      <div class="filters"><select class="f" id="logUnit" data-act="log-unit" aria-label="Filter by unit"><option value="all">All units</option>${names.map(n => `<option ${S.logUnit === n ? "selected" : ""}>${esc(n)}</option>`).join("")}</select>
+      <div class="filters"><select class="f" id="logUnit" data-act="log-unit" aria-label="Filter by unit"><option value="all">All units</option>${names.map(n => `<option value="${esc(n)}" ${S.logUnit === n ? "selected" : ""}>${esc(fullName(n))}</option>`).join("")}</select>
       ${isAdmin() ? `<button class="btn" data-act="undo-last">Undo last</button>` : ""}<button class="btn" data-act="csv">Export CSV</button>${isAdmin() ? `<button class="btn danger" data-act="close-day">Close day</button>` : ""}</div></div>
     <div class="sumgrid">${sumTiles(summaryOf(st))}</div>
     <div class="tablebox"><table><thead><tr><th>Time</th><th>Unit</th><th>Event</th><th style="text-align:right">Pax</th><th>Driver</th>${isAdmin() ? "<th></th>" : ""}</tr></thead>
@@ -880,13 +963,13 @@ function issuesHTML(){
   const units = issueUnits();
   return `<section class="panel"><div class="panel-head"><h2>Tender issues</h2>
       <div class="filters">
-        <select class="f" id="issueUnit" data-act="issue-unit" aria-label="Filter by unit"><option value="all">All units</option>${units.map(n => `<option ${S.issueUnit === n ? "selected" : ""}>${esc(n)}</option>`).join("")}</select>
+        <select class="f" id="issueUnit" data-act="issue-unit" aria-label="Filter by unit"><option value="all">All units</option>${units.map(n => `<option value="${esc(n)}" ${S.issueUnit === n ? "selected" : ""}>${esc(fullName(n))}</option>`).join("")}</select>
         <select class="f" id="issueStatus" data-act="issue-status" aria-label="Filter by status">${[["all","Open + resolved"],["open","Open"],["resolved","Resolved"]].map(([v,l]) => `<option value="${v}" ${S.issueStatus === v ? "selected" : ""}>${l}</option>`).join("")}</select>
         ${isAdmin() ? `<button class="btn primary" data-act="new-issue">Report issue</button>` : ""}</div></div>
     <div class="issues">${list.length ? list.map(i => {
       const repeat = all.filter(x => x.unitName === i.unitName && x.category === i.category && x.id !== i.id && x.t < i.t).length;
-      return `<div class="issue"><div class="who2">${esc(i.unitName)}</div>
-      <div class="body"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="cat">${esc(i.category)}</span><span class="status ${i.status}">${i.status}</span>${repeat ? `<span class="pill warn">Seen ${repeat}× before on ${esc(i.unitName)}</span>` : ""}</div>
+      return `<div class="issue"><div class="who2">${nameHTML(i.unitName)}</div>
+      <div class="body"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="cat">${esc(i.category)}</span><span class="status ${i.status}">${i.status}</span>${repeat ? `<span class="pill warn">Seen ${repeat}× before on ${esc(fullName(i.unitName))}</span>` : ""}</div>
         <p>${esc(i.text)}</p><span class="when mono">${new Date(i.t).toLocaleDateString("en-GB", {day:"2-digit", month:"short", year:"numeric"})} · ${fmtT(i.t)}${i.port ? " · " + esc(i.port) : ""}</span>
         ${i.status === "resolved" && (i.resolution || i.resolvedAt) ? `<div class="res">${i.resolvedAt ? `<span class="mono">${fmtT(i.resolvedAt)}</span> ` : ""}${esc(i.resolution || "Resolved")}</div>` : ""}</div>
       ${isAdmin() ? `<div class="side-acts">${i.status === "open" ? `<button class="btn small" data-act="resolve" data-id="${i.id}">Resolve</button>` : `<button class="btn small" data-act="reopen" data-id="${i.id}">Reopen</button>`}<button class="btn small" data-act="edit-issue" data-id="${i.id}">Edit</button></div>` : ""}</div>`;
@@ -974,8 +1057,8 @@ function readTime(form, id, dayDate, fallback){
 const driverList = () => `<datalist id="drvList">${(ST ? ST.drivers : []).map(d => `<option value="${esc(d)}">`).join("")}</datalist>`;
 function berthChoice(st, current, id="mBerth"){
   const fb = freeBerths(st), def = current || fb[0] || "SB";
-  const btn = (b, sub) => { const dis = b !== "SB" && !fb.includes(b) && current !== b; return `<button type="button" data-berth="${b}" aria-pressed="${def === b}" ${dis ? "disabled" : ""}>${berthName(b)}<small>${sub}</small></button>`; };
-  const sub = b => !st.pont[b] ? "closed" : st.occ[b] && current !== b ? "occupied · " + st.occ[b].name : "free";
+  const btn = (b, sub) => { const dis = b !== "SB" && !fb.includes(b) && current !== b; return `<button type="button" data-berth="${b}" aria-pressed="${def === b}" ${dis ? "disabled" : ""}>${b === "SB" ? "Stand-by" : berthShort(b) + "<small>pontoon</small>"}<small>${sub}</small></button>`; };
+  const sub = b => !st.pont[b] ? "closed" : st.occ[b] && current !== b ? "occupied · " + st.occ[b].full : "free";
   return `<div class="fld"><span>Ship berth · ${st.pont.side}</span><div class="choice" id="${id}" data-val="${def}">${btn("FWD", sub("FWD"))}${btn("MID", sub("MID"))}${btn("SB", "wait off ship")}</div></div>`;
 }
 function bindChoice(f, id="mBerth"){ const box = f.querySelector("#" + id); if (!box) return; box.querySelectorAll("button").forEach(b => b.addEventListener("click", () => { box.dataset.val = b.dataset.berth; box.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); })); }
@@ -992,12 +1075,13 @@ function addEv(type, unit, extra, t, msg){
 function departModal(u, dir){
   const isShore = dir === "shore", st = ST;
   modal({
-    title: `${u.name} · Depart → ${isShore ? "Shore" : "Ship"}`, submit: "Log departure",
+    title: `${u.full} · Depart → ${isShore ? "Shore" : "Ship"}`, submit: "Log departure",
     body: `<div class="paxprev" id="pv">${ringSVG(u.pax || 0, u.cap, 96)}</div>
       <label class="fld"><span>Pax on board</span><input id="mPax" class="big" type="number" inputmode="numeric" min="0" step="1" placeholder="0" value="${u.pax || ""}" required>${isShore ? "" : `<span class="hint">${num(Math.max(0, st.ashore))} currently ashore</span>`}</label>
       <div class="quick"><button type="button" class="btn" data-q="0">Empty</button>${u.cap ? `<button type="button" class="btn" data-q="${u.cap}">Full · ${u.cap}</button>` : ""}</div>
       <div id="mWarn"></div>
-      <div class="two"><label class="fld"><span>Driver</span><input id="mDrv" list="drvList" value="${esc(u.driver)}" autocomplete="off"></label>${timeField("mT")}</div>${driverList()}`,
+      <div class="two"><label class="fld"><span>Driver</span><input id="mDrv" list="drvList" value="${esc(u.driver)}" autocomplete="off"></label>${timeField("mT")}</div>${driverList()}
+      ${!isShore ? `<div class="toggles"><label class="lastchk"><input type="checkbox" id="mLastT">Last tender from shore</label></div>` : ""}`,
     onOpen: f => {
       const upd = () => { const p = Math.max(0, parseInt(f.querySelector("#mPax").value || "0", 10) || 0); f.querySelector("#pv").innerHTML = ringSVG(p, u.cap, 96);
         f.querySelector("#mWarn").innerHTML = u.cap && p > u.cap ? `<div class="warnbox">${p} is above the max load of ${u.cap}.</div>` : (!isShore && p > st.ashore ? `<div class="warnbox">More than the ${num(st.ashore)} counted ashore. Check the number or sync Ashore.</div>` : ""); };
@@ -1008,21 +1092,22 @@ function departModal(u, dir){
       const v = f.querySelector("#mPax").value;
       if (v === "" || isNaN(+v)){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Enter the number of pax (0 if empty).</div>`; return false; }
       const p = Math.max(0, Math.round(+v));
-      addEv("depart", u.id, {dir, pax: p, driver: f.querySelector("#mDrv").value.trim()}, readTime(f, "mT", day().date), `${u.name} departed → ${isShore ? "Shore" : "Ship"} · ${p} pax`);
+      const lt = !!(f.querySelector("#mLastT") && f.querySelector("#mLastT").checked);
+      addEv("depart", u.id, Object.assign({dir, pax: p, driver: f.querySelector("#mDrv").value.trim()}, lt ? {last:true} : {}), readTime(f, "mT", day().date), `${lt ? "LAST TENDER · " : ""}${u.full} departed → ${isShore ? "Shore" : "Ship"} · ${p} pax`);
     }
   });
 }
 function arriveShipModal(u){
-  modal({title:`${u.name} · Arrived at ship`, submit:"Log arrival",
+  modal({title:`${u.full} · Arrived at ship`, submit:"Log arrival",
     body: `<p style="margin:0;color:var(--muted)">${u.pax} pax on board. They count as back on board when the tender is alongside a pontoon.</p>${berthChoice(ST, null)}${timeField("mT")}`,
     onOpen: f => bindChoice(f),
     onSubmit: f => { const b = f.querySelector("#mBerth").dataset.val;
-      addEv("arrive", u.id, {at:"ship", berth:b}, readTime(f, "mT", day().date), b === "SB" ? `${u.name} on stand-by · ${u.pax} waiting` : `${u.name} alongside ${berthName(b)} · ${u.pax} back on board`); }});
+      addEv("arrive", u.id, {at:"ship", berth:b}, readTime(f, "mT", day().date), b === "SB" ? `${u.full} on stand-by · ${u.pax} waiting` : `${u.full} alongside ${berthName(b)} · ${u.pax} back on board`); }});
 }
 function activateModal(u){
   const tender = u.kind === "tender";
   modal({
-    title: tender ? `Lower ${u.name}` : `Return ${u.name} to service`, submit: tender ? "Log lowering" : "Return to service",
+    title: tender ? `Lower ${u.full}` : `Return ${u.full} to service`, submit: tender ? "Log lowering" : "Return to service",
     body: `<div class="two"><label class="fld"><span>Max load (pax)</span><input id="mCap" type="number" inputmode="numeric" min="1" value="${u.cap ?? (tender ? DEFAULT_CAP : SHORE_CAP)}" required></label>
       <label class="fld"><span>Driver</span><input id="mDrv" list="drvList" value="${esc(u.driver)}" autocomplete="off"></label></div>
       ${berthChoice(ST, null)}${timeField("mT")}${driverList()}<div id="mWarn"></div>`,
@@ -1030,7 +1115,7 @@ function activateModal(u){
     onSubmit: f => {
       const cap = parseInt(f.querySelector("#mCap").value, 10);
       if (!cap || cap < 1){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Set the max load.</div>`; return false; }
-      addEv("activate", u.id, {cap, driver: f.querySelector("#mDrv").value.trim(), berth: f.querySelector("#mBerth").dataset.val}, readTime(f, "mT", day().date), tender ? `${u.name} lowered` : `${u.name} back on service`);
+      addEv("activate", u.id, {cap, driver: f.querySelector("#mDrv").value.trim(), berth: f.querySelector("#mBerth").dataset.val}, readTime(f, "mT", day().date), tender ? `${u.full} lowered` : `${u.full} back on service`);
     }
   });
 }
@@ -1078,12 +1163,12 @@ function dayModal(existing){
       <label class="fld"><span>Total on board (guests + crew)</span><input id="mTot" type="number" inputmode="numeric" min="0" value="${esc(d.total ?? "")}"><span class="hint">Reference only, from the ship’s system.</span></label>
       ${existing ? "" : `<div class="fld"><span>Pontoon side</span><div class="choice" id="mSide" data-val="${d.side}" style="grid-template-columns:1fr 1fr"><button type="button" data-berth="PORT" aria-pressed="false">Port</button><button type="button" data-berth="STBD" aria-pressed="true">Starboard</button></div></div>
       <div class="toggles"><label><input type="checkbox" id="mFwd" checked>FWD pontoon</label><label><input type="checkbox" id="mMid" checked>MIDSHIP pontoon</label></div>`}
-      <label class="fld"><span>Planned round trip (min)</span><input id="mCyc" type="number" inputmode="numeric" min="5" value="${esc(d.plannedCycle ?? 30)}"><span class="hint">Used for the estimate until real round trips are logged.</span></label><div id="mWarn"></div>`,
+      <span class="hint">Round trip time is worked out automatically from the logged trips.</span><div id="mWarn"></div>`,
     onOpen: f => bindChoice(f, "mSide"),
     onSubmit: f => {
       const port = f.querySelector("#mPort").value.trim();
       if (!port){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Enter the port.</div>`; return false; }
-      const rec = {port, date: f.querySelector("#mDate").value || ymd(Date.now()), lastTender: normHM(f.querySelector("#mLast").value) || "", total: parseInt(f.querySelector("#mTot").value, 10) || 0, plannedCycle: parseInt(f.querySelector("#mCyc").value, 10) || 30};
+      const rec = {port, date: f.querySelector("#mDate").value || ymd(Date.now()), lastTender: normHM(f.querySelector("#mLast").value) || "", total: parseInt(f.querySelector("#mTot").value, 10) || 0};
       if (existing) S.store.saveDay(Object.assign({id: existing.id}, rec));
       else S.store.saveDay(Object.assign({id: "d" + uid(), status:"open", openedAt: Date.now(), side: f.querySelector("#mSide").dataset.val, fwd: f.querySelector("#mFwd").checked, mid: f.querySelector("#mMid").checked}, rec));
       toast(existing ? "Day updated" : `Tender day open · ${port}`);
@@ -1092,7 +1177,7 @@ function dayModal(existing){
 function closeDayModal(){
   const st = ST, active = st.list.filter(u => u.active);
   modal({title:"Close tender day", submit:"Close day", danger:true,
-    body: `${active.length ? `<div class="warnbox">${active.map(u => esc(u.name)).join(", ")} still in service. Hoist them first, or close anyway.</div>` : ""}
+    body: `${active.length ? `<div class="warnbox">${active.map(u => esc(u.full)).join(", ")} still in service. Hoist them first, or close anyway.</div>` : ""}
       ${st.ashore > 0 ? `<div class="warnbox">${num(st.ashore)} still counted ashore.</div>` : ""}
       <p style="margin:0">The day moves to History with its full log. The board stays empty until a new day is opened.</p>`,
     onSubmit: () => { S.store.saveDay({id: day().id, status:"closed", closedAt: Date.now(), summary: summaryOf(st)}); toast("Day closed and saved to History"); location.hash = "history"; }});
@@ -1104,7 +1189,7 @@ function sheetModal(u){
   const isIss = S.data.issues.filter(i => i.status === "open" && i.unitName === u.name);
   const canHoist = u.active && u.loc === "ship" && u.pax === 0;
   const status = !u.active ? "Not in service" : u.loc === "ship" ? berthName(u.berth) : u.loc === "transit" ? (u.dir === "shore" ? "→ Shore" : "← Ship") : "Shore";
-  modal({title:`${u.name}`, submit:null,
+  modal({title:`${u.full}`, submit:null,
     body: `<div class="kv"><div><span>Status</span><b>${status}</b></div><div><span>Pax</span><b>${u.pax} / ${u.cap ?? "—"}</b></div><div><span>Driver</span><b>${esc(u.driver || "—")}</b></div>
         <div><span>${u.kind === "tender" ? "Lowered" : "On service"}</span><b class="mono">${fmtT(u.kind === "tender" ? u.lowered : u.since)}</b></div><div><span>Trips out / back</span><b>${u.tripsOut} / ${u.tripsBack}</b></div><div><span>Side</span><b>${u.side}</b></div></div>
       <label class="fld"><span>Note</span><textarea id="mNote" placeholder="e.g. Refuel at 15:30" ${isAdmin() ? "" : "readonly"}>${esc(u.note)}</textarea></label>
@@ -1124,16 +1209,28 @@ function sheetModal(u){
       f.querySelectorAll("[data-m]").forEach(b => b.addEventListener("click", () => {
         const m = b.dataset.m;
         if (m === "depart-shore") departModal(u, "shore");
-        if (m === "move") modal({title:`${u.name} · Berth`, submit:"Save", body: berthChoice(ST, u.berth), onOpen: f2 => bindChoice(f2),
-          onSubmit: f2 => { const nb = f2.querySelector("#mBerth").dataset.val; if (nb !== u.berth) addEv("berth", u.id, {berth: nb}, Date.now(), `${u.name} → ${berthName(nb)}`); }});
-        if (m === "driver") simpleModal(`${u.name} · Driver`, "Driver", "text", u.driver, v => addEv("driver", u.id, {driver: v}), true);
-        if (m === "cap") simpleModal(`${u.name} · Max load`, "Max load (pax)", "number", u.cap ?? "", v => addEv("cap", u.id, {cap: Math.max(1, parseInt(v, 10) || 1)}));
+        if (m === "move") modal({title:`${u.full} · Berth`, submit:"Save", body: berthChoice(ST, u.berth), onOpen: f2 => bindChoice(f2),
+          onSubmit: f2 => { const nb = f2.querySelector("#mBerth").dataset.val; if (nb !== u.berth) addEv("berth", u.id, {berth: nb}, Date.now(), `${u.full} → ${berthName(nb)}`); }});
+        if (m === "driver") simpleModal(`${u.full} · Driver`, "Driver", "text", u.driver, v => addEv("driver", u.id, {driver: v}), true);
+        if (m === "cap") simpleModal(`${u.full} · Max load`, "Max load (pax)", "number", u.cap ?? "", v => addEv("cap", u.id, {cap: Math.max(1, parseInt(v, 10) || 1)}));
         if (m === "issue") issueModal(null, u.name);
-        if (m === "stow") modal({title: u.kind === "tender" ? `Hoist ${u.name}` : `Release ${u.name}`, submit: u.kind === "tender" ? "Log hoisting" : "Release",
+        if (m === "stow") modal({title: u.kind === "tender" ? `Hoist ${u.full}` : `Release ${u.full}`, submit: u.kind === "tender" ? "Log hoisting" : "Release",
           body: `<p style="margin:0;color:var(--muted)">${u.kind === "tender" ? "Logs the hoisting time. The row turns grey: Not in service." : "Takes the shoretender off the board."}</p>${timeField("mT")}`,
-          onSubmit: f2 => { addEv("deactivate", u.id, {}, readTime(f2, "mT", day().date), `${u.name} ${u.kind === "tender" ? "hoisted" : "released"}`); }});
+          onSubmit: f2 => { addEv("deactivate", u.id, {}, readTime(f2, "mT", day().date), `${u.full} ${u.kind === "tender" ? "hoisted" : "released"}`); }});
       }));
     }});
+}
+function legendModal(){
+  modal({title:"How to read the board", submit:null,
+    body: `<div class="legend">
+      <div>${ringSVG(60, 170, 46)}<p><b>Pax ring</b> fills clockwise up to the boat’s max load: green, amber from 80%, red from 95%.</p></div>
+      <div>${boatSVG(false, "", "")}<p><b>Bow direction</b> shows where the boat is heading. At the ship it points to shore, at the pier it points back to the ship.</p></div>
+      <div><span class="tag berth">Forward Pontoon</span><p><b>Alongside</b> the ship at that pontoon. Pax have disembarked.</p></div>
+      <div><span class="tag sb">Stand-by</span><p><b>Waiting off the ship</b> for a free pontoon. Its pax are still on the tender and count in “On tenders”.</p></div>
+      <div><span class="side STBD">STBD</span><p>Where the tender is stowed (STBD / PORT). Shoretenders are local boats.</p></div>
+      <div><span class="offtag">Not in service</span><p>Tender hoisted or not lowered today.</p></div>
+      <div><b class="lgnum">Ashore</b><p>Counted from tender trips (out − back), corrected by <b>Sync</b> with the security count. <b>Aboard</b> = Total − Ashore − On tenders.</p></div>
+      <div><b class="lgnum">Recovery</b><p>Started by the Bridge when guests begin returning. It estimates how many tenders are still needed before the last tender.</p></div></div>`});
 }
 function refreshSheet(){ /* keep an open sheet static; data refresh is shown on the board */ }
 function simpleModal(title, label, type, value, apply, drivers){
@@ -1146,7 +1243,7 @@ function editEvModal(id){
   const e = l.e;
   const hasPax = e.type === "depart", hasDrv = e.type === "depart" || e.type === "activate" || e.type === "driver";
   const hasCap = e.type === "cap" || e.type === "activate" || e.type === "shore_add", hasVal = e.type === "sync";
-  modal({title:`Edit · ${l.unitName}`, submit:"Save",
+  modal({title:`Edit · ${fullName(l.unitName)}`, submit:"Save",
     extra:`<button type="button" class="btn danger" id="mDel" style="margin-right:auto">Delete</button>`,
     body: `<p style="margin:0;color:var(--muted)">${esc(l.text)}</p>${timeField("mT", e.t)}
       ${hasPax ? `<label class="fld"><span>Pax</span><input id="mPax" type="number" inputmode="numeric" min="0" value="${e.pax ?? 0}"></label>` : ""}
@@ -1169,9 +1266,9 @@ function editEvModal(id){
 function issueModal(existing, unitName){
   const i = existing || {};
   const units = issueUnits(), t = i.t ?? Date.now();
-  modal({title: existing ? `Edit issue · ${i.unitName}` : "Report issue", submit: existing ? "Save" : "Log issue",
+  modal({title: existing ? `Edit issue · ${fullName(i.unitName)}` : "Report issue", submit: existing ? "Save" : "Log issue",
     extra: existing ? `<button type="button" class="btn danger" id="mDel" style="margin-right:auto">Delete</button>` : "",
-    body: `<div class="two"><label class="fld"><span>Unit</span><select id="mU">${units.map(n => `<option ${(i.unitName || unitName) === n ? "selected" : ""}>${esc(n)}</option>`).join("")}</select></label>
+    body: `<div class="two"><label class="fld"><span>Unit</span><select id="mU">${units.map(n => `<option value="${esc(n)}" ${(i.unitName || unitName) === n ? "selected" : ""}>${esc(fullName(n))}</option>`).join("")}</select></label>
       <label class="fld"><span>Category</span><select id="mCat">${CATEGORIES.map(c => `<option ${i.category === c ? "selected" : ""}>${esc(c)}</option>`).join("")}</select></label></div>
       <div class="two"><label class="fld"><span>Date</span><input id="mD" type="date" value="${ymd(t)}"></label><label class="fld"><span>Time (24h)</span>${hmInput("mTi", fmtT(t))}</label></div>
       <label class="fld"><span>Description</span><textarea id="mTx" required placeholder="What happened, and what was done">${esc(i.text || "")}</textarea></label>
@@ -1185,11 +1282,11 @@ function issueModal(existing, unitName){
       const rec = {id: i.id || "i" + uid(), unitName: f.querySelector("#mU").value, category: f.querySelector("#mCat").value, text, t: tt,
         status: i.status || "open", port: i.port ?? (day() ? day().port : ""), dayId: i.dayId ?? (day() ? day().id : null)};
       const r = f.querySelector("#mRes"); if (r) rec.resolution = r.value.trim();
-      S.store.saveIssue(rec); toast(existing ? "Issue updated" : `Issue logged on ${rec.unitName}`);
+      S.store.saveIssue(rec); toast(existing ? "Issue updated" : `Issue logged on ${fullName(rec.unitName)}`);
     }});
 }
 function resolveModal(i){
-  modal({title:`Resolve · ${i.unitName}`, submit:"Mark resolved",
+  modal({title:`Resolve · ${fullName(i.unitName)}`, submit:"Mark resolved",
     body: `<p style="margin:0">${esc(i.text)}</p><label class="fld"><span>What was done</span><textarea id="mRes" placeholder="e.g. Strainer cleaned, tested OK"></textarea></label>
       <div class="two"><label class="fld"><span>Date</span><input id="mD" type="date" value="${ymd(Date.now())}"></label><label class="fld"><span>Time (24h)</span>${hmInput("mTi", fmtT(Date.now()))}</label></div>`,
     onSubmit: f => { S.store.saveIssue({id:i.id, status:"resolved", resolution: f.querySelector("#mRes").value.trim(), resolvedAt: hmToMs(f.querySelector("#mD").value, normHM(f.querySelector("#mTi").value)) ?? Date.now()}); toast("Issue resolved"); }});
@@ -1218,13 +1315,16 @@ document.addEventListener("click", e => {
     case "edit-day": dayModal(day()); break;
     case "sync": syncModal(); break;
     case "rec": S.recOpen = !S.recOpen; render(); break;
+    case "rec-start": addEv("recovery", null, {on:true}, null, "Recovery started"); break;
+    case "rec-stop": addEv("recovery", null, {on:false}, null, "Recovery ended"); break;
+    case "legend": legendModal(); break;
     case "pontoons": pontoonModal(); break;
     case "sheet": sheetModal(u); break;
     case "depart-shore": departModal(u, "shore"); break;
     case "depart-ship": departModal(u, "ship"); break;
-    case "arrive-shore": addEv("arrive", u.id, {at:"shore"}, null, `${u.name} alongside Shore · ${u.pax} landed`); break;
+    case "arrive-shore": addEv("arrive", u.id, {at:"shore"}, null, `${u.full} alongside Shore · ${u.pax} landed`); break;
     case "arrive-ship": arriveShipModal(u); break;
-    case "berth": addEv("berth", u.id, {berth: el.dataset.b}, null, `${u.name} alongside ${berthName(el.dataset.b)}${u.pax ? " · " + u.pax + " back on board" : ""}`); break;
+    case "berth": addEv("berth", u.id, {berth: el.dataset.b}, null, `${u.full} alongside ${berthName(el.dataset.b)}${u.pax ? " · " + u.pax + " back on board" : ""}`); break;
     case "activate": activateModal(u); break;
     case "add-shore": shoreModal(); break;
     case "undo-last": { const l = ST && ST.log.slice().sort((a,b) => (b.e.c||0) - (a.e.c||0))[0]; if (!l) break;
