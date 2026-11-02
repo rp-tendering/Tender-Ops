@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#13212f">
+<meta name="color-scheme" content="light dark">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Tendering Ops">
@@ -202,10 +203,27 @@ main{padding-block:12px 70px;display:flex;flex-direction:column;gap:12px}
 .flagl.f-emergency{background:var(--crit);color:#fff}
 .grow.fl-tech,.grow.fl-pvi{background:color-mix(in srgb,var(--warn) 9%,var(--surface));box-shadow:inset 4px 0 0 var(--warn)}
 .grow.fl-emergency{background:color-mix(in srgb,var(--crit) 10%,var(--surface));box-shadow:inset 5px 0 0 var(--crit)}
-.grow.fl-pvi .tok{opacity:.6}
 .embar{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;background:var(--crit);color:#fff;border-radius:12px;padding:10px 16px}
 .embar > b{font-family:var(--f-display);font-size:24px;letter-spacing:.12em;text-transform:uppercase}
 @media (prefers-reduced-motion: no-preference){ .embar{animation:empulse 1.6s ease-in-out infinite} @keyframes empulse{50%{filter:brightness(1.15)}} }
+.nextb{font-size:11.5px;color:var(--sea);white-space:nowrap}
+.nextb b{font-weight:700}
+.eta{font-size:11.5px;color:var(--ink);white-space:nowrap}
+.eta b{font-weight:700}
+.m.svc .svcr{display:flex;align-items:center;gap:6px}
+.svcring .c{font-size:11px}
+.deck.nrec{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}
+.people{grid-template-columns:1.35fr 1fr 1fr 1fr 1fr}
+.stats{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0 14px}
+.stats > summary{cursor:pointer;padding:10px 0;font-family:var(--f-display);font-weight:700;font-size:15px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.stats[open]{padding-bottom:12px}
+.stats .capbar{border:0;padding:0 0 10px;border-bottom:1px solid var(--line);border-radius:0;margin-bottom:10px}
+.sugbar{margin:0;align-self:flex-start}
+.onlbtn{cursor:pointer}
+.onl{display:flex;flex-direction:column;gap:8px}
+.onl > div{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rk2{font-size:11.5px;font-weight:700;padding:1px 7px;border-radius:999px;background:color-mix(in srgb,var(--ink) 9%,transparent)}
+.onl .hint{margin-left:auto}
 .offbar{background:var(--warn);color:#1a1200;font-weight:600;font-size:13.5px}
 .offbar .wrap{padding-block:6px}
 .board.ro .grow{grid-template-columns:minmax(170px,220px) repeat(3,minmax(0,1fr));grid-template-areas:"b s t h"}
@@ -427,6 +445,11 @@ tr.k-lower td,tr.k-hoist td{background:color-mix(in srgb,var(--accent) 8%,transp
   .people{grid-template-columns:repeat(3,minmax(0,1fr))}
   .m{padding:6px 10px}
   .m.ashore{grid-column:1 / -1}
+  .people{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .deck.nrec{grid-template-columns:minmax(0,1fr)}
+  .onlbtn{font-size:11px}
+  .who{flex-wrap:wrap;gap:6px;width:100%}
+  .who .chip{padding:3px 7px;font-size:11px}
   .m:nth-child(2){border-left:0}
   .people .m:not(.ashore){border-top:1px solid var(--line)}
   .m .v{font-size:22px}
@@ -665,8 +688,8 @@ function compute(day, events){
   return {units, list, ashore, onTenders, aboard: total - ashore - onTenders, total, pont, occ, cycles, cycleAvg, cycleN, recovery, lastDep, openTender, legs, trips, changes, log, drivers:[...drivers],
     tripsOut:s("tripsOut"), tripsBack:s("tripsBack"), paxOut:s("paxOut"), paxBack:s("paxBack"), firstLowered, lastHoisted};
 }
-const inService = u => u.active && !(u.flag && u.flag.status === "pvi");
-const STATUS = {tech:"Technical issue", pvi:"PVI/PDI · out of service", emergency:"EMERGENCY"};
+const inService = u => u.active;
+const STATUS = {tech:"Technical issue", pvi:"PVI/PDI incident", emergency:"EMERGENCY"};
 const freeBerths = st => ["FWD","MID"].filter(b => st.pont[b] && !st.occ[b]);
 
 function estimate(day, st, now){
@@ -689,7 +712,7 @@ function estimate(day, st, now){
   // Trips run at ~85% of max load on average (guests reach the pier a few at a time).
   r.load = Math.round(avgCap * LOAD_FACTOR);
   r.trips = Math.ceil(A / r.load);
-  r.maxWait = +day.maxWait || DEFAULT_MAX_WAIT;
+  r.maxWait = DEFAULT_MAX_WAIT;
   if (A === 0){ r.needed = 0; r.reason = "none"; }
   else if (remain != null && remain > 0){
     r.perUnit = Math.max(1, Math.floor(remain / cycle));                 // full round trips still possible per tender
@@ -707,6 +730,23 @@ function estimate(day, st, now){
 }
 
 /* ---------------- capacity: demand vs lift, with a brake on hoisting ---------------- */
+/* where each tender coming back will berth, and when it is due */
+function legAvg(a){ return a && a.length ? a.slice(-8).reduce((x,y) => x+y, 0) / Math.min(8, a.length) : null; }
+function etaShip(st, u){
+  if (!(u.loc === "transit" && u.dir === "ship")) return null;
+  const own = u.tArrShore != null && u.tDepShip != null ? (u.tArrShore - u.tDepShip) / 60000 : null;   // this boat's own run out
+  const run = legAvg(st.legs.tIn) ?? own ?? legAvg(st.legs.tOut) ?? 15;
+  return u.since + run * 60000;
+}
+function berthPlan(st, now){
+  const dwell = (legAvg(st.legs.ship) ?? 8) * 60000, plan = {};
+  const slots = ["FWD","MID"].filter(b => st.pont[b]).map(b => ({b, free: st.occ[b] ? Math.max(now, (st.occ[b].since || now) + dwell) : now}));
+  if (!slots.length) return plan;
+  const queue = st.list.filter(u => u.active && u.loc === "ship" && u.berth === "SB").sort((a,b) => (a.since||0) - (b.since||0)).map(u => ({u, eta: now}))
+    .concat(st.list.filter(u => u.active && u.loc === "transit" && u.dir === "ship").map(u => ({u, eta: etaShip(st, u) || now})).sort((a,b) => a.eta - b.eta));
+  for (const q of queue){ slots.sort((a,b) => a.free - b.free); const s = slots[0]; const at = Math.max(s.free, q.eta); plan[q.u.id] = {b: s.b, at, wait: Math.max(0, (at - q.eta) / 60000)}; s.free = at + dwell; }
+  return plan;
+}
 function capacity(day, st, now, est){
   const avg = a => a.length ? a.slice(-8).reduce((x,y) => x+y, 0) / Math.min(8, a.length) : null;
   const L = {tOut:avg(st.legs.tOut), pier:avg(st.legs.pier), tIn:avg(st.legs.tIn), ship:avg(st.legs.ship)};
@@ -736,7 +776,7 @@ function capacity(day, st, now, est){
   }
   return {L, cycle, fill, n, lift, dOut, dIn, demand, sat, sug, headway: n ? cycle / n : null};
 }
-function capHTML(cap){
+function capHTML(cap, inStats){
   if (!cap.n) return "";
   const r = x => Math.round(x / 10) * 10, pct = Math.min(100, Math.round(cap.demand / Math.max(1, cap.lift) * 100));
   const parts = cap.L.tOut ? `${Math.round(cap.L.tOut)} + ${Math.round(cap.L.pier)} + ${Math.round(cap.L.tIn)} + ${Math.round(cap.L.ship)}` : "";
@@ -746,7 +786,7 @@ function capHTML(cap){
     <div class="cb3"><span class="l">Round trip</span><b>${Math.round(cap.cycle)}′</b>${parts ? `<span class="u" title="run to shore + at pier + run to ship + at ship">${parts}</span>` : ""}</div>
     <div class="cb3"><span class="l">Loads</span><b>${Math.round(cap.fill * 100)}%</b></div>
     <div class="cb3"><span class="l">Boat at pier</span><b>every ${Math.round(cap.headway)}′</b></div>
-    ${cap.sug ? `<div class="sug ${cap.sug.k}">${cap.sug.k === "up" ? "▲" : "▼"} ${cap.sug.t}</div>` : ""}</section>`;
+    ${cap.sug && !inStats ? `<div class="sug ${cap.sug.k}">${cap.sug.k === "up" ? "▲" : "▼"} ${cap.sug.t}</div>` : ""}</section>`;
 }
 function recoverList(st, k){
   if (k <= 0) return [];
@@ -759,9 +799,11 @@ function recoverList(st, k){
 }
 
 function statusHTML(day, st, est, lastSync){
+  const own = st.list.filter(u => u.kind === "tender"), ownIn = own.filter(u => u.active).length, stIn = st.list.filter(u => u.kind === "shore" && u.active).length;
   const people = `<div class="sec people">
     <div class="m ashore"><div><div class="l">Ashore</div><div class="v">${num(st.ashore)}</div><div class="s">${lastSync ? "synced " + fmtT(lastSync.e.t) : "tender count"}</div></div>
       ${isAdmin() ? `<button class="btn small sync" data-act="sync">Sync</button>` : ""}</div>
+    <div class="m svc"><div class="l">In service</div><div class="svcr">${ringSVG(ownIn, own.length, 50).replace('class="ring ', 'class="ring svcring ')}</div>${stIn ? `<div class="q">+${stIn} shoretender${stIn > 1 ? "s" : ""}</div>` : ""}</div>
     <div class="m"><div class="l">On tenders</div><div class="v">${num(st.onTenders)}</div></div>
     <div class="m"><div class="l">Aboard</div><div class="v">${num(st.aboard)}</div><div class="q">calculated</div></div>
     <div class="m"><div class="l">Total</div><div class="v">${num(st.total)}</div><div class="q">reference</div></div></div>`;
@@ -814,15 +856,15 @@ function statusHTML(day, st, est, lastSync){
         <li>For the lift: ${est.final ? `${est.trips} trips + 1 sweep` : `${est.trips ?? "—"} trips ÷ ${est.perUnit ?? "—"} per tender`} → <b>${est.capNeed ?? "—"}</b> tenders</li>
         <li>For waiting time: a tender at the pier at least every ${est.maxWait} min (${Math.round(est.cycle)} ÷ ${est.maxWait}), never more than the loads left ashore (min 2) → <b>${est.waitNeed ?? "—"}</b> tenders</li>
         <li>${est.final ? `Final round (less than one round trip left): one trip per tender plus one sweep for late arrivals → keep the larger figure, <b>${est.needed}</b> of ${est.activeCount}` : est.peak ? `Return peak still to come: more people ashore than 2 tenders can lift in an hour, so keep all <b>${est.activeCount}</b>` : `Keep the larger of the two → <b>${est.needed ?? "—"}</b> of ${est.activeCount}`}</li></ol>
-        <p class="hint">Advisory. Max wait at the pier is set in Edit day (now ${est.maxWait} min).</p>` : ""}
+        <p class="hint">Advisory: the decision stays with the Bridge.</p>` : ""}
       ${isAdmin() ? `<button class="linkish" data-act="rec-stop">End recovery</button>` : ""}</div>`;
   }
-  return `<section class="deck" aria-label="Tender status">${people}${pont}${rec}</section>`;
+  return `<section class="deck${isAdmin() ? "" : " nrec"}" aria-label="Tender status">${people}${pont}${isAdmin() ? rec : ""}</section>`;
 }
 
 /* ---------------- stores ---------------- */
 function createLocalStore(){
-  const KEY = "tom.demo.v6";
+  const KEY = "tom.demo.v7";
   let mem = null; const listeners = [];
   const read = () => { const s = lsGet(KEY); if (s){ try { return JSON.parse(s); } catch(e){} } return mem; };
   const db = () => read() || {days:{}, events:{}, issues:{}};
@@ -831,7 +873,7 @@ function createLocalStore(){
     const d = db();
     const days = Object.values(d.days).sort((a,b) => (b.date || "").localeCompare(a.date || "") || (b.openedAt||0) - (a.openedAt||0));
     const currentDay = days.find(x => x.status === "open") || null;
-    return {days, currentDay, events: currentDay ? (d.events[currentDay.id] || []) : [], issues: Object.values(d.issues).sort((a,b) => b.t - a.t), messages: Object.values(d.messages || {}).sort((a,b) => a.t - b.t), feedback: Object.values(d.feedback || {}), offline:false, pending:false};
+    return {days, currentDay, events: currentDay ? (d.events[currentDay.id] || []) : [], issues: Object.values(d.issues).sort((a,b) => b.t - a.t), messages: Object.values(d.messages || {}).sort((a,b) => a.t - b.t), feedback: Object.values(d.feedback || {}), presence: Object.values(d.presence || {}), offline:false, pending:false};
   }
   function emit(){ const s = snap(); listeners.forEach(f => f(s)); }
   window.addEventListener("storage", e => { if (e.key === KEY) emit(); });
@@ -851,6 +893,7 @@ function createLocalStore(){
     saveMessage: m => mut(d => { (d.messages = d.messages || {})[m.id] = clean(m); }),
     deleteMessages: ids => mut(d => { ids.forEach(id => { if (d.messages) delete d.messages[id]; }); }),
     getMessages: async dayId => Object.values(db().messages || {}).filter(m => m.dayId === dayId).sort((a,b) => a.t - b.t),
+    savePresence: x => { const d = db(); d.presence = d.presence || {}; d.presence[x.id] = x; mem = d; lsSet(KEY, JSON.stringify(d)); },
     saveFeedback: f => mut(d => { d.feedback = d.feedback || {}; d.feedback[f.id] = Object.assign({}, d.feedback[f.id], clean(f)); }),
     deleteDay: dayId => mut(d => { delete d.events[dayId]; delete d.days[dayId]; }),
     getEvents: async dayId => (db().events[dayId] || []).slice()
@@ -864,9 +907,9 @@ async function createFirebaseStore(){
   const fs = firebase.firestore();
   try { await fs.enablePersistence({synchronizeTabs:true}); } catch(e){}
   const auth = firebase.auth();
-  let days = [], events = [], issues = [], messages = [], feedback = [], curId = null, unsubEv = null, unsubs = [], offline = !navigator.onLine, pending = false;
+  let days = [], events = [], issues = [], messages = [], feedback = [], presence = [], curId = null, unsubEv = null, unsubs = [], offline = !navigator.onLine, pending = false;
   const listeners = [];
-  const emit = () => { const currentDay = days.find(d => d.status === "open") || null; const s = {days, currentDay, events: currentDay && currentDay.id === curId ? events : [], issues, messages, feedback, offline, pending}; listeners.forEach(f => f(s)); };
+  const emit = () => { const currentDay = days.find(d => d.status === "open") || null; const s = {days, currentDay, events: currentDay && currentDay.id === curId ? events : [], issues, messages, feedback, presence, offline, pending}; listeners.forEach(f => f(s)); };
   const fail = err => { console.error(err); toast(err.code === "permission-denied" ? "Access denied by the server" : "Sync error: " + (err.message || err)); };
   const dayRef = id => fs.collection("days").doc(id);
   function watchEvents(id){
@@ -884,10 +927,11 @@ async function createFirebaseStore(){
       emit();
     }, fail));
     unsubs.push(fs.collection("issues").orderBy("t","desc").limit(1000).onSnapshot(s => { issues = s.docs.map(d => d.data()); emit(); }, fail));
+    unsubs.push(fs.collection("presence").onSnapshot(s => { presence = s.docs.map(d => d.data()); emit(); }, () => {}));
     unsubs.push(fs.collection("feedback").orderBy("t","desc").limit(300).onSnapshot(s => { feedback = s.docs.map(d => d.data()); emit(); }, fail));
     unsubs.push(fs.collection("messages").orderBy("t","desc").limit(300).onSnapshot(s => { messages = s.docs.map(d => d.data()).reverse(); emit(); }, fail));
   }
-  function stop(){ unsubs.forEach(u => u()); unsubs = []; if (unsubEv) unsubEv(); unsubEv = null; curId = null; days = []; events = []; issues = []; messages = []; feedback = []; }
+  function stop(){ unsubs.forEach(u => u()); unsubs = []; if (unsubEv) unsubEv(); unsubEv = null; curId = null; days = []; events = []; issues = []; messages = []; feedback = []; presence = []; }
   addEventListener("online", () => { offline = false; emit(); });
   addEventListener("offline", () => { offline = true; emit(); });
   const w = p => { p.catch(fail); return Promise.resolve(); };
@@ -906,6 +950,7 @@ async function createFirebaseStore(){
     saveMessage: m => w(fs.collection("messages").doc(m.id).set(clean(m))),
     deleteMessages: async ids => { for (let i = 0; i < ids.length; i += 400){ const b = fs.batch(); ids.slice(i, i + 400).forEach(id => b.delete(fs.collection("messages").doc(id))); await b.commit().catch(fail); } },
     getMessages: async dayId => (await fs.collection("messages").where("dayId", "==", dayId).get()).docs.map(d => d.data()).sort((a,b) => a.t - b.t),
+    savePresence: x => { fs.collection("presence").doc(x.id).set(clean(x)).catch(() => {}); },
     saveFeedback: f => w(fs.collection("feedback").doc(f.id).set(clean(f), {merge:true})),
     resetDay: async dayId => { const snap = await dayRef(dayId).collection("events").get(); const docs = snap.docs;
       for (let i = 0; i < docs.length; i += 400){ const b = fs.batch(); docs.slice(i, i + 400).forEach(d => b.delete(d.ref)); await b.commit().catch(fail); } },
@@ -1021,7 +1066,7 @@ function summaryOf(st){
 }
 
 /* ---------------- app state ---------------- */
-const S = {store:null, role:null, data:{days:[], currentDay:null, events:[], issues:[], messages:[], feedback:[]}, view:"board", logUnit:"all", issueUnit:"all", issueStatus:"all", hist:null, histEvents:null, recOpen:false};
+const S = {store:null, role:null, data:{days:[], currentDay:null, events:[], issues:[], messages:[], feedback:[], presence:[]}, view:"board", logUnit:"all", issueUnit:"all", issueStatus:"all", hist:null, histEvents:null, recOpen:false};
 const isAdmin = () => S.role === "deck";
 const canIssues = () => S.role === "deck" || S.role === "tech";
 const canOpenTender = () => S.role === "deck" || S.role === "hotel";
@@ -1064,7 +1109,7 @@ function headerHTML(){
   return `<header class="top"><div class="wrap">
     <div class="brand">${boatSVG(false)}<div><b>Tendering Operations</b><span>${esc(CONFIG.shipName)} · <i class="credit">made by Erio</i></span></div></div>
     <nav class="tabs">${tab("board","Board")}${tab("log","Log")}${tab("issues","Issues" + (openIssues ? ` <i class="badge warnb">${openIssues}</i>` : ""))}${tab("chat","Chat" + (unreadCount() ? ` <i class="badge">${unreadCount()}</i>` : ""))}${tab("feedback","Feedback")}${tab("history","History")}</nav>
-    <div class="who">${conn}${S.data.currentDay && ST && ST.openTender.on ? `<span class="chip ot">Open Tender</span>` : ""}
+    <div class="who">${conn}<button class="chip onlbtn" data-act="online" title="Who is online"><span class="dot"></span>${Math.max(1, onlineList().length)} online</button>${S.data.currentDay && ST && ST.openTender.on ? `<span class="chip ot">Open Tender</span>` : ""}
       <button class="icon-btn themebtn" data-act="theme" title="${isDark() ? "Switch to light" : "Switch to dark"}" aria-label="${isDark() ? "Switch to light" : "Switch to dark"}">${isDark() ? SUN : MOON}</button>
       <span class="acct"><span class="chip role d-${S.role}">${DEPT[S.role]}</span>${S.store.mode === "live" ? `<button class="icon-btn" data-act="signout">Sign out</button>` : ""}</span></div>
   </div></header>${demo}${S.store.mode === "live" && d.offline ? `<div class="offbar"><div class="wrap">Offline since ${fmtT(S.offlineSince || Date.now())} · showing the data as of then. ${isAdmin() ? "Entries are saved on this device and sync when the connection is back." : "Numbers may be out of date."}</div></div>` : ""}`;
@@ -1119,7 +1164,17 @@ function identityModal(){
       <label class="fld"><span>Name</span><input id="mName" value="${esc(id.name || "")}" autocomplete="name" required></label>
       <label class="fld"><span>Rank / position</span><input id="mRank" value="${esc(id.rank || "")}" placeholder="e.g. 2/O, Hotel Director, 1st Engineer"></label><div id="mWarn"></div>`,
     onSubmit: f => { const name = f.querySelector("#mName").value.trim(); if (!name){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Enter your name.</div>`; return false; }
-      lsSet("tom.id." + S.role, JSON.stringify({name, rank: f.querySelector("#mRank").value.trim()})); setTimeout(render, 0); }});
+      lsSet("tom.id." + S.role, JSON.stringify({name, rank: f.querySelector("#mRank").value.trim()})); heartbeat(); setTimeout(render, 0); }});
+}
+
+/* ---------------- presence ---------------- */
+function onlineList(){ const cut = Date.now() - 2.5 * 60000; return (S.data.presence || []).filter(x => x.t > cut).sort((a,b) => a.dept.localeCompare(b.dept) || (a.name||"").localeCompare(b.name||"")); }
+function heartbeat(){ if (!S.role || !S.store || !S.store.savePresence) return; const id = identity() || {}; S.store.savePresence({id: deviceId(), dept: DEPT[S.role], name: id.name || "", rank: id.rank || "", t: Date.now(), view: S.view}); }
+setInterval(heartbeat, 60000);
+function onlineModal(){
+  const L = onlineList();
+  modal({title:`Online now · ${L.length}`, submit:null, body: L.length ? `<div class="onl">${L.map(x => `<div><span class="dept d-${x.dept.toLowerCase()}">${esc(x.dept)}</span><b>${esc(x.name || "No name set")}</b>${x.rank ? `<span class="rk2">${esc(x.rank)}</span>` : ""}<span class="mono hint">${x.id === deviceId() ? "this device" : "seen " + fmtT(x.t)}</span></div>`).join("")}</div>
+    <p class="hint" style="margin:8px 0 0">Devices with the app open in the last 2 minutes. Names come from the chat (Chat → Change).</p>` : `<p class="hint">Nobody else online.</p>`});
 }
 
 /* ---------------- feedback ---------------- */
@@ -1157,6 +1212,7 @@ function boardHTML(){
   const syncs = st.log.filter(l => l.e.type === "sync");
   const lastSync = syncs.length ? syncs[syncs.length - 1] : null;
 
+  st._plan = berthPlan(st, now);
   const statusPanel = statusHTML(day, st, est, lastSync);
   const lastInfo = est.remain != null ? (est.remain > 0 ? ` (in ${fmtDur(est.remain)})` : " (passed)") : "";
   const dayline = `<section class="dayline"><h1>${esc(day.port || "Tender day")}</h1>
@@ -1174,7 +1230,11 @@ function boardHTML(){
   const cap = capacity(day, st, now, est);
   const ems = st.list.filter(u => u.flag && u.flag.status === "emergency");
   const em = ems.length ? `<section class="embar"><b>Emergency</b><span>${ems.map(u => `${esc(u.full)} since <b class="mono">${fmtT(u.flag.since)}</b>${u.flag.text ? " · " + esc(u.flag.text) : ""}`).join(" · ")}</span></section>` : "";
-  return dayline + em + ot + statusPanel + capHTML(cap) + board;
+  const sumS = summaryOf(st);
+  const statsOpen = (lsGet("tom.stats." + S.role) ?? (isAdmin() ? "1" : "0")) === "1";
+  const stats = `<details class="stats" id="statsBox" ${statsOpen ? "open" : ""}><summary>Statistics</summary>${capHTML(cap, true)}<div class="sumgrid">${sumTiles(sumS)}</div></details>`;
+  const sugBar = isAdmin() && cap.sug ? `<div class="sug ${cap.sug.k} sugbar">${cap.sug.k === "up" ? "▲" : "▼"} ${cap.sug.t}</div>` : "";
+  return dayline + em + ot + statusPanel + sugBar + board + stats;
 }
 
 function rowHTML(u){
@@ -1192,9 +1252,12 @@ function rowHTML(u){
   const since = u.since ? `${fmtT(u.since)} · ${fmtShort((now - u.since) / 60000)}` : "";
   // bow faces the next move: at ship → shore (right), at shore → ship (left), stand-by waits facing the ship
   const flip = (u.loc === "transit" && u.dir === "ship") || u.loc === "shore" || (u.loc === "ship" && u.berth === "SB");
+  const pl = ST && ST._plan ? ST._plan[u.id] : null, eta = ST ? etaShip(ST, u) : null;
+  const next = pl ? `<span class="nextb">next: <b><span class="ln">${berthName(pl.b)}</span><span class="sn">${berthShort(pl.b)}</span></b>${pl.wait >= 1 ? ` · ~${Math.round(pl.wait)}′ wait` : ""}</span>` : "";
+  const etaTxt = eta ? `<span class="eta">ETA ship <b class="mono">${fmtT(eta)}</b> · ${eta > now ? "in " + fmtShort((eta - now) / 60000) : "due"}</span>` : "";
   const tag = u.loc === "ship" ? (u.berth === "SB" ? `<span class="tag sb">Stand-by</span>` : `<span class="tag berth"><span class="ln">${berthName(u.berth)}</span><span class="sn">${berthShort(u.berth)}</span></span>`)
     : u.loc === "transit" ? `<span class="tag dir">${u.dir === "shore" ? "→ to shore" : "← to ship"}</span>` : "";
-  const tok = `<div class="tok"><div class="vis">${ringSVG(u.pax, u.cap)}${boatSVG(flip, u.kind === "shore" ? "shore" : "", u.num)}</div>${tag}<span class="since mono">${since}</span></div>`;
+  const tok = `<div class="tok"><div class="vis">${ringSVG(u.pax, u.cap)}${boatSVG(flip, u.kind === "shore" ? "shore" : "", u.num)}</div>${tag}${etaTxt}${next}<span class="since mono">${since}</span></div>`;
   const cell = loc => u.loc === loc ? tok : "";
   let acts = "";
   if (isAdmin()){
@@ -1207,7 +1270,6 @@ function rowHTML(u){
     else if (u.loc === "transit") acts = u.dir === "shore" ? B("arrive-shore", "Arrived Shore", "dark") : B("arrive-ship", "Arrived Ship", "dark");
     else if (u.loc === "shore") acts = B("depart-ship", "Depart → Ship", "primary");
   }
-  if (isAdmin() && u.flag && u.flag.status === "pvi") acts = `<button class="btn" data-act="status-ok" data-u="${u.id}">Back in service</button>`;
   return `<div class="grow${u.flag ? " fl-" + u.flag.status : ""}">${cb}<div class="cs">${cell("ship")}</div><div class="ct">${cell("transit")}</div><div class="ch">${cell("shore")}</div><div class="ca">${acts}</div></div>`;
 }
 
@@ -1301,9 +1363,9 @@ function bindLogin(){
 /* ---------------- theme, toast, wake lock ---------------- */
 const SUN = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></g></svg>`;
 const MOON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" fill="currentColor"/></svg>`;
-function isDark(){ const t = lsGet("tb.theme"); return t ? t === "dark" : (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches); }
+function isDark(){ return lsGet("tb.theme") === "dark"; }
 function themeLabel(){ const t = lsGet("tb.theme") || "auto"; return t === "auto" ? "Auto" : t === "dark" ? "Dark" : "Light"; }
-function applyTheme(){ const t = lsGet("tb.theme") || "auto"; if (t === "auto") document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", t); }
+function applyTheme(){ document.documentElement.setAttribute("data-theme", isDark() ? "dark" : "light"); }
 let toastTimer = null, toastUndo = null;
 function toast(msg, undoId){
   const t = $("#toast"); toastUndo = undoId || null;
@@ -1387,8 +1449,9 @@ function departModal(u, dir){
   });
 }
 function arriveShipModal(u){
+  const pl = ST._plan && ST._plan[u.id];
   modal({title:`${u.full} · Arrived at ship`, submit:"Log arrival",
-    body: `<p style="margin:0;color:var(--muted)">${u.pax} pax on board. They count as back on board when the tender is alongside a pontoon.</p>${berthChoice(ST, null)}${timeField("mT")}`,
+    body: `<p style="margin:0;color:var(--muted)">${u.pax} pax on board. They count as back on board when the tender is alongside a pontoon.</p>${berthChoice(ST, pl && freeBerths(ST).includes(pl.b) ? pl.b : null)}${timeField("mT")}`,
     onOpen: f => bindChoice(f),
     onSubmit: f => { const b = f.querySelector("#mBerth").dataset.val;
       addEv("arrive", u.id, {at:"ship", berth:b}, readTime(f, "mT", day().date), b === "SB" ? `${u.full} on stand-by · ${u.pax} waiting` : `${u.full} alongside ${berthName(b)} · ${u.pax} back on board`); }});
@@ -1451,7 +1514,6 @@ function dayModal(existing){
       <label class="fld"><span>Last tender (24h)</span>${hmInput("mLast", d.lastTender || "")}</label></div>
       <div class="two"><label class="fld"><span>All aboard (24h)</span>${hmInput("mAA", d.allAboard || "")}</label><label class="fld"><span>Ship departure (24h)</span>${hmInput("mDep", d.departure || "")}</label></div>
       <div class="two"><label class="fld"><span>VHF channel</span><input id="mVhf" value="${esc(d.vhf || "")}" placeholder="e.g. 72"></label><label class="fld"><span>UHF channel</span><input id="mUhf" value="${esc(d.uhf || "")}" placeholder="e.g. 3"></label></div>
-      <label class="fld"><span>Max guest wait at the pier (min)</span><input id="mMw" type="number" inputmode="numeric" min="5" max="60" value="${esc(d.maxWait ?? DEFAULT_MAX_WAIT)}"><span class="hint">Recovery keeps enough tenders to have one at the pier at least this often.</span></label>
       <label class="fld"><span>Total on board (guests + crew)</span><input id="mTot" type="number" inputmode="numeric" min="0" value="${esc(d.total ?? "")}"><span class="hint">Reference only, from the ship’s system.</span></label>
       ${existing ? "" : `<div class="fld"><span>Pontoon side</span><div class="choice" id="mSide" data-val="${d.side}" style="grid-template-columns:1fr 1fr"><button type="button" data-berth="PORT" aria-pressed="false">Port</button><button type="button" data-berth="STBD" aria-pressed="true">Starboard</button></div></div>
       <div class="toggles"><label><input type="checkbox" id="mFwd" checked>FWD pontoon</label><label><input type="checkbox" id="mMid" checked>MIDSHIP pontoon</label></div>`}
@@ -1460,7 +1522,7 @@ function dayModal(existing){
     onSubmit: f => {
       const port = f.querySelector("#mPort").value.trim();
       if (!port){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Enter the port.</div>`; return false; }
-      const rec = {port, date: f.querySelector("#mDate").value || ymd(Date.now()), lastTender: normHM(f.querySelector("#mLast").value) || "", allAboard: normHM(f.querySelector("#mAA").value) || "", departure: normHM(f.querySelector("#mDep").value) || "", vhf: f.querySelector("#mVhf").value.trim(), uhf: f.querySelector("#mUhf").value.trim(), maxWait: Math.max(5, parseInt(f.querySelector("#mMw").value, 10) || DEFAULT_MAX_WAIT), total: parseInt(f.querySelector("#mTot").value, 10) || 0};
+      const rec = {port, date: f.querySelector("#mDate").value || ymd(Date.now()), lastTender: normHM(f.querySelector("#mLast").value) || "", allAboard: normHM(f.querySelector("#mAA").value) || "", departure: normHM(f.querySelector("#mDep").value) || "", vhf: f.querySelector("#mVhf").value.trim(), uhf: f.querySelector("#mUhf").value.trim(), total: parseInt(f.querySelector("#mTot").value, 10) || 0};
       if (existing) S.store.saveDay(Object.assign({id: existing.id}, rec));
       else S.store.saveDay(Object.assign({id: "d" + uid(), status:"open", openedAt: Date.now(), side: f.querySelector("#mSide").dataset.val, fwd: f.querySelector("#mFwd").checked, mid: f.querySelector("#mMid").checked}, rec));
       toast(existing ? "Day updated" : `Tender day open · ${port}`);
@@ -1540,7 +1602,7 @@ function legendModal(){
       <div><span class="offtag">Not in service</span><p>Stowed: not lowered today, or hoisted.</p></div>
       <div><span class="lgmarks"><span class="iss">⚠ 1 issue</span> <span class="nt">✎ note</span></span><p>Open defect or a note on that tender. Tap the tender’s name to read it.</p></div>
       <div><span class="flagl f-tech">■ Technical issue</span><p>The tender has a defect but stays in service. Amber row, visible to all.</p></div>
-      <div><span class="flagl f-pvi">■ PVI/PDI</span><p>Out of service for cleaning. Not counted in lift or recovery. <b>Back in service</b> returns it.</p></div>
+      <div><span class="flagl f-pvi">■ PVI/PDI</span><p>Incident on board. The tender stays on the board with its pax until Deck hoists it or clears the status.</p></div>
       <div><span class="flagl f-emergency">■ EMERGENCY</span><p>Red row and red banner for everyone, with the time.</p></div>
       <h4>Status panel</h4>
       <div><b class="lgnum">Ashore</b><p>Pax landed minus pax brought back. <b>Sync</b> replaces it with the official security count; later trips continue from there.</p></div>
@@ -1582,8 +1644,7 @@ const HELP = {
     <li><b>Deck</b>: <b>Clear chat…</b> deletes today’s messages for everyone (type CLEAR). Meant for tests or mistakes.</li>
     <li>For anything urgent or safety related use the radio: if the connection drops, messages arrive late.</li></ul>`},
   feedback:{t:"Feedback", b:`<p>Ideas, problems and requests about the app, from every department.</p>
-    <ul><li><b>Write feedback</b>: choose Idea, Problem or Other and describe it. Your name and rank are filled in from the chat if set.</li>
-    <li>Deck marks items <b>done</b> when they are dealt with.</li></ul>`},
+    <ul><li><b>Write feedback</b>: choose Idea, Problem or Other and describe it. Your name and rank are filled in from the chat if set.</li></ul>`},
   history:{t:"History", b:`<p>Closed tender days, newest first, with trips, pax ashore and average round trip.</p>
     <ul><li>Open a day for its summary, full log and chat.</li><li><b>Export CSV</b> downloads that day’s log.</li>
     <li><b>Deck</b>: <b>Delete day</b> removes a test or duplicate day (type DELETE). Issues are kept.</li></ul>`}
@@ -1593,7 +1654,7 @@ function statusModal(u){
   const cur = u.flag ? u.flag.status : "ok";
   const opt = (v, l, d) => `<button type="button" data-berth="${v}" aria-pressed="${cur === v}">${l}<small>${d}</small></button>`;
   modal({title:`${u.full} · Status`, submit:"Save status",
-    body:`<div class="choice" id="mSt" data-val="${cur}" style="grid-template-columns:1fr 1fr">${opt("ok","Normal","in service")}${opt("tech","Technical issue","stays in service, shown to all")}${opt("pvi","PVI/PDI","out of service")}${opt("emergency","Emergency","red alert to all")}</div>
+    body:`<div class="choice" id="mSt" data-val="${cur}" style="grid-template-columns:1fr 1fr">${opt("ok","Normal","in service")}${opt("tech","Technical issue","stays in service, shown to all")}${opt("pvi","PVI/PDI","shown to all; hoist when convenient")}${opt("emergency","Emergency","red alert to all")}</div>
       <label class="fld"><span>Details</span><input id="mStx" value="${esc(u.flag ? u.flag.text : "")}" placeholder="e.g. port engine overheating, returning to ship"></label>
       <label class="toggles"><label><input type="checkbox" id="mStLog" ${canIssues() ? "checked" : "disabled"}>Also add to the maintenance log (technical issue)</label></label>${timeField("mT")}`,
     onOpen: f => { f.dataset.nofocus = 1; bindChoice(f, "mSt"); },
@@ -1689,6 +1750,7 @@ document.addEventListener("click", e => {
     case "legend": legendModal(); break;
     case "help": helpModal(el.dataset.k); break;
     case "fb-new": feedbackModal(); break;
+    case "online": onlineModal(); break;
     case "fb-toggle": { const f = (S.data.feedback || []).find(x => x.id === el.dataset.id); if (f) S.store.saveFeedback({id:f.id, status: f.status === "done" ? "new" : "done"}); break; }
     case "status-ok": addEv("status", u.id, {status:"ok", text:""}, null, `${u.full} back in service`); break;
     case "chat-id": identityModal(); break;
@@ -1728,6 +1790,7 @@ document.addEventListener("click", e => {
     case "csv-hist": { const d = S.data.days.find(x => x.id === S.hist); if (d && S.histEvents) csvFor(d, compute(d, S.histEvents)); break; }
   }
 });
+document.addEventListener("click", e => { const sm = e.target.closest && e.target.closest("#statsBox > summary"); if (sm) lsSet("tom.stats." + S.role, sm.parentElement.open ? "0" : "1"); });
 document.addEventListener("change", e => {
   const el = e.target; if (!el.dataset || !el.dataset.act) return;
   if (el.dataset.act === "log-unit"){ S.logUnit = el.value; render(); }
@@ -1764,13 +1827,13 @@ setInterval(() => { if (S.role && !$("#modal-root").innerHTML && S.view === "boa
       S.role = user ? (Object.keys(CONFIG.accounts).find(k => CONFIG.accounts[k] === user.email) || null) : null;
       if (user && !S.role){ toast("This account has no access"); S.store.signOut(); }
       if (!user){ S.data = {days:[], currentDay:null, events:[], issues:[], messages:[]}; ST = null; }
-      render(); if (user) keepAwake();
+      render(); if (user){ keepAwake(); heartbeat(); }
     });
   } else {
     S.store = createLocalStore();
     S.role = "deck";
     S.store.seedIfEmpty();
-    S.store.onChange(setData);
+    S.store.onChange(setData); heartbeat();
   }
 })();
 </script>
