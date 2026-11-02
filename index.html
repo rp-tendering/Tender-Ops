@@ -426,6 +426,31 @@ tr.k-lower td,tr.k-hoist td{background:color-mix(in srgb,var(--accent) 8%,transp
 .kv{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .kv div{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:7px 9px;min-width:0}
 .kv span{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.ti{display:flex;flex-direction:column;gap:12px}
+.ti-hero{--c:var(--sea);display:flex;align-items:center;gap:12px;padding:14px 14px 14px 16px;border-radius:14px;background:color-mix(in srgb,var(--c) 12%,var(--surface));border:1px solid color-mix(in srgb,var(--c) 30%,transparent);border-left:5px solid var(--c)}
+.ti-hero.ti-ship{--c:var(--ok)} .ti-hero.ti-shore{--c:var(--accent)} .ti-hero.ti-sb{--c:var(--muted)} .ti-hero.ti-off{--c:var(--muted)}
+.ti-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.ti-txt small{font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700}
+.ti-txt b{font-family:var(--f-display);font-size:24px;line-height:1.1;color:color-mix(in srgb,var(--c) 70%,var(--ink))}
+.ti-txt span{font-size:13px;color:var(--muted)} .ti-txt strong{color:var(--ink)}
+.ti-pax .ring{width:76px;height:76px}
+.ti-pt span{white-space:nowrap}
+.ti-pax{display:flex;flex-direction:column;align-items:center;gap:2px} .ti-pax small{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.ti-leg{display:grid;grid-template-columns:auto 1fr auto;align-items:end;gap:14px;padding:14px 16px;border-radius:14px;background:var(--surface-2);border:1px solid var(--line)}
+.ti-pt{display:flex;flex-direction:column;gap:1px} .ti-pt.r{text-align:right;align-items:flex-end}
+.ti-pt span,.ti-one span,.ti-pont span,.ti-note span{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600}
+.ti-pt b{font-size:24px;font-weight:700;line-height:1.1} .ti-pt small{font-size:12px;color:var(--muted);font-weight:600}
+.ti-pt.r b{color:var(--sea)} .ti-pt.late b,.ti-pt.late small{color:var(--warn)}
+.ti-bar{position:relative;height:6px;border-radius:3px;background:var(--track);min-width:60px;margin:0 14px 8px}
+.ti-bar i{position:absolute;inset:0 auto 0 0;border-radius:3px;background:var(--sea)}
+.ti-b{position:absolute;bottom:3px;transform:translateX(-50%);display:block;width:48px;line-height:0} .ti-b svg{width:48px;height:auto}
+.ti-one,.ti-pont{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:10px 14px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line)}
+.ti-one b{font-size:20px} .ti-pont{background:var(--sea-tint);border-color:color-mix(in srgb,var(--sea) 30%,transparent)} .ti-pont b{font-family:var(--f-display);font-size:20px;color:var(--sea)}
+.ti-note{padding:10px 14px;border-radius:12px;background:var(--accent-soft);font-size:14px;display:flex;flex-direction:column;gap:2px}
+.onlc{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.onlc div{display:flex;flex-direction:column;align-items:center;padding:14px 8px;border-radius:14px;background:var(--surface-2);border:1px solid var(--line);border-top:4px solid var(--c,var(--muted))}
+.onlc .d-deck{--c:var(--dk)} .onlc .d-hotel{--c:var(--ht)} .onlc .d-tech{--c:var(--tc)}
+.onlc b{font-family:var(--f-display);font-size:34px;line-height:1;color:var(--c)} .onlc span{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
 .kv .wide{grid-column:1/-1}
 .kv b{font-family:var(--f-display);font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
 .warnbox{background:color-mix(in srgb,var(--warn) 14%,transparent);border:1px solid color-mix(in srgb,var(--warn) 40%,var(--line));border-radius:9px;padding:8px 10px;font-size:13.5px}
@@ -1178,13 +1203,15 @@ function identityModal(){
 }
 
 /* ---------------- presence ---------------- */
-function onlineList(){ const cut = Date.now() - 2.5 * 60000; return (S.data.presence || []).filter(x => x.t > cut).sort((a,b) => a.dept.localeCompare(b.dept) || (a.name||"").localeCompare(b.name||"")); }
-function heartbeat(){ if (!S.role || !S.store || !S.store.savePresence) return; const id = identity() || {}; S.store.savePresence({id: deviceId(), dept: DEPT[S.role], name: id.name || "", rank: id.rank || "", t: Date.now(), view: S.view}); }
+function onlineList(){ const cut = Date.now() - 2.5 * 60000; return (S.data.presence || []).filter(x => x.t > cut); }
+function heartbeat(){ if (!S.role || !S.store || !S.store.savePresence) return; S.store.savePresence({id: deviceId(), dept: DEPT[S.role], t: Date.now()}); }
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") heartbeat(); });
 setInterval(heartbeat, 60000);
 function onlineModal(){
-  const L = onlineList();
-  modal({title:`Online now · ${L.length}`, submit:null, body: L.length ? `<div class="onl">${L.map(x => `<div><span class="dept d-${x.dept.toLowerCase()}">${esc(x.dept)}</span><b>${esc(x.name || "No name set")}</b>${x.rank ? `<span class="rk2">${esc(x.rank)}</span>` : ""}<span class="mono hint">${x.id === deviceId() ? "this device" : "seen " + fmtT(x.t)}</span></div>`).join("")}</div>
-    <p class="hint" style="margin:8px 0 0">Devices with the app open in the last 2 minutes. Names come from the chat (Chat → Change).</p>` : `<p class="hint">Nobody else online.</p>`});
+  const L = onlineList(), n = d => L.filter(x => (x.dept || "").toUpperCase() === d.toUpperCase()).length;
+  modal({title:`Online now · ${L.length}`, submit:null,
+    body:`<div class="onlc">${["Deck","Hotel","Tech"].map(d => `<div class="d-${d.toLowerCase()}"><b>${n(d)}</b><span>${d}</span></div>`).join("")}</div>
+    <p class="hint" style="margin:10px 0 0">Devices with the app open in the last 2 minutes.</p>`});
 }
 
 /* ---------------- feedback ---------------- */
@@ -1263,7 +1290,7 @@ function rowHTML(u){
   const flip = (u.loc === "transit" && u.dir === "ship") || u.loc === "shore" || (u.loc === "ship" && u.berth === "SB");
   const eta = ST ? etaShip(ST, u) : null;
   const canPlan = (u.loc === "transit" && u.dir === "ship") || (u.loc === "ship" && u.berth === "SB");
-  const next = canPlan && u.plan ? `<span class="nextb">→ <b><span class="ln">${berthName(u.plan)}</span><span class="sn">${berthShort(u.plan)}</span></b></span>` : "";
+  const next = canPlan && u.plan ? `<span class="nextb">${u.loc === "transit" ? "" : "→ "}<b><span class="ln">${berthName(u.plan)}</span><span class="sn">${berthShort(u.plan)}</span></b></span>` : "";
   const etaTxt = eta ? `<span class="eta${now - eta > 3 * 60000 ? " late" : ""}">ETA<span class="lng"> ship</span> <b class="mono">${fmtT(eta)}</b><span class="lng"> · ${etaRel(eta, now)}</span></span>` : "";
   const tag = u.loc === "ship" ? (u.berth === "SB" ? `<span class="tag sb">Stand-by</span>` : `<span class="tag berth"><span class="ln">${berthName(u.berth)}</span><span class="sn">${berthShort(u.berth)}</span></span>`)
     : u.loc === "transit" ? `<span class="tag dir">${u.dir === "shore" ? "→ to shore" : "← to ship"}</span>` : "";
@@ -1671,23 +1698,37 @@ function planModal(u){
     onOpen: f => { f.dataset.nofocus = 1; bindChoice(f, "mPl"); },
     onSubmit: f => { const v = f.querySelector("#mPl").dataset.val || null; if ((u.plan || null) !== v) addEv("plan", u.id, {berth: v}, null, v ? `${u.full} → ${berthName(v)}` : `${u.full} · assignment cleared`); }});
 }
+function etaShore(st, u){
+  if (!(u.loc === "transit" && u.dir === "shore")) return null;
+  return u.since + (legAvg(st.legs.tOut) ?? legAvg(st.legs.tIn) ?? 15) * 60000;
+}
 function infoModal(u){
-  const now = Date.now(), eta = etaShip(ST, u), lg = ST.legs;
-  const where = !u.active ? "Not in service" : u.loc === "ship" ? (u.berth === "SB" ? "Stand-by at ship" : "Alongside " + berthName(u.berth)) : u.loc === "transit" ? (u.dir === "shore" ? "In transit → shore" : "In transit → ship") : "Alongside shore";
-  const row = (k, v, w) => v == null || v === "" ? "" : `<div${w ? ' class="wide"' : ""}><span>${k}</span><b>${v}</b></div>`;
-  const mm = v => v == null ? null : Math.round(v) + " min";
-  const avgIn = legAvg(lg.tIn);
+  const now = Date.now();
+  const toShip = u.loc === "transit" && u.dir === "ship", toShore = u.loc === "transit" && u.dir === "shore";
+  const eta = toShip ? etaShip(ST, u) : toShore ? etaShore(ST, u) : null;
+  const st = !u.active ? "off" : u.loc === "transit" ? "transit" : u.loc === "shore" ? "shore" : u.berth === "SB" ? "sb" : "ship";
+  const state = {off:"Not in service", transit: toShip ? "Returning to the ship" : "Heading ashore", shore:"Alongside ashore", sb:"Stand-by at the ship", ship:"Alongside " + (u.berth ? berthName(u.berth) : "the ship")}[st];
+  let leg = "";
+  if (eta){
+    const pct = Math.round(Math.min(1, Math.max(0, (now - u.since) / Math.max(1, eta - u.since))) * 100), late = now - eta > 3 * 60000;
+    leg = `<div class="ti-leg">
+      <div class="ti-pt"><span>${toShip ? "Left shore" : "Left ship"}</span><b class="mono">${fmtT(u.since)}</b></div>
+      <div class="ti-bar"><i style="width:${pct}%"></i><span class="ti-b" style="left:${pct}%">${boatSVG(false, u.kind === "shore" ? "shore" : "", "")}</span></div>
+      <div class="ti-pt r${late ? " late" : ""}"><span>${toShip ? "Due at ship" : "Due ashore"}</span><b class="mono">${fmtT(eta)}</b><small>${etaRel(eta, now)}</small></div></div>`;
+  } else if (u.active && u.since){
+    leg = `<div class="ti-one"><span>${st === "sb" ? "On stand-by from" : "Arrived at"}</span><b class="mono">${fmtT(u.since)}</b></div>`;
+  }
   modal({title:`${u.full}`, submit:null,
-    body:`${u.flag ? `<div class="flagl f-${u.flag.status}" style="flex-direction:row;gap:6px">■ ${esc(STATUS[u.flag.status])}${u.flag.text ? ` · <em>${esc(u.flag.text)}</em>` : ""}</div>` : ""}
-      <div class="kv">${row("Status", where, 1)}${row("Pax on board", u.active ? `${u.pax} / ${u.cap ?? "—"}` : "")}${row("Driver", esc(u.driver || "—"))}
-      ${row("Since", u.since ? `${fmtT(u.since)} (${fmtShort((now - u.since)/60000)} ago)` : "")}
-      ${eta ? row("ETA at ship", `${fmtT(eta)} · ${etaRel(eta, now)}`) : ""}
-      ${u.plan ? row("Assigned pontoon", berthName(u.plan)) : ""}
-      ${u.kind === "tender" && u.lowered ? row("Lowered", fmtT(u.lowered)) : ""}
-      ${row("Trips out / back", `${u.tripsOut} / ${u.tripsBack}`)}${row("Pax out / back", `${u.paxOut} / ${u.paxBack}`)}
-      ${row("Run to shore (avg)", mm(legAvg(lg.tOut)))}${row("Run to ship (avg)", mm(legAvg(lg.tIn)))}${row("Max load", u.cap ?? "—")}</div>
-      ${u.note ? `<div class="fld"><span>Note</span><p style="margin:0">${esc(u.note)}</p></div>` : ""}
-      ${eta ? `<p class="hint" style="margin:0">${avgIn != null ? "ETA uses today’s average run to the ship." : "ETA uses this boat’s run out until the first returns are logged."}</p>` : ""}`});
+    body:`<div class="ti">
+      <div class="ti-hero ti-${st}">
+        <div class="ti-txt"><small>${u.kind === "shore" ? "Shoretender" : (u.side === "STBD" ? "Starboard" : "Port") + " tender"}</small><b>${state}</b><span>Driver <strong>${esc(u.driver || "—")}</strong></span></div>
+        ${u.active ? `<div class="ti-pax">${ringSVG(u.pax, u.cap, 72)}<small>pax on board</small></div>` : ""}
+      </div>
+      ${u.flag ? `<div class="flagl f-${u.flag.status}" style="flex-direction:row;gap:6px;padding:6px 10px">■ ${esc(STATUS[u.flag.status])}${u.flag.text ? ` · <em>${esc(u.flag.text)}</em>` : ""}</div>` : ""}
+      ${leg}
+      ${u.plan && (toShip || st === "sb") ? `<div class="ti-pont"><span>Pontoon on arrival</span><b>${berthName(u.plan)}</b></div>` : ""}
+      ${u.note ? `<div class="ti-note"><span>Note</span>${esc(u.note)}</div>` : ""}
+    </div>`});
 }
 function statusModal(u){
   const cur = u.flag ? u.flag.status : "ok";
