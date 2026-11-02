@@ -206,6 +206,11 @@ main{padding-block:12px 70px;display:flex;flex-direction:column;gap:12px}
 .embar{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;background:var(--crit);color:#fff;border-radius:12px;padding:10px 16px}
 .embar > b{font-family:var(--f-display);font-size:24px;letter-spacing:.12em;text-transform:uppercase}
 @media (prefers-reduced-motion: no-preference){ .embar{animation:empulse 1.6s ease-in-out infinite} @keyframes empulse{50%{filter:brightness(1.15)}} }
+.tok[data-act]{cursor:pointer;border-radius:10px;padding:2px 4px}
+.tok[data-act]:hover{background:color-mix(in srgb,var(--sea) 8%,transparent)}
+.eta.late,.eta.late b{color:var(--warn)}
+.xtra{display:flex;flex-direction:column;align-items:center;gap:1px}
+.btn.ghost{background:transparent;font-weight:600;color:var(--sea);border-color:color-mix(in srgb,var(--sea) 40%,var(--line))}
 .nextb{font-size:11.5px;color:var(--sea);white-space:nowrap}
 .nextb b{font-weight:700}
 .eta{font-size:11.5px;color:var(--ink);white-space:nowrap}
@@ -421,6 +426,7 @@ tr.k-lower td,tr.k-hoist td{background:color-mix(in srgb,var(--accent) 8%,transp
 .kv{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .kv div{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:7px 9px;min-width:0}
 .kv span{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.kv .wide{grid-column:1/-1}
 .kv b{font-family:var(--f-display);font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
 .warnbox{background:color-mix(in srgb,var(--warn) 14%,transparent);border:1px solid color-mix(in srgb,var(--warn) 40%,var(--line));border-radius:9px;padding:8px 10px;font-size:13.5px}
 .toggles{display:flex;gap:8px;flex-wrap:wrap}
@@ -479,6 +485,7 @@ tr.k-lower td,tr.k-hoist td{background:color-mix(in srgb,var(--accent) 8%,transp
   .tok .vis{flex-direction:column;gap:2px}
   .ring{width:44px;height:44px}
   .tok .since{font-size:10.5px}
+  .tok .xtra .since,.tok .eta .lng{display:none}
   .ca{flex-direction:row;border-left:0;border-top:1px dashed var(--line);padding:6px 8px}
   .ca .btn{min-height:40px}
   .grow.off{grid-template-areas:"b o o o" "a a a a"}
@@ -494,6 +501,7 @@ tr.k-lower td,tr.k-hoist td{background:color-mix(in srgb,var(--accent) 8%,transp
   .issue .side-acts{grid-column:1/-1;flex-direction:row;justify-content:flex-end;flex-wrap:wrap}
   .two{grid-template-columns:1fr}
   .kv{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kv b{white-space:normal;font-size:17px;line-height:1.2}
 }
 </style>
 
@@ -589,7 +597,7 @@ function pontoonsOf(day, evs){
 }
 function compute(day, events){
   const units = {}, order = [];
-  const mkUnit = (o) => Object.assign({active:false, loc:"stowed", berth:null, dir:null, pax:0, cap:null, driver:"", note:"", since:null, lowered:null, hoisted:null, tripsOut:0, tripsBack:0, paxOut:0, paxBack:0, lastShipDep:null, flag:null, tDepShip:null, tArrShore:null, tDepShore:null, tArrShip:null}, o);
+  const mkUnit = (o) => Object.assign({active:false, loc:"stowed", berth:null, dir:null, pax:0, cap:null, driver:"", note:"", since:null, lowered:null, hoisted:null, tripsOut:0, tripsBack:0, paxOut:0, paxBack:0, lastShipDep:null, flag:null, plan:null, tDepShip:null, tArrShore:null, tDepShore:null, tArrShip:null}, o);
   for (const t of TENDERS){ units[t.id] = mkUnit({id:t.id, name:"T"+t.num, full:"Tender "+t.num, num:String(t.num), kind:"tender", side:t.side}); order.push(t.id); }
   let ashore = 0;
   const pont = pontoonsOf(day);
@@ -632,7 +640,7 @@ function compute(day, events){
         } else { if (u.tArrShore != null && e.t - u.tArrShore < 90*60000) legs.pier.push((e.t - u.tArrShore)/60000); u.tDepShore = e.t;
           ashore -= pax; u.paxBack += pax; u.tripsBack++; text = e.last ? "LAST TENDER departed → Ship" : "Departed → Ship";
           if (e.last){ lastDep = {unit:u.id, name:u.name, t:e.t, pax, arrived:null}; kind = "last"; } }
-        Object.assign(u, {loc:"transit", berth:null, dir:e.dir, pax, since:e.t});
+        Object.assign(u, {loc:"transit", berth:null, dir:e.dir, pax, since:e.t, plan:null});
         break;
       }
       case "arrive":
@@ -642,7 +650,7 @@ function compute(day, events){
           Object.assign(u, {loc:"shore", berth:null, dir:null, pax:0, since:e.t});
         } else {
           if (u.tDepShore != null && e.t - u.tDepShore < 90*60000) legs.tIn.push((e.t - u.tDepShore)/60000); u.tArrShip = e.t;
-          const b = e.berth || "SB"; atBerth(u, b); u.since = e.t;
+          const b = e.berth || "SB"; atBerth(u, b); u.since = e.t; if (b !== "SB") u.plan = null;
           if (b === "SB"){ text = `Stand-by at ship · ${u.pax} waiting on board`; }
           else { pax = u.pax; text = `Alongside ${berthName(b)} · ${u.pax} back on board`; u.pax = 0;
             if (lastDep && lastDep.unit === u.id && !lastDep.arrived) lastDep.arrived = e.t; }
@@ -652,9 +660,10 @@ function compute(day, events){
         const b = e.berth;
         if (b !== "SB" && u.pax > 0){ pax = u.pax; text = `Alongside ${berthName(b)} · ${u.pax} back on board`; }
         else text = b === "SB" ? "Moved to stand-by" : `Alongside ${berthName(b)}`;
-        atBerth(u, b); u.since = e.t; if (b !== "SB"){ u.pax = 0; if (lastDep && lastDep.unit === u.id && !lastDep.arrived) lastDep.arrived = e.t; }
+        atBerth(u, b); u.since = e.t; if (b !== "SB"){ u.plan = null; u.pax = 0; if (lastDep && lastDep.unit === u.id && !lastDep.arrived) lastDep.arrived = e.t; }
         break;
       }
+      case "plan": u.plan = e.berth || null; text = e.berth ? `Assigned to ${berthName(e.berth)}` : "Pontoon assignment cleared"; break;
       case "pontoons":
         pont.side = e.side || pont.side; pont.FWD = !!e.fwd; pont.MID = !!e.mid; kind = "pont";
         text = `Pontoons: ${pont.side} · FWD ${pont.FWD ? "open" : "closed"} · MIDSHIP ${pont.MID ? "open" : "closed"}`;
@@ -732,6 +741,7 @@ function estimate(day, st, now){
 /* ---------------- capacity: demand vs lift, with a brake on hoisting ---------------- */
 /* where each tender coming back will berth, and when it is due */
 function legAvg(a){ return a && a.length ? a.slice(-8).reduce((x,y) => x+y, 0) / Math.min(8, a.length) : null; }
+const etaRel = (eta, now) => eta > now ? "in " + fmtShort((eta - now) / 60000) : now - eta <= 3 * 60000 ? "due" : fmtShort((now - eta) / 60000) + " late";
 function etaShip(st, u){
   if (!(u.loc === "transit" && u.dir === "ship")) return null;
   const own = u.tArrShore != null && u.tDepShip != null ? (u.tArrShore - u.tDepShip) / 60000 : null;   // this boat's own run out
@@ -803,7 +813,7 @@ function statusHTML(day, st, est, lastSync){
   const people = `<div class="sec people">
     <div class="m ashore"><div><div class="l">Ashore</div><div class="v">${num(st.ashore)}</div><div class="s">${lastSync ? "synced " + fmtT(lastSync.e.t) : "tender count"}</div></div>
       ${isAdmin() ? `<button class="btn small sync" data-act="sync">Sync</button>` : ""}</div>
-    <div class="m svc"><div class="l">In service</div><div class="svcr">${ringSVG(ownIn, own.length, 50).replace('class="ring ', 'class="ring svcring ')}</div>${stIn ? `<div class="q">+${stIn} shoretender${stIn > 1 ? "s" : ""}</div>` : ""}</div>
+    <div class="m svc"><div class="l">In service</div><div class="svcr">${ringSVG(ownIn, own.length, 50).replace(/class="ring \w+"/, 'class="ring ok svcring"')}</div>${stIn ? `<div class="q">+${stIn} shoretender${stIn > 1 ? "s" : ""}</div>` : ""}</div>
     <div class="m"><div class="l">On tenders</div><div class="v">${num(st.onTenders)}</div></div>
     <div class="m"><div class="l">Aboard</div><div class="v">${num(st.aboard)}</div><div class="q">calculated</div></div>
     <div class="m"><div class="l">Total</div><div class="v">${num(st.total)}</div><div class="q">reference</div></div></div>`;
@@ -1212,7 +1222,6 @@ function boardHTML(){
   const syncs = st.log.filter(l => l.e.type === "sync");
   const lastSync = syncs.length ? syncs[syncs.length - 1] : null;
 
-  st._plan = berthPlan(st, now);
   const statusPanel = statusHTML(day, st, est, lastSync);
   const lastInfo = est.remain != null ? (est.remain > 0 ? ` (in ${fmtDur(est.remain)})` : " (passed)") : "";
   const dayline = `<section class="dayline"><h1>${esc(day.port || "Tender day")}</h1>
@@ -1252,12 +1261,13 @@ function rowHTML(u){
   const since = u.since ? `${fmtT(u.since)} · ${fmtShort((now - u.since) / 60000)}` : "";
   // bow faces the next move: at ship → shore (right), at shore → ship (left), stand-by waits facing the ship
   const flip = (u.loc === "transit" && u.dir === "ship") || u.loc === "shore" || (u.loc === "ship" && u.berth === "SB");
-  const pl = ST && ST._plan ? ST._plan[u.id] : null, eta = ST ? etaShip(ST, u) : null;
-  const next = pl ? `<span class="nextb">next: <b><span class="ln">${berthName(pl.b)}</span><span class="sn">${berthShort(pl.b)}</span></b>${pl.wait >= 1 ? ` · ~${Math.round(pl.wait)}′ wait` : ""}</span>` : "";
-  const etaTxt = eta ? `<span class="eta">ETA ship <b class="mono">${fmtT(eta)}</b> · ${eta > now ? "in " + fmtShort((eta - now) / 60000) : "due"}</span>` : "";
+  const eta = ST ? etaShip(ST, u) : null;
+  const canPlan = (u.loc === "transit" && u.dir === "ship") || (u.loc === "ship" && u.berth === "SB");
+  const next = canPlan && u.plan ? `<span class="nextb">→ <b><span class="ln">${berthName(u.plan)}</span><span class="sn">${berthShort(u.plan)}</span></b></span>` : "";
+  const etaTxt = eta ? `<span class="eta${now - eta > 3 * 60000 ? " late" : ""}">ETA<span class="lng"> ship</span> <b class="mono">${fmtT(eta)}</b><span class="lng"> · ${etaRel(eta, now)}</span></span>` : "";
   const tag = u.loc === "ship" ? (u.berth === "SB" ? `<span class="tag sb">Stand-by</span>` : `<span class="tag berth"><span class="ln">${berthName(u.berth)}</span><span class="sn">${berthShort(u.berth)}</span></span>`)
     : u.loc === "transit" ? `<span class="tag dir">${u.dir === "shore" ? "→ to shore" : "← to ship"}</span>` : "";
-  const tok = `<div class="tok"><div class="vis">${ringSVG(u.pax, u.cap)}${boatSVG(flip, u.kind === "shore" ? "shore" : "", u.num)}</div>${tag}${etaTxt}${next}<span class="since mono">${since}</span></div>`;
+  const tok = `<div class="tok" role="button" tabindex="0" data-act="info" data-u="${u.id}" title="Details"><div class="vis">${ringSVG(u.pax, u.cap)}${boatSVG(flip, u.kind === "shore" ? "shore" : "", u.num)}</div>${tag}${next}<span class="xtra">${etaTxt}<span class="since mono">${since}</span></span></div>`;
   const cell = loc => u.loc === loc ? tok : "";
   let acts = "";
   if (isAdmin()){
@@ -1267,7 +1277,7 @@ function rowHTML(u){
       const fb = freeBerths(ST);
       acts = fb.length ? fb.map(b => B("berth", `→ <span class="ln">${berthName(b)}</span><span class="sn">${berthShort(b)}</span>`, "sea", `data-b="${b}"`)).join("") : `<span class="wait">Waiting for a free pontoon</span>`;
     }
-    else if (u.loc === "transit") acts = u.dir === "shore" ? B("arrive-shore", "Arrived Shore", "dark") : B("arrive-ship", "Arrived Ship", "dark");
+    else if (u.loc === "transit") acts = u.dir === "shore" ? B("arrive-shore", "Arrived Shore", "dark") : B("arrive-ship", "Arrived Ship", "dark") + B("plan", u.plan ? "Change pontoon" : "Assign pontoon", "small ghost");
     else if (u.loc === "shore") acts = B("depart-ship", "Depart → Ship", "primary");
   }
   return `<div class="grow${u.flag ? " fl-" + u.flag.status : ""}">${cb}<div class="cs">${cell("ship")}</div><div class="ct">${cell("transit")}</div><div class="ch">${cell("shore")}</div><div class="ca">${acts}</div></div>`;
@@ -1449,7 +1459,7 @@ function departModal(u, dir){
   });
 }
 function arriveShipModal(u){
-  const pl = ST._plan && ST._plan[u.id];
+  const pl = u.plan ? {b:u.plan} : null;
   modal({title:`${u.full} · Arrived at ship`, submit:"Log arrival",
     body: `<p style="margin:0;color:var(--muted)">${u.pax} pax on board. They count as back on board when the tender is alongside a pontoon.</p>${berthChoice(ST, pl && freeBerths(ST).includes(pl.b) ? pl.b : null)}${timeField("mT")}`,
     onOpen: f => bindChoice(f),
@@ -1564,6 +1574,7 @@ function sheetModal(u){
       ${isIss.length ? `<div class="fld"><span>Open issues</span>${isIss.map(i => `<div class="warnbox"><b>${esc(i.category)}</b> · ${esc(i.text)}</div>`).join("")}</div>` : ""}
       ${isAdmin() && u.active ? `<div class="menu-list">
         ${u.loc === "ship" && u.berth === "SB" ? `<button type="button" class="btn" data-m="depart-shore">Depart → Shore from stand-by</button>` : ""}
+        ${(u.loc === "transit" && u.dir === "ship") || (u.loc === "ship" && u.berth === "SB") ? `<button type="button" class="btn" data-m="plan">${u.plan ? "Change assigned pontoon (" + berthName(u.plan) + ")" : "Assign pontoon for arrival"}</button>` : ""}
         ${u.loc === "ship" ? `<button type="button" class="btn" data-m="move">Change berth (FWD / MIDSHIP / stand-by)</button>` : ""}
         <button type="button" class="btn ${u.flag ? "danger" : ""}" data-m="status">${u.flag ? "Status: " + esc(STATUS[u.flag.status]) + " · change" : "Set status (technical issue, PVI/PDI, emergency)"}</button>
         <button type="button" class="btn" data-m="driver">Change driver</button>
@@ -1583,6 +1594,7 @@ function sheetModal(u){
         if (m === "cap") simpleModal(`${u.full} · Max load`, "Max load (pax)", "number", u.cap ?? "", v => addEv("cap", u.id, {cap: Math.max(1, parseInt(v, 10) || 1)}));
         if (m === "issue") issueModal(null, u.name);
         if (m === "status") statusModal(u);
+        if (m === "plan") planModal(u);
         if (m === "stow") modal({title: u.kind === "tender" ? `Hoist ${u.full}` : `Release ${u.full}`, submit: u.kind === "tender" ? "Log hoisting" : "Release",
           body: `<p style="margin:0;color:var(--muted)">${u.kind === "tender" ? "Logs the hoisting time. The row turns grey: Not in service." : "Takes the shoretender off the board."}</p>${timeField("mT")}`,
           onSubmit: f2 => { addEv("deactivate", u.id, {}, readTime(f2, "mT", day().date), `${u.full} ${u.kind === "tender" ? "hoisted" : "released"}`); }});
@@ -1650,6 +1662,33 @@ const HELP = {
     <li><b>Deck</b>: <b>Delete day</b> removes a test or duplicate day (type DELETE). Issues are kept.</li></ul>`}
 };
 function helpModal(k){ const h = HELP[k]; if (h) modal({title: h.t, submit:null, body:`<div class="helptxt">${h.b}</div>`}); }
+function planModal(u){
+  const opt = (v, l, sub, dis) => `<button type="button" data-berth="${v}" aria-pressed="${(u.plan || "") === v}" ${dis ? "disabled" : ""}>${l}<small>${sub}</small></button>`;
+  const sub = b => !ST.pont[b] ? "closed" : ST.occ[b] ? "now: " + ST.occ[b].full : "free now";
+  modal({title:`${u.full} · Assign pontoon`, submit:"Save",
+    body:`<p class="hint" style="margin:0">Where ${esc(u.full)} will go alongside when back at the ship. Shown on the board; preselected on arrival.</p>
+      <div class="choice" id="mPl" data-val="${u.plan || ""}">${opt("FWD","Forward",sub("FWD"),!ST.pont.FWD)}${opt("MID","Midship",sub("MID"),!ST.pont.MID)}${opt("","None","not assigned",false)}</div>`,
+    onOpen: f => { f.dataset.nofocus = 1; bindChoice(f, "mPl"); },
+    onSubmit: f => { const v = f.querySelector("#mPl").dataset.val || null; if ((u.plan || null) !== v) addEv("plan", u.id, {berth: v}, null, v ? `${u.full} → ${berthName(v)}` : `${u.full} · assignment cleared`); }});
+}
+function infoModal(u){
+  const now = Date.now(), eta = etaShip(ST, u), lg = ST.legs;
+  const where = !u.active ? "Not in service" : u.loc === "ship" ? (u.berth === "SB" ? "Stand-by at ship" : "Alongside " + berthName(u.berth)) : u.loc === "transit" ? (u.dir === "shore" ? "In transit → shore" : "In transit → ship") : "Alongside shore";
+  const row = (k, v, w) => v == null || v === "" ? "" : `<div${w ? ' class="wide"' : ""}><span>${k}</span><b>${v}</b></div>`;
+  const mm = v => v == null ? null : Math.round(v) + " min";
+  const avgIn = legAvg(lg.tIn);
+  modal({title:`${u.full}`, submit:null,
+    body:`${u.flag ? `<div class="flagl f-${u.flag.status}" style="flex-direction:row;gap:6px">■ ${esc(STATUS[u.flag.status])}${u.flag.text ? ` · <em>${esc(u.flag.text)}</em>` : ""}</div>` : ""}
+      <div class="kv">${row("Status", where, 1)}${row("Pax on board", u.active ? `${u.pax} / ${u.cap ?? "—"}` : "")}${row("Driver", esc(u.driver || "—"))}
+      ${row("Since", u.since ? `${fmtT(u.since)} (${fmtShort((now - u.since)/60000)} ago)` : "")}
+      ${eta ? row("ETA at ship", `${fmtT(eta)} · ${etaRel(eta, now)}`) : ""}
+      ${u.plan ? row("Assigned pontoon", berthName(u.plan)) : ""}
+      ${u.kind === "tender" && u.lowered ? row("Lowered", fmtT(u.lowered)) : ""}
+      ${row("Trips out / back", `${u.tripsOut} / ${u.tripsBack}`)}${row("Pax out / back", `${u.paxOut} / ${u.paxBack}`)}
+      ${row("Run to shore (avg)", mm(legAvg(lg.tOut)))}${row("Run to ship (avg)", mm(legAvg(lg.tIn)))}${row("Max load", u.cap ?? "—")}</div>
+      ${u.note ? `<div class="fld"><span>Note</span><p style="margin:0">${esc(u.note)}</p></div>` : ""}
+      ${eta ? `<p class="hint" style="margin:0">${avgIn != null ? "ETA uses today’s average run to the ship." : "ETA uses this boat’s run out until the first returns are logged."}</p>` : ""}`});
+}
 function statusModal(u){
   const cur = u.flag ? u.flag.status : "ok";
   const opt = (v, l, d) => `<button type="button" data-berth="${v}" aria-pressed="${cur === v}">${l}<small>${d}</small></button>`;
@@ -1765,6 +1804,8 @@ document.addEventListener("click", e => {
         onSubmit: () => { addEv("opentender", null, {on:false, by: DEPT[S.role]}); toast("Open Tender cancelled"); }}); break;
     case "pontoons": pontoonModal(); break;
     case "sheet": sheetModal(u); break;
+    case "info": infoModal(u); break;
+    case "plan": planModal(u); break;
     case "depart-shore": departModal(u, "shore"); break;
     case "depart-ship": departModal(u, "ship"); break;
     case "arrive-shore": addEv("arrive", u.id, {at:"shore"}, null, `${u.full} alongside Shore · ${u.pax} landed`); break;
