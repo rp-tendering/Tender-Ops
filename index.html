@@ -1108,10 +1108,11 @@ const canOpenTender = () => S.role === "deck" || S.role === "hotel";
 const DEPT = {deck:"DECK", hotel:"HOTEL", tech:"TECH"};
 const VIEWS = ["board","log","issues","chat","feedback","history"];
 let ST = null;
+const BOOT_T = Date.now();
 function setData(d){
   const me = deviceId(), prevMax = S.msgMax;
   const ms = (d.messages || []); const max = ms.length ? ms[ms.length - 1].t : 0;
-  if (prevMax != null && S.view !== "chat"){ const nw = ms.filter(m => m.t > prevMax && m.dev !== me); if (nw.length){ const m = nw[nw.length - 1]; setTimeout(() => toast(`Message · ${m.dept} ${m.name}: ${m.text.slice(0, 60)}`), 0); } }
+  if (prevMax != null && S.view !== "chat"){ const dayId = d.currentDay && d.currentDay.id, fresh = Date.now() - 2 * 60000; const nw = dayId ? ms.filter(m => m.t > prevMax && m.t > fresh && m.t > BOOT_T && m.dayId === dayId && m.dev !== me) : []; if (nw.length){ const m = nw[nw.length - 1]; setTimeout(() => toast(`Message · ${m.dept} ${m.name}: ${m.text.slice(0, 60)}`), 0); } }
   S.msgMax = max;
   if (d.offline && !S.data.offline) S.offlineSince = Date.now(); if (!d.offline) S.offlineSince = null; S.data = d; ST = d.currentDay ? compute(d.currentDay, d.events) : null; render(); refreshSheet(); }
 
