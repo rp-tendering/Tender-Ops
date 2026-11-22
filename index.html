@@ -122,7 +122,12 @@ main{padding-block:12px 70px;display:flex;flex-direction:column;gap:12px}
 .m .l{font-family:var(--f-display);font-weight:600;font-size:13px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
 .m .v{font-family:var(--f-display);font-weight:700;font-size:28px;line-height:1.05;font-variant-numeric:tabular-nums;white-space:nowrap}
 .m .q{font-size:11px;color:var(--muted)}
-.m.ashore{background:var(--ink);color:var(--surface);flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
+.m.ashore{background:var(--ink);color:var(--surface);flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 10px}
+.m.ashore .am{min-width:0}
+.tzbtn{cursor:pointer;gap:5px;font-size:11px} .tzbtn b{font-size:13px}
+.m.ashore .offs{margin-top:5px;padding-top:5px;border-top:1px solid color-mix(in srgb,var(--surface) 22%,transparent);display:flex;align-items:baseline;gap:7px;white-space:nowrap}
+.m.ashore .offs span{font-family:var(--f-display);font-weight:600;font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--surface) 70%,transparent)}
+.m.ashore .offs b{font-family:var(--f-display);font-weight:700;font-size:20px;font-variant-numeric:tabular-nums}
 .m.ashore .l{color:color-mix(in srgb,var(--surface) 70%,transparent)}
 .m.ashore .v{color:var(--accent);font-size:34px}
 .m.ashore .sync{background:transparent;color:inherit;border-color:color-mix(in srgb,var(--surface) 35%,transparent)}
@@ -218,7 +223,7 @@ main{padding-block:12px 70px;display:flex;flex-direction:column;gap:12px}
 .m.svc .svcr{display:flex;align-items:center;gap:6px}
 .svcring .c{font-size:11px}
 .deck.nrec{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}
-.people{grid-template-columns:1.35fr 1fr 1fr 1fr 1fr}
+.people{grid-template-columns:minmax(0,1.9fr) minmax(0,.9fr) minmax(0,1fr) minmax(0,1fr)}
 .stats{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0 14px}
 .stats > summary{cursor:pointer;padding:10px 0;font-family:var(--f-display);font-weight:700;font-size:15px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
 .stats[open]{padding-bottom:12px}
@@ -339,10 +344,6 @@ tr.k-last td{background:color-mix(in srgb,var(--accent) 16%,transparent);font-we
 .boat.muted .can,.boat.muted .post{fill:var(--track)}
 .boat.muted .wave{stroke:var(--line)}
 .boat.muted .win,.boat.muted .door{fill:var(--muted)}
-@media (prefers-reduced-motion: no-preference){
-  .ct .boat .hullg{animation:bob 3.2s ease-in-out infinite;transform-origin:100px 45px}
-  @keyframes bob{50%{transform:translateY(1.2px) rotate(-.5deg)}}
-}
 
 /* pages */
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
@@ -446,7 +447,9 @@ tr.k-lower td,tr.k-hoist td{background:color-mix(in srgb,var(--accent) 8%,transp
 .ti-b{position:absolute;bottom:3px;transform:translateX(-50%);display:block;width:48px;line-height:0} .ti-b svg{width:48px;height:auto}
 .ti-one,.ti-pont{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:10px 14px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line)}
 .ti-one b{font-size:20px} .ti-pont{background:var(--sea-tint);border-color:color-mix(in srgb,var(--sea) 30%,transparent)} .ti-pont b{font-family:var(--f-display);font-size:20px;color:var(--sea)}
+.ti-fix{width:100%;justify-content:center}
 .ti-note{padding:10px 14px;border-radius:12px;background:var(--accent-soft);font-size:14px;display:flex;flex-direction:column;gap:2px}
+.backup{margin-top:22px;padding-top:14px;border-top:1px solid var(--line)} .row-btns{display:flex;gap:8px;flex-wrap:wrap}
 .onlc{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .onlc div{display:flex;flex-direction:column;align-items:center;padding:14px 8px;border-radius:14px;background:var(--surface-2);border:1px solid var(--line);border-top:4px solid var(--c,var(--muted))}
 .onlc .d-deck{--c:var(--dk)} .onlc .d-hotel{--c:var(--ht)} .onlc .d-tech{--c:var(--tc)}
@@ -476,7 +479,7 @@ tr.k-lower td,tr.k-hoist td{background:color-mix(in srgb,var(--accent) 8%,transp
   .people{grid-template-columns:repeat(3,minmax(0,1fr))}
   .m{padding:6px 10px}
   .m.ashore{grid-column:1 / -1}
-  .people{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .people{grid-template-columns:repeat(3,minmax(0,1fr))}
   .deck.nrec{grid-template-columns:minmax(0,1fr)}
   .onlbtn{font-size:11px}
   .who{flex-wrap:wrap;gap:6px;width:100%}
@@ -528,6 +531,165 @@ tr.k-lower td,tr.k-hoist td{background:color-mix(in srgb,var(--accent) 8%,transp
   .kv{grid-template-columns:repeat(2,minmax(0,1fr))}
   .kv b{white-space:normal;font-size:17px;line-height:1.2}
 }
+
+/* ---- off ship tile ---- */
+.m.ashore .brk{display:flex;flex-wrap:wrap;gap:2px 12px;margin-top:3px;font-size:12.5px;color:color-mix(in srgb,var(--surface) 75%,transparent);white-space:nowrap}
+.m.ashore .brk b{color:var(--surface);font-family:var(--f-display);font-size:16px;font-weight:700;font-variant-numeric:tabular-nums}
+.tag.falls{background:color-mix(in srgb,var(--muted) 20%,transparent);color:var(--muted);border:1px dashed var(--muted)}
+.offc[data-act]{cursor:pointer}
+.offc[data-act]:hover{background:color-mix(in srgb,var(--sea) 6%,transparent)}
+.cb[data-act="unit"] .bn::after{content:"";}
+/* ---- number pad ---- */
+.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.kp button{font-family:var(--f-display);font-weight:700;font-size:24px;min-height:52px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;touch-action:manipulation}
+.kp button:active{background:var(--sea-tint)}
+.kp .kq{font-size:16px;letter-spacing:.04em;background:var(--surface-2)}
+.kp .kfull{grid-column:1 / -1;background:var(--sea-tint);color:var(--sea);border-color:color-mix(in srgb,var(--sea) 35%,transparent)}
+.kpin{caret-color:transparent}
+body:has(.overlay) .toast{visibility:hidden}
+.dform{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,300px);gap:14px;align-items:start}
+.dleft{display:flex;flex-direction:column;gap:8px;min-width:0}
+.dleft .paxprev{margin:0 auto}
+@media (max-width:640px){ .dform{grid-template-columns:minmax(0,1fr)} .kp button{min-height:46px;font-size:21px} }
+/* ---- tender card ---- */
+.ua{display:flex;flex-direction:column;gap:10px;padding-bottom:12px;margin-bottom:6px;border-bottom:1px solid var(--line)}
+.ua-row{display:flex;gap:8px;flex-wrap:wrap}
+.ua-row .btn{flex:1 1 200px}
+.btn.big{min-height:54px;font-size:18px;font-weight:700}
+.ua-go{width:100%}
+.ua-title{font-family:var(--f-display);font-weight:700;font-size:18px;letter-spacing:.04em}
+.ua-more > summary{cursor:pointer;font-family:var(--f-display);font-weight:700;font-size:13px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);padding:6px 0}
+.ua-more[open] > summary{margin-bottom:8px}
+.ua-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:7px;margin-top:10px}
+.modal:has(.dform){width:min(780px,96vw);max-width:min(780px,96vw)}
+.dleft .two{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}
+/* ---- compact board for tablets and PCs ---- */
+@media (min-width:761px){
+  .dayline{margin:2px 0 6px;gap:6px 8px}
+  .dayline h1{font-size:24px}
+  .dayline .dinfo > span{padding:2px 9px;font-size:12.5px}
+  .dayline .btn.small{padding:4px 9px;font-size:12.5px}
+  .m{padding:5px 12px} .m .v{font-size:23px} .m .l{font-size:11.5px} .m .q{display:none}
+  .m.ashore{padding:6px 12px;flex-wrap:nowrap}
+  .m.ashore .s{margin-top:1px}
+  .sec.rec{display:flex;flex-direction:column;gap:3px}
+  .sec.rec .big{font-size:15px}
+  .sec.rec .btn.small, .sec.rec > .btn{padding:3px 10px;font-size:12.5px;align-self:flex-start}
+  .m.ashore .v{font-size:30px}
+  .m.ashore .sync{padding:4px 10px}
+  .svcring{width:40px;height:40px}
+  .sec .sh{min-height:20px;font-size:12px}
+  .prow{padding:0;font-size:13.5px} .prow b{font-size:15.5px}
+  .prow.sb{display:none}
+  .sec.rec .big{margin:2px 0}
+  .sec.rec .sugbar{margin:6px 0 0;display:inline-block}
+  .grow.head .cs,.grow.head .ct,.grow.head .ch,.grow.head > div{min-height:0;padding-top:4px;padding-bottom:4px;font-size:13px}
+  .cs,.ct,.ch{min-height:54px;padding:2px 6px}
+  .cb{padding:4px 12px;gap:1px} .bn{font-size:21px} .drv{font-size:12px}
+  .tok{display:grid;grid-template-columns:auto auto;align-items:center;justify-items:start;column-gap:8px;row-gap:1px}
+  .tok .vis{grid-row:1 / span 3}
+  .tok .boat{width:92px;max-width:none}
+  .tok .ring{width:42px;height:42px}
+  .tok .xtra{display:flex;flex-direction:column;gap:0}
+  .sep{padding:4px 12px;min-height:0;font-size:12px}
+  .sep .btn.small{padding:2px 8px;font-size:12px}
+  .grow.off .offc{padding:3px 14px} .grow.off .offc .boat{width:64px}
+  .grow.off .cb .bn{font-size:19px}
+}
+
+/* ---- pinned numbers ---- */
+.pinwrap{display:flex;flex-direction:column;gap:12px}
+.pinwrap.pinned{position:sticky;top:var(--toph, 56px);z-index:15;background:var(--bg);padding:6px 0 8px;margin:-6px 0 -8px;box-shadow:0 10px 14px -12px rgba(6,14,22,.45)}
+.pinbtn{width:30px;height:30px;min-width:30px;padding:0;display:inline-flex;align-items:center;justify-content:center;align-self:center;color:var(--muted)}
+.pinbtn svg{display:block;flex:none}
+.pinbtn.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+@media (min-width:761px){ .pinwrap{gap:8px} }
+@media (max-width:760px){
+  .pinwrap.pinned .deck > .sec:not(.people){display:none}
+  .pinwrap.pinned .dayline > .btn, .pinwrap.pinned .dayline > .sub:not(:first-of-type){display:none}
+}
+
+/* ---- tenders in motion ---- */
+.ct{container-type:inline-size}
+.ct:has(> .tok.mv){justify-content:flex-start}
+.ct > .tok.mv{transform:translateX(calc((100cqw - 100%) * var(--x, .5)));transition:transform 1.5s ease-out}
+.tag.sb.wait{background:color-mix(in srgb,var(--warn) 30%,transparent)}
+@media (prefers-reduced-motion: no-preference){
+  body:not(.noanim) .tok.mv .wave{animation:tk-wave 1.4s linear infinite}
+  body:not(.noanim) .tok.mv .hullg{transform-box:fill-box;transform-origin:50% 80%;animation:tk-bob 2.4s ease-in-out infinite}
+  body:not(.noanim) .tok.idle .hullg{transform-box:fill-box;transform-origin:50% 80%;animation:tk-bob 5.5s ease-in-out infinite}
+  body:not(.noanim) .tok.idle .tag.sb.wait{animation:tk-wait 1.8s ease-in-out infinite}
+  @keyframes tk-wave{to{transform:translateX(-28px)}}
+  @keyframes tk-bob{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-1.3px) rotate(-1.1deg)}70%{transform:translateY(.9px) rotate(.8deg)}}
+  @keyframes tk-wait{50%{box-shadow:0 0 0 4px color-mix(in srgb,var(--warn) 28%,transparent)}}
+}
+body.noanim .ct > .tok.mv{transition:none}
+
+.ring.tbd .n{fill:var(--warn)} .ring.tbd .trk{stroke:color-mix(in srgb,var(--warn) 35%,var(--track));stroke-dasharray:6 5}
+.tag.tbd{background:color-mix(in srgb,var(--warn) 22%,transparent);color:var(--warn);border:1px solid color-mix(in srgb,var(--warn) 45%,transparent)}
+.btn.later{width:100%;margin-top:8px;border-style:dashed}
+
+/* ---- open tender chip, edit mode, pause ---- */
+.dinfo > span.otchip,.otchip{border-color:var(--ok);display:inline-flex;align-items:center;gap:6px;background:var(--ok);color:#fff;border-radius:999px;padding:2px 4px 2px 10px;font-weight:700;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.otchip i{width:7px;height:7px;border-radius:50%;background:#fff}
+.otchip b{font-weight:700;letter-spacing:0;color:#fff}
+.otchip .otx{border:0;background:rgba(255,255,255,.22);color:#fff;border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;line-height:1;padding:0}
+.editbtn.on{background:var(--warn);border-color:var(--warn);color:#fff}
+.editbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:color-mix(in srgb,var(--warn) 16%,var(--surface));border:1px solid color-mix(in srgb,var(--warn) 45%,transparent);border-radius:10px;padding:6px 12px;font-size:13.5px}
+.editbar b{font-family:var(--f-display);letter-spacing:.08em;text-transform:uppercase;color:var(--warn)}
+.editbar .btn{margin-left:auto}
+.grow.editing .cs,.grow.editing .ct,.grow.editing .ch{cursor:pointer;outline:1px dashed color-mix(in srgb,var(--warn) 55%,transparent);outline-offset:-4px}
+.grow.editing .cs:hover,.grow.editing .ct:hover,.grow.editing .ch:hover{background:color-mix(in srgb,var(--warn) 10%,transparent)}
+.fixc{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.fixc button{min-height:46px}
+.undo-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:10px;font-size:13px;color:var(--muted)}
+.undo-row .btn{margin-left:auto}
+.tag.paused{background:var(--surface-2);color:var(--muted);border:1px dashed var(--muted)}
+.tok.paused .vis{opacity:.45;filter:grayscale(1)}
+
+/* ---- day window with keypad ---- */
+.dayform{grid-template-columns:minmax(0,1fr) minmax(200px,260px)}
+.kp-for{font-family:var(--f-display);font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--sea);margin-bottom:6px}
+.kpt.kpfocus{outline:2px solid var(--sea);outline-offset:1px}
+.modal:has(.dayform){width:min(820px,96vw);max-width:min(820px,96vw)}
+#mNext:empty{display:none}
+@media (max-width:1420px){ .dayline > .sub{display:none} }
+#mNext{color:var(--warn)}
+@media (max-width:640px){ .dayform .dright{order:2} }
+.p1{font-size:.62em;font-weight:700;color:var(--warn);margin-left:2px;vertical-align:super;line-height:0}
+/* ---- arrows centred on the line ---- */
+.arw{display:inline-block;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-weight:600;line-height:1;vertical-align:middle;position:relative;top:-.08em;margin:0 .08em}
+/* ---- same size for every chip in the port line ---- */
+.dinfo > span, .dinfo > span.chn, .dinfo > span.otchip{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 11px;font-size:13px;line-height:1;box-sizing:border-box;border-width:1px}
+.dinfo > span b, .dinfo > span.chn b, .dinfo > span.otchip b{font-size:14px}
+.dinfo > span.otchip{padding-right:4px;letter-spacing:.04em;font-size:12px}
+.dinfo > span.otchip .otx{width:20px;height:20px}
+@media (min-width:761px){ .dayline .dinfo > span, .dayline .dinfo > span.chn, .dayline .dinfo > span.otchip{height:26px;padding:0 10px;font-size:12.5px} .dayline .dinfo > span.otchip{padding-right:3px} }
+/* ---- a little more room per tender row so the ETA always fits ---- */
+@media (min-width:761px){
+  .cs,.ct,.ch{min-height:66px}
+  .tok .xtra{display:flex;flex-direction:column;gap:1px}
+  .tok .xtra .eta{white-space:nowrap}
+}
+.cs,.ch{container-type:inline-size}
+.tok{max-width:100%}
+@container (max-width: 250px){
+  .tok{grid-template-columns:auto !important;justify-items:center;text-align:center}
+  .tok .vis{grid-row:auto !important}
+  .tok .xtra{align-items:center}
+}
+
+/* ---- drivers as one-tap chips ---- */
+.dchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:-2px}
+.dchips button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-weight:600;font-size:13.5px;cursor:pointer}
+.dchips button.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+/* ---- system keyboard open: keep the window above it ---- */
+body.kb-open .overlay{align-items:flex-start;padding-top:6px}
+body.kb-open .modal{max-height:calc(var(--vvh, 100vh) - 12px);overflow-y:auto}
+.ovn{font-weight:600}
+.four{display:grid;grid-template-columns:.8fr .8fr 1.2fr 1.2fr;gap:10px}
+@media (max-width:640px){ .four{grid-template-columns:1fr 1fr} }
+#mNext .btn{margin-left:6px}
 </style>
 
 <div id="app"></div>
@@ -564,19 +726,26 @@ let _c = 0;
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 const seq = () => Date.now() * 1000 + (_c++ % 1000);
 const pad = n => String(n).padStart(2, "0");
-const fmtT = ms => { if (ms == null) return "—"; const d = new Date(ms); return pad(d.getHours()) + ":" + pad(d.getMinutes()); };
-const ymd = ms => { const d = new Date(ms); return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate()); };
+/* Ship's time: null = use the device clock; otherwise a fixed UTC offset in minutes, chosen in the app (per device). */
+let TZ = (() => { const v = lsGet("tom.tz"); return v === null || v === "" || isNaN(+v) ? null : +v; })();
+const devOff = () => -new Date().getTimezoneOffset();
+const tzLabel = m => { const a = Math.abs(m), h = Math.floor(a / 60), mm = a % 60; return "UTC" + (m < 0 ? "−" : "+") + h + (mm ? ":" + pad(mm) : ""); };
+const tzp = ms => { if (TZ == null){ const d = new Date(ms); return [d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes()]; }
+  const d = new Date(ms + TZ * 60000); return [d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), d.getUTCHours(), d.getUTCMinutes()]; };
+const fmtT = ms => { if (ms == null) return "—"; const t = tzp(ms); return pad(t[3]) + ":" + pad(t[4]); };
+const ymd = ms => { const t = tzp(ms); return t[0] + "-" + pad(t[1] + 1) + "-" + pad(t[2]); };
+const dLabel = (ms, opts) => { const [y,m,d] = ymd(ms).split("-").map(Number); return new Date(y, m-1, d).toLocaleDateString("en-GB", opts); };
 const fmtDate = s => { if (!s) return ""; const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d).toLocaleDateString("en-GB", {weekday:"short", day:"numeric", month:"short", year:"numeric"}); };
-const hmToMs = (dateStr, hm) => { if (!dateStr || !hm) return null; const [y,m,d] = dateStr.split("-").map(Number); const [h,mi] = hm.split(":").map(Number); return new Date(y, m-1, d, h, mi).getTime(); };
+const hmToMs = (dateStr, hm) => { if (!dateStr || !hm) return null; const [y,m,d] = dateStr.split("-").map(Number); const [h,mi] = hm.split(":").map(Number); return TZ == null ? new Date(y, m-1, d, h, mi).getTime() : Date.UTC(y, m-1, d, h, mi) - TZ * 60000; };
 const fmtDur = min => { if (min == null || !isFinite(min)) return "—"; const neg = min < 0; min = Math.abs(Math.round(min)); const h = Math.floor(min/60), m = min % 60; return (neg?"−":"") + (h ? h + "h " + pad(m) + "m" : m + " min"); };
 const fmtShort = min => { min = Math.max(0, Math.round(min)); return min < 60 ? min + "′" : Math.floor(min/60) + "h" + pad(min%60); };
 const num = n => (n == null || isNaN(n)) ? "—" : Math.round(n).toLocaleString("en-GB");
 const clean = o => JSON.parse(JSON.stringify(o));
 function loadScript(src){ return new Promise((res, rej) => { const s = document.createElement("script"); s.src = src; s.onload = res; s.onerror = () => rej(new Error("Could not load " + src)); document.head.appendChild(s); }); }
 function lsGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
-function lsSet(k, v){ try { localStorage.setItem(k, v); } catch(e){} }
-const berthName = b => b === "FWD" ? "Forward Pontoon" : b === "MID" ? "Midship Pontoon" : "Stand-by";
-const berthShort = b => b === "FWD" ? "Forward" : b === "MID" ? "Midship" : "Stand-by";
+function lsSet(k, v){ try { localStorage.setItem(k, v); return true; } catch(e){ return false; } }
+const berthName = b => b === "FWD" ? "Forward Pontoon" : b === "MID" ? "Midship Pontoon" : b === "FALLS" ? "At the falls" : "Stand-by";
+const berthShort = b => b === "FWD" ? "Forward" : b === "MID" ? "Midship" : b === "FALLS" ? "Falls" : "Stand-by";
 const fullName = n => /^T\d+$/.test(n || "") ? "Tender " + n.slice(1) : (n || "");
 const nameHTML = n => /^T\d+$/.test(n || "") ? `<span class="ln">Tender ${n.slice(1)}</span><span class="sn">${n}</span>` : esc(n);
 
@@ -587,7 +756,7 @@ function boatSVG(flip=false, cls="", number=""){
   // Raked rounded stern, deep white hull rising aft. Bow to the right.
   const w = (x, y, wd, h) => `<rect class="win" x="${x}" y="${y}" width="${wd}" height="${h}" rx="1.2"/>`;
   return `<svg class="boat ${cls}" viewBox="0 0 200 70" aria-hidden="true"><g ${flip ? 'transform="translate(200 0) scale(-1 1)"' : ""}>
-  <path class="wave" d="M2 68 q7 -3 14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0"/>
+  <path class="wave" d="M-26 68 q7 -3 14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0"/>
   <g class="hullg">
   <path class="hull" d="M6 38 L190 35.5 Q197 36 196.5 42 Q195.5 55 185 61 Q176 64.5 158 64.5 L42 64.5 Q16 63.5 6.5 52 Q3.5 46 6 38 Z"/>
   <path class="stripe" d="M140 44.5 Q170 43.5 195.5 40"/><path class="stripe" d="M6 45.5 H32"/>
@@ -601,6 +770,7 @@ function boatSVG(flip=false, cls="", number=""){
   ${number ? `<text class="num" x="186" y="47.5" text-anchor="middle" ${flip ? 'transform="translate(372 0) scale(-1 1)"' : ""}>${esc(number)}</text>` : ""}
   </g></g></svg>`;
 }
+const ringQ = (cap, size) => ringSVG(0, cap, size).replace(/(<text x="40" y="37" class="n">)0</, "$1?<").replace('class="ring ', 'class="ring tbd ');
 function ringSVG(p, cap, size=56){
   const r = 31, C = 2 * Math.PI * r;
   const ratio = cap ? p / cap : 0;
@@ -622,7 +792,7 @@ function pontoonsOf(day, evs){
 }
 function compute(day, events){
   const units = {}, order = [];
-  const mkUnit = (o) => Object.assign({active:false, loc:"stowed", berth:null, dir:null, pax:0, cap:null, driver:"", note:"", since:null, lowered:null, hoisted:null, tripsOut:0, tripsBack:0, paxOut:0, paxBack:0, lastShipDep:null, flag:null, plan:null, tDepShip:null, tArrShore:null, tDepShore:null, tArrShip:null}, o);
+  const mkUnit = (o) => Object.assign({active:false, loc:"stowed", berth:null, dir:null, pax:0, cap:null, driver:"", note:"", since:null, lowered:null, hoisted:null, tripsOut:0, tripsBack:0, paxOut:0, paxBack:0, lastShipDep:null, flag:null, plan:null, paxTbd:false, depEv:null, paused:false, pauseSince:null, tDepShip:null, tArrShore:null, tDepShore:null, tArrShip:null}, o);
   for (const t of TENDERS){ units[t.id] = mkUnit({id:t.id, name:"T"+t.num, full:"Tender "+t.num, num:String(t.num), kind:"tender", side:t.side}); order.push(t.id); }
   let ashore = 0;
   const pont = pontoonsOf(day);
@@ -646,35 +816,41 @@ function compute(day, events){
         if (u.kind === "tender"){ u.lowered = e.t; u.hoisted = null; if (firstLowered == null) firstLowered = e.t; kind = "lower"; text = `Lowered · ${berthName(u.berth)} · max ${u.cap}`; }
         else text = `Back on service · ${berthName(u.berth)}`;
         break;
+      case "pause":
+        u.paused = !!e.on; u.pauseSince = e.on ? e.t : null; kind = "status"; text = e.on ? "Paused · temporary break" : "Back in service after the break"; break;
+      case "falls":
+        atBerth(u, "FALLS"); u.since = e.t; u.plan = null; kind = "pont"; text = "Left the pontoon · at the falls for hoisting"; break;
       case "deactivate":
         Object.assign(u, {active:false, loc:"stowed", berth:null, dir:null, pax:0, since:e.t, lastShipDep:null, flag:null}); changes.push(e.t);
-        if (u.kind === "tender"){ u.hoisted = e.t; lastHoisted = e.t; kind = "hoist"; text = "Hoisted · not in service"; }
+        if (u.kind === "tender"){ u.hoisted = e.t; lastHoisted = e.t; kind = "hoist"; text = "Out of the water · hoisted · not in service"; }
         else text = "Released from service";
         break;
       case "depart": {
         pax = Math.max(0, +e.pax || 0);
         if (e.driver) u.driver = e.driver;
-        trips.push({t:e.t, dir:e.dir, pax, cap:u.cap || DEFAULT_CAP});
+        if (!e.paxTbd) trips.push({t:e.t, dir:e.dir, pax, cap:u.cap || DEFAULT_CAP});
         if (e.dir === "shore"){
-          if (u.tArrShip != null && e.t - u.tArrShip < 90*60000) legs.ship.push((e.t - u.tArrShip)/60000);
+          if (u.tArrShip != null && e.t - u.tArrShip < 90*60000 && !e.fix && e.t - u.tArrShip >= 60000) legs.ship.push((e.t - u.tArrShip)/60000);
           u.tDepShip = e.t;
           u.paxOut += pax; u.tripsOut++;
-          if (u.lastShipDep != null) cycles.push({unit:u.id, t:e.t, min:(e.t - u.lastShipDep) / 60000});
+          if (u.lastShipDep != null && !e.fix && e.t - u.lastShipDep > 5*60000) cycles.push({unit:u.id, t:e.t, min:(e.t - u.lastShipDep) / 60000});
           u.lastShipDep = e.t;
           text = `Departed ${u.berth && u.berth !== "SB" ? berthName(u.berth) + " " : ""}→ Shore`;
-        } else { if (u.tArrShore != null && e.t - u.tArrShore < 90*60000) legs.pier.push((e.t - u.tArrShore)/60000); u.tDepShore = e.t;
+        } else { if (u.tArrShore != null && e.t - u.tArrShore < 90*60000 && !e.fix && e.t - u.tArrShore >= 60000) legs.pier.push((e.t - u.tArrShore)/60000); u.tDepShore = e.t;
           ashore -= pax; u.paxBack += pax; u.tripsBack++; text = e.last ? "LAST TENDER departed → Ship" : "Departed → Ship";
           if (e.last){ lastDep = {unit:u.id, name:u.name, t:e.t, pax, arrived:null}; kind = "last"; } }
-        Object.assign(u, {loc:"transit", berth:null, dir:e.dir, pax, since:e.t, plan:null});
+        Object.assign(u, {loc:"transit", berth:null, dir:e.dir, pax, since:e.t, plan:null, paxTbd: !!e.paxTbd, depEv: e.id});
+        if (e.paxTbd){ text += " · pax to confirm"; pax = "?"; }
         break;
       }
       case "arrive":
+        u.paxTbd = false;
         if (e.at === "shore"){
-          if (u.tDepShip != null && e.t - u.tDepShip < 90*60000) legs.tOut.push((e.t - u.tDepShip)/60000); u.tArrShore = e.t;
+          if (u.tDepShip != null && e.t - u.tDepShip < 90*60000 && !e.fix && e.t - u.tDepShip >= 60000) legs.tOut.push((e.t - u.tDepShip)/60000); u.tArrShore = e.t;
           pax = u.pax; ashore += u.pax; text = `Alongside Shore · ${u.pax} landed`;
           Object.assign(u, {loc:"shore", berth:null, dir:null, pax:0, since:e.t});
         } else {
-          if (u.tDepShore != null && e.t - u.tDepShore < 90*60000) legs.tIn.push((e.t - u.tDepShore)/60000); u.tArrShip = e.t;
+          if (u.tDepShore != null && e.t - u.tDepShore < 90*60000 && !e.fix && e.t - u.tDepShore >= 60000) legs.tIn.push((e.t - u.tDepShore)/60000); u.tArrShip = e.t;
           const b = e.berth || "SB"; atBerth(u, b); u.since = e.t; if (b !== "SB") u.plan = null;
           if (b === "SB"){ text = `Stand-by at ship · ${u.pax} waiting on board`; }
           else { pax = u.pax; text = `Alongside ${berthName(b)} · ${u.pax} back on board`; u.pax = 0;
@@ -700,7 +876,11 @@ function compute(day, events){
       case "status": u.flag = e.status === "ok" ? null : {status:e.status, text:e.text || "", since:e.t}; kind = e.status === "emergency" ? "em" : "status";
         text = e.status === "ok" ? "Status cleared · back to normal" : `${STATUS[e.status] || e.status}${e.text ? " · " + e.text : ""}`; changes.push(e.t); break;
       case "note": u.note = e.text || ""; text = e.text ? `Note: ${e.text}` : "Note cleared"; break;
-      case "sync": { const prev = ashore; ashore = +e.value; const d = ashore - prev; text = `Ashore synced to ${num(ashore)} (count was ${num(prev)}, Δ ${d >= 0 ? "+" : "−"}${num(Math.abs(d))})`; break; }
+      case "sync": { const prev = ashore;
+        if (e.mode === "off"){ const onT = Object.values(units).filter(x => x.loc === "transit" || (x.loc === "ship" && x.berth === "SB")).reduce((a, x) => a + (x.pax || 0), 0); ashore = Math.max(0, +e.value - onT);
+          const d = ashore - prev; text = `Synced from Off ${num(+e.value)} − ${num(onT)} on tenders = Ashore ${num(ashore)} (count was ${num(prev)}, Δ ${d >= 0 ? "+" : "−"}${num(Math.abs(d))})`; }
+        else { ashore = +e.value; const d = ashore - prev; text = `Ashore synced to ${num(ashore)} (count was ${num(prev)}, Δ ${d >= 0 ? "+" : "−"}${num(Math.abs(d))})`; }
+        break; }
       default: continue;
     }
     if (u && u.driver) drivers.add(u.driver);
@@ -722,10 +902,24 @@ function compute(day, events){
   return {units, list, ashore, onTenders, aboard: total - ashore - onTenders, total, pont, occ, cycles, cycleAvg, cycleN, recovery, lastDep, openTender, legs, trips, changes, log, drivers:[...drivers],
     tripsOut:s("tripsOut"), tripsBack:s("tripsBack"), paxOut:s("paxOut"), paxBack:s("paxBack"), firstLowered, lastHoisted};
 }
-const inService = u => u.active;
+const inService = u => u.active && u.berth !== "FALLS" && !u.paused;
 const STATUS = {tech:"Technical issue", pvi:"PVI/PDI incident", emergency:"EMERGENCY"};
 const freeBerths = st => ["FWD","MID"].filter(b => st.pont[b] && !st.occ[b]);
 
+/* the day's times as moments: a time earlier than the opening (or than the time before it) is on the next day */
+function dayTimes(day){
+  /* times are on the day's date; with "Overnight" ticked, departure is on the next day,
+     and any time earlier than the one before it (e.g. last tender 23:30 → all aboard 00:15) is too */
+  const out = {}; let prev = null;
+  for (const k of ["lastTender", "allAboard", "departure"]){
+    let ms = hmToMs(day.date, day[k]); if (ms == null){ out[k] = null; continue; }
+    let next = false;
+    if (day.overnight && (k === "departure" || (prev != null && ms < prev - 60000))){ ms += 864e5; next = true; }
+    out[k] = {ms, next}; prev = ms;
+  }
+  return out;
+}
+const plus1 = (day, k) => { const t = dayTimes(day)[k]; return t && t.next ? `<sup class="p1">+1</sup>` : ""; };
 function estimate(day, st, now){
   const active = st.list.filter(inService);
   const caps = active.map(u => u.cap).filter(Boolean);
@@ -734,10 +928,10 @@ function estimate(day, st, now){
   let cycle = st.cycleAvg, cycleSrc = "today";
   if (cycle == null){
     const prev = (S.data.days || []).find(d => d.id !== day.id && d.summary && d.summary.cycleAvg);
-    if (prev){ cycle = prev.summary.cycleAvg; cycleSrc = "prev:" + prev.port; } else { cycle = 30; cycleSrc = "default"; }
+    if (day.estRun > 0){ cycle = 2 * day.estRun + 10; cycleSrc = "estimate"; }
+    else if (prev){ cycle = prev.summary.cycleAvg; cycleSrc = "prev:" + prev.port; } else { cycle = 30; cycleSrc = "default"; }
   }
-  let last = hmToMs(day.date, day.lastTender);
-  if (last != null && day.openedAt && last < day.openedAt - 3600e3) last += 864e5;
+  const DT = dayTimes(day), last = DT.lastTender ? DT.lastTender.ms : null;
   const remain = last != null ? (last - now) / 60000 : null;
   const inRecovery = !!(st.recovery && st.recovery.on);
   const A = Math.max(0, st.ashore);
@@ -759,7 +953,11 @@ function estimate(day, st, now){
     r.reason = r.peak ? "peak" : r.final ? "final" : r.capNeed >= r.waitNeed ? "lift" : "wait";
     r.needed = Math.min(active.length, n);
   } else { r.needed = Math.min(active.length, r.trips); r.reason = "late"; }
-  r.recoverable = Math.max(0, active.length - r.needed);
+  /* the advice is for our tenders: shoretenders stay to the end, their trips already count above */
+  const shoreAct = active.filter(u => u.kind === "shore").length, ownAct = active.length - shoreAct;
+  r.neededAll = r.needed; r.shoreActive = shoreAct; r.activeCount = ownAct;
+  r.needed = Math.min(ownAct, Math.max(r.reason === "none" || !ownAct ? 0 : 1, r.needed - shoreAct));
+  r.recoverable = Math.max(0, ownAct - r.needed);
   return r;
 }
 
@@ -767,10 +965,11 @@ function estimate(day, st, now){
 /* where each tender coming back will berth, and when it is due */
 function legAvg(a){ return a && a.length ? a.slice(-8).reduce((x,y) => x+y, 0) / Math.min(8, a.length) : null; }
 const etaRel = (eta, now) => eta > now ? "in " + fmtShort((eta - now) / 60000) : now - eta <= 3 * 60000 ? "due" : fmtShort((now - eta) / 60000) + " late";
+const estRun = () => { const d = S.data && S.data.currentDay; return d && d.estRun > 0 ? d.estRun : 15; };
 function etaShip(st, u){
   if (!(u.loc === "transit" && u.dir === "ship")) return null;
   const own = u.tArrShore != null && u.tDepShip != null ? (u.tArrShore - u.tDepShip) / 60000 : null;   // this boat's own run out
-  const run = legAvg(st.legs.tIn) ?? own ?? legAvg(st.legs.tOut) ?? 15;
+  const run = legAvg(st.legs.tIn) ?? own ?? legAvg(st.legs.tOut) ?? estRun();
   return u.since + run * 60000;
 }
 function berthPlan(st, now){
@@ -828,18 +1027,18 @@ function recoverList(st, k){
   const order = {ship:0, transit:1, shore:2};
   const own = st.list.filter(u => inService(u) && u.kind === "tender").sort((a,b) => (order[a.loc] - order[b.loc]) || ((a.loc === "transit" && a.dir === "ship") ? -1 : 1));
   const shore = st.list.filter(u => inService(u) && u.kind === "shore");
-  const out = own.slice(0, Math.max(0, Math.min(k, own.length - 1)));              // keep at least one of our tenders for the shore party
-  if (out.length < k) out.push(...shore.slice(0, k - out.length));               // shoretenders only if nothing else is left
+  const out = own.slice(0, Math.max(0, Math.min(k, own.length)));
   return out;
 }
 
 function statusHTML(day, st, est, lastSync){
-  const own = st.list.filter(u => u.kind === "tender"), ownIn = own.filter(u => u.active).length, stIn = st.list.filter(u => u.kind === "shore" && u.active).length;
+  const own = st.list.filter(u => u.kind === "tender"), ownIn = own.filter(inService).length, stIn = st.list.filter(u => u.kind === "shore" && inService(u)).length;
   const people = `<div class="sec people">
-    <div class="m ashore"><div><div class="l">Ashore</div><div class="v">${num(st.ashore)}</div><div class="s">${lastSync ? "synced " + fmtT(lastSync.e.t) : "tender count"}</div></div>
+    <div class="m ashore"><div class="am"><div class="l" title="Ashore + on tenders: everyone off the ship">Off ship</div><div class="v">${num(st.ashore + st.onTenders)}</div>
+      <div class="brk"><span>Ashore <b>${num(st.ashore)}</b></span><span>On tenders <b>${num(st.onTenders)}</b></span></div>
+      <div class="s">${lastSync ? "synced " + fmtT(lastSync.e.t) : "tender count"}</div></div>
       ${isAdmin() ? `<button class="btn small sync" data-act="sync">Sync</button>` : ""}</div>
     <div class="m svc"><div class="l">In service</div><div class="svcr">${ringSVG(ownIn, own.length, 50).replace(/class="ring \w+"/, 'class="ring ok svcring"')}</div>${stIn ? `<div class="q">+${stIn} shoretender${stIn > 1 ? "s" : ""}</div>` : ""}</div>
-    <div class="m"><div class="l">On tenders</div><div class="v">${num(st.onTenders)}</div></div>
     <div class="m"><div class="l">Aboard</div><div class="v">${num(st.aboard)}</div><div class="q">calculated</div></div>
     <div class="m"><div class="l">Total</div><div class="v">${num(st.total)}</div><div class="q">reference</div></div></div>`;
 
@@ -853,6 +1052,7 @@ function statusHTML(day, st, est, lastSync){
     ${sb.length ? `<div class="prow sb"><i></i><span class="pn">Stand-by</span><b>${sb.map(u => nameHTML(u.name)).join(", ")}</b></div>` : ""}</div>`;
 
   const cycleTxt = est.cycleSrc === "today" ? `average of the last ${est.cycleN} round trips today`
+    : est.cycleSrc === "estimate" ? `estimated from the run time set for the day (2 × ${day.estRun} min + 10 min at the piers) until today’s first round trips are logged`
     : est.cycleSrc === "default" ? "default until today’s first round trips are logged" : `from the last tender day (${esc(est.cycleSrc.slice(5))}) until today’s are logged`;
   let rec;
   const ld = st.lastDep;
@@ -872,11 +1072,11 @@ function statusHTML(day, st, est, lastSync){
     if (ld) head = "";
     else if (!est.activeCount) head = "No tenders in service";
     else if (!est.avgCap) head = "Set max loads to estimate";
-    else if (est.A === 0) head = `Nobody ashore · <b>${est.activeCount}</b> can be recovered`;
+    else if (est.A === 0) head = `Nobody ashore · <b>${est.activeCount}</b> tender${est.activeCount === 1 ? "" : "s"} can be recovered`;
     else if (est.remain != null && est.remain <= 0){ cls = "crit"; head = `Past last tender · <b>${est.trips}</b> trip${est.trips === 1 ? "" : "s"} still needed`; }
     else if (est.peak){ cls = "warn"; head = `Keep all <b>${est.activeCount}</b> · return peak still to come`; }
-    else { cls = est.needed >= est.activeCount ? "warn" : "ok"; head = `Keep <b>${est.needed}</b> of ${est.activeCount} in service · <b>${est.recoverable}</b> can be recovered`;
-      const rl = recoverList(st, est.recoverable); if (rl.length) head += `<span class="rl">Recover first: ${rl.map(u => esc(u.full)).join(", ")} · shoretenders stay, one tender kept for the shore party</span>`; }
+    else { cls = est.needed >= est.activeCount ? "warn" : "ok"; head = `Keep <b>${est.needed}</b> of ${est.activeCount} tenders · <b>${est.recoverable}</b> can be recovered${est.shoreActive ? ` · ${est.shoreActive} shoretender${est.shoreActive > 1 ? "s" : ""} stay` : ""}`;
+      const rl = recoverList(st, est.recoverable); if (rl.length) head += `<span class="rl">Recover first: ${rl.map(u => esc(u.full)).join(", ")}</span>`; }
     rec = `<div class="sec rec ${cls}"><div class="sh"><span>Recovery</span><span class="phase on">Active since ${fmtT(st.recovery.since)}</span>
         ${ld ? "" : `<button class="btn small" data-act="rec" aria-expanded="${S.recOpen}">${S.recOpen ? "Hide" : "How"}</button>`}</div>
       ${head ? `<p class="big">${head}</p>` : ""}
@@ -890,7 +1090,8 @@ function statusHTML(day, st, est, lastSync){
         <li>Time to last tender ${esc(day.lastTender || "")}: <b>${fmtDur(est.remain)}</b> → each tender can still make <b>${est.perUnit ?? "—"}</b> full round trips</li>
         <li>For the lift: ${est.final ? `${est.trips} trips + 1 sweep` : `${est.trips ?? "—"} trips ÷ ${est.perUnit ?? "—"} per tender`} → <b>${est.capNeed ?? "—"}</b> tenders</li>
         <li>For waiting time: a tender at the pier at least every ${est.maxWait} min (${Math.round(est.cycle)} ÷ ${est.maxWait}), never more than the loads left ashore (min 2) → <b>${est.waitNeed ?? "—"}</b> tenders</li>
-        <li>${est.final ? `Final round (less than one round trip left): one trip per tender plus one sweep for late arrivals → keep the larger figure, <b>${est.needed}</b> of ${est.activeCount}` : est.peak ? `Return peak still to come: more people ashore than 2 tenders can lift in an hour, so keep all <b>${est.activeCount}</b>` : `Keep the larger of the two → <b>${est.needed ?? "—"}</b> of ${est.activeCount}`}</li></ol>
+        <li>${est.final ? `Final round (less than one round trip left): one trip per tender plus one sweep for late arrivals → keep the larger figure, <b>${est.needed}</b> of ${est.activeCount}` : est.peak ? `Return peak still to come: more people ashore than 2 tenders can lift in an hour, so keep all <b>${est.activeCount}</b>` : `Keep the larger of the two → <b>${est.neededAll ?? "—"}</b> boats in all`}</li>
+        <li>Shoretenders in service: <b>${est.shoreActive || 0}</b>. They stay until the end and their trips are already counted, so our tenders needed = ${est.neededAll ?? "—"} − ${est.shoreActive || 0}${est.reason === "none" ? "" : ", at least one kept for the shore party"} → keep <b>${est.needed ?? "—"}</b> of ${est.activeCount} tenders</li></ol>
         <p class="hint">Advisory: the decision stays with the Bridge.</p>` : ""}
       ${isAdmin() ? `<button class="linkish" data-act="rec-stop">End recovery</button>` : ""}</div>`;
   }
@@ -899,11 +1100,11 @@ function statusHTML(day, st, est, lastSync){
 
 /* ---------------- stores ---------------- */
 function createLocalStore(){
-  const KEY = "tom.demo.v7";
+  const KEY = CONFIG.standalone ? "tom.deck.offline.v1" : "tom.demo.v7";
   let mem = null; const listeners = [];
   const read = () => { const s = lsGet(KEY); if (s){ try { return JSON.parse(s); } catch(e){} } return mem; };
   const db = () => read() || {days:{}, events:{}, issues:{}};
-  const write = d => { mem = d; lsSet(KEY, JSON.stringify(d)); emit(); };
+  const write = d => { mem = d; const ok = lsSet(KEY, JSON.stringify(d)); if (!ok && CONFIG.standalone && !write.warned){ write.warned = true; setTimeout(() => toast("NOT SAVED · device storage is full. Save a backup file, then delete old days in History."), 0); } if (ok) write.warned = false; emit(); };
   function snap(){
     const d = db();
     const days = Object.values(d.days).sort((a,b) => (b.date || "").localeCompare(a.date || "") || (b.openedAt||0) - (a.openedAt||0));
@@ -931,6 +1132,8 @@ function createLocalStore(){
     savePresence: x => { const d = db(); d.presence = d.presence || {}; d.presence[x.id] = x; mem = d; lsSet(KEY, JSON.stringify(d)); },
     saveFeedback: f => mut(d => { d.feedback = d.feedback || {}; d.feedback[f.id] = Object.assign({}, d.feedback[f.id], clean(f)); }),
     deleteDay: dayId => mut(d => { delete d.events[dayId]; delete d.days[dayId]; }),
+    exportAll: () => JSON.stringify({app:"tendering-ops-deck", v:1, saved:Date.now(), data:db()}),
+    importAll: txt => { const o = JSON.parse(txt); if (!o || o.app !== "tendering-ops-deck" || !o.data || !o.data.days) throw new Error("Not a Tendering Operations backup"); write(o.data); },
     getEvents: async dayId => (db().events[dayId] || []).slice()
   };
 }
@@ -1106,7 +1309,7 @@ const isAdmin = () => S.role === "deck";
 const canIssues = () => S.role === "deck" || S.role === "tech";
 const canOpenTender = () => S.role === "deck" || S.role === "hotel";
 const DEPT = {deck:"DECK", hotel:"HOTEL", tech:"TECH"};
-const VIEWS = ["board","log","issues","chat","feedback","history"];
+const VIEWS = CONFIG.standalone ? ["board","log","issues","history"] : ["board","log","issues","chat","feedback","history"];
 let ST = null;
 const BOOT_T = Date.now();
 function setData(d){
@@ -1129,23 +1332,26 @@ function render(){
   else body = historyHTML();
   const ta = $("#chatText"), keep = ta ? {v: ta.value, f: document.activeElement === ta, s: ta.selectionStart} : null;
   app.innerHTML = headerHTML() + `<main class="wrap">${body}</main>`;
+  setTopH(); document.body.classList.toggle("noanim", !animOn());
   if (S.view === "chat") afterChatRender(keep);
 }
 
 function headerHTML(){
   const d = S.data;
-  const conn = S.store.mode === "demo" ? `<span class="chip"><span class="dot"></span>This device</span>`
+  const conn = CONFIG.standalone ? `<span class="chip" title="Works without internet · data is stored on this device"><span class="dot"></span>Offline · this device</span>` : S.store.mode === "demo" ? `<span class="chip"><span class="dot"></span>This device</span>`
     : d.offline ? `<span class="chip off" title="Changes are saved on this device and sync when back online"><span class="dot"></span>Offline${d.pending ? " · pending" : ""}</span>`
     : `<span class="chip"><span class="dot"></span>Live</span>`;
   const tab = (id, label) => `<a href="#${id}" ${S.view === id ? 'aria-current="page"' : ""}>${label}</a>`;
   const openIssues = d.issues.filter(i => i.status === "open").length;
-  const demo = S.store.mode === "demo" ? `<div class="demo"><div class="wrap"><span><b>Demo mode</b> · sample data on this device only.</span>
+  const demo = S.store.mode === "demo" && !CONFIG.standalone ? `<div class="demo"><div class="wrap"><span><b>Demo mode</b> · sample data on this device only.</span>
     <span class="seg" role="group" aria-label="View as">${["deck","hotel","tech"].map(r => `<button data-act="demo-role" data-r="${r}" aria-pressed="${S.role === r}">${DEPT[r][0] + DEPT[r].slice(1).toLowerCase()}</button>`).join("")}</span>
     <button class="linkish" data-act="demo-reset">Reset sample</button></div></div>` : "";
   return `<header class="top"><div class="wrap">
     <div class="brand">${boatSVG(false)}<div><b>Tendering Operations</b><span>${esc(CONFIG.shipName)} · <i class="credit">made by Erio</i></span></div></div>
-    <nav class="tabs">${tab("board","Board")}${tab("log","Log")}${tab("issues","Issues" + (openIssues ? ` <i class="badge warnb">${openIssues}</i>` : ""))}${tab("chat","Chat" + (unreadCount() ? ` <i class="badge">${unreadCount()}</i>` : ""))}${tab("feedback","Feedback")}${tab("history","History")}</nav>
-    <div class="who">${conn}<button class="chip onlbtn" data-act="online" title="Who is online"><span class="dot"></span>${Math.max(1, onlineList().length)} online</button>${S.data.currentDay && ST && ST.openTender.on ? `<span class="chip ot">Open Tender</span>` : ""}
+    <nav class="tabs">${tab("board","Board")}${tab("log","Log")}${tab("issues","Issues" + (openIssues ? ` <i class="badge warnb">${openIssues}</i>` : ""))}${CONFIG.standalone ? "" : tab("chat","Chat" + (unreadCount() ? ` <i class="badge">${unreadCount()}</i>` : "")) + tab("feedback","Feedback")}${tab("history","History")}</nav>
+    <div class="who">${conn}${CONFIG.standalone ? "" : `<button class="chip onlbtn" data-act="online" title="Who is online"><span class="dot"></span>${Math.max(1, onlineList().length)} online</button>`}${S.data.currentDay && ST && ST.openTender.on && S.view !== "board" ? `<span class="chip ot">Open Tender</span>` : ""}
+      <button class="chip tzbtn" data-act="tz" title="Ship's time · tap to change"><b class="mono">${fmtT(Date.now())}</b> ${tzLabel(TZ ?? devOff())}</button>
+      ${fsOK() ? `<button class="icon-btn fsbtn" data-act="fs" title="${fsOn() ? "Exit full screen" : "Full screen"}" aria-label="${fsOn() ? "Exit full screen" : "Full screen"}">${fsOn() ? FS_OFF : FS_ON}</button>` : ""}
       <button class="icon-btn themebtn" data-act="theme" title="${isDark() ? "Switch to light" : "Switch to dark"}" aria-label="${isDark() ? "Switch to light" : "Switch to dark"}">${isDark() ? SUN : MOON}</button>
       <span class="acct"><span class="chip role d-${S.role}">${DEPT[S.role]}</span>${S.store.mode === "live" ? `<button class="icon-btn" data-act="signout">Sign out</button>` : ""}</span></div>
   </div></header>${demo}${S.store.mode === "live" && d.offline ? `<div class="offbar"><div class="wrap">Offline since ${fmtT(S.offlineSince || Date.now())} · showing the data as of then. ${isAdmin() ? "Entries are saved on this device and sync when the connection is back." : "Numbers may be out of date."}</div></div>` : ""}`;
@@ -1161,7 +1367,7 @@ function chatMsgs(){
 function unreadCount(){ const seen = +(lsGet("tom.seen") || 0), me = deviceId(); return chatMsgs().filter(m => m.t > seen && m.dev !== me).length; }
 function msgsHTML(msgs){
   const me = deviceId(); let lastDate = "";
-  return msgs.map(m => { const dt = new Date(m.t).toDateString(); const sep = dt !== lastDate ? `<div class="msep">${new Date(m.t).toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"})}</div>` : ""; lastDate = dt;
+  return msgs.map(m => { const dt = ymd(m.t); const sep = dt !== lastDate ? `<div class="msep">${dLabel(m.t, {weekday:"short",day:"numeric",month:"short"})}</div>` : ""; lastDate = dt;
       return `${sep}<div class="msg ${m.dev === me ? "mine" : ""}"><div class="mh"><span class="dept d-${String(m.dept).toLowerCase()}">${esc(m.dept)}</span><b class="nmx">${esc(m.name)}</b>${m.rank ? `<b class="rk">${esc(m.rank)}</b>` : ""}<span class="mt mono">${fmtT(m.t)}</span></div><p>${esc(m.text)}</p></div>`; }).join("");
 }
 function chatHTML(){
@@ -1222,7 +1428,7 @@ function feedbackHTML(){
       <button class="btn primary" data-act="fb-new">Write feedback</button></div>
     <div class="issues">${list.length ? list.map(f => `<div class="issue"><div class="who2"><span class="dept d-${String(f.dept).toLowerCase()}">${esc(f.dept)}</span></div>
       <div class="body"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="cat">${esc(f.kind)}</span><span class="status ${f.status === "done" ? "resolved" : "open"}">${f.status === "done" ? "done" : "new"}</span></div>
-        <p>${esc(f.text)}</p><span class="when mono">${esc(f.name || "")}${f.rank ? " · " + esc(f.rank) : ""} · ${new Date(f.t).toLocaleDateString("en-GB",{day:"2-digit",month:"short"})} ${fmtT(f.t)}</span></div>
+        <p>${esc(f.text)}</p><span class="when mono">${esc(f.name || "")}${f.rank ? " · " + esc(f.rank) : ""} · ${dLabel(f.t, {day:"2-digit",month:"short"})} ${fmtT(f.t)}</span></div>
       ${isAdmin() ? `<div class="side-acts"><button class="btn small" data-act="fb-toggle" data-id="${f.id}">${f.status === "done" ? "Reopen" : "Mark done"}</button></div>` : ""}</div>`).join("")
       : `<div class="emptystate" style="padding:24px"><p>No feedback yet. Ideas, problems and requests about the app go here.</p></div>`}</div></section>`;
 }
@@ -1254,16 +1460,16 @@ function boardHTML(){
   const lastInfo = est.remain != null ? (est.remain > 0 ? ` (in ${fmtDur(est.remain)})` : " (passed)") : "";
   const dayline = `<section class="dayline"><h1>${esc(day.port || "Tender day")}</h1>
     <span class="sub">${fmtDate(day.date)}</span>
-    <span class="dinfo"><span>Last tender <b class="mono">${esc(day.lastTender || "—")}</b>${lastInfo}</span>${day.allAboard ? `<span>All aboard <b class="mono">${esc(day.allAboard)}</b></span>` : ""}${day.departure ? `<span>Departure <b class="mono">${esc(day.departure)}</b></span>` : ""}${day.vhf ? `<span class="chn">VHF&nbsp;<b>${esc(day.vhf)}</b></span>` : ""}${day.uhf ? `<span class="chn">UHF&nbsp;<b>${esc(day.uhf)}</b></span>` : ""}</span>
+    <span class="dinfo"><span>Last tender <b class="mono">${esc(day.lastTender || "—")}${plus1(day, "lastTender")}</b>${lastInfo}</span>${day.allAboard ? `<span>All aboard <b class="mono">${esc(day.allAboard)}${plus1(day, "allAboard")}</b></span>` : ""}${day.departure ? `<span>Departure <b class="mono">${esc(day.departure)}${plus1(day, "departure")}</b></span>` : ""}${day.vhf ? `<span class="chn">VHF&nbsp;<b>${esc(day.vhf)}</b></span>` : ""}${day.uhf ? `<span class="chn">UHF&nbsp;<b>${esc(day.uhf)}</b></span>` : ""}${st.openTender.on ? `<span class="otchip" title="Open Tender declared${st.openTender.by ? " by " + esc(st.openTender.by) : ""}"><i></i>Open Tender <b class="mono">${fmtT(st.openTender.since)}</b>${canOpenTender() ? `<button class="otx" data-act="ot-off" aria-label="Cancel Open Tender" title="Cancel Open Tender">✕</button>` : ""}</span>` : ""}</span>
     ${st.log.length ? `<span class="sub">· Last entry <b class="mono">${fmtT(Math.max(...st.log.map(l => l.e.t)))}</b></span>` : ""}
-    <span class="spacer"></span>${canOpenTender() && !st.openTender.on ? `<button class="btn small otbtn" data-act="ot-on">Open Tender…</button>` : ""}${isAdmin() ? `<button class="btn small" data-act="edit-day">Edit day</button><button class="btn small danger" data-act="close-day">Close day…</button>` : ""}</section>`;
+    <span class="spacer"></span>${isAdmin() ? `<button class="icon-btn pinbtn editbtn${S.edit ? " on" : ""}" data-act="editmode" aria-pressed="${!!S.edit}" title="${S.edit ? "Edit mode on · tap to finish" : "Edit mode: correct a tender's position by tapping it"}" aria-label="Edit mode">${EDIT_SVG}</button>` : ""}<button class="icon-btn pinbtn animbtn${animOn() ? " on" : ""}" data-act="anim" aria-pressed="${animOn()}" title="${animOn() ? "Animations on · tap to switch off" : "Animations off · tap to switch on"}" aria-label="Animations">${WAVE_SVG}</button><button class="icon-btn pinbtn${pinned() ? " on" : ""}" data-act="pin" aria-pressed="${pinned()}" title="${pinned() ? "Pinned at the top · tap to unpin" : "Pin this area at the top while scrolling"}" aria-label="${pinned() ? "Unpin" : "Pin at the top"}">${PIN_SVG}</button>${canOpenTender() && !st.openTender.on ? `<button class="btn small otbtn" data-act="ot-on">Open Tender…</button>` : ""}${isAdmin() ? `<button class="btn small" data-act="edit-day">Edit day</button><button class="btn small danger" data-act="close-day">Close day…</button>` : ""}</section>`;
 
   const tenders = st.list.filter(u => u.kind === "tender"), shores = st.list.filter(u => u.kind === "shore" && u.active);
   const head = `<div class="grow head"><div class="cb"><span class="hl">Boat</span><button class="icon-btn hbtn" data-act="legend" title="How to read the board" aria-label="How to read the board">?</button></div><div class="cs">${SHIP_ICON}Ship</div><div class="ct h-t">${SEA_ICON}In transit</div><div class="ch">${PIER_ICON}Shore</div><div class="ca"></div></div>`;
-  const board = `<section class="board${isAdmin() ? "" : " ro"}" aria-label="Tender board">${head}${tenders.map(rowHTML).join("")}
+  const board = `<section class="board ro" aria-label="Tender board">${head}${tenders.map(rowHTML).join("")}
     <div class="sep">Shoretenders ${isAdmin() ? `<button class="btn small" data-act="add-shore">+ Add shoretender</button>` : ""}</div>
     ${shores.length ? shores.map(rowHTML).join("") : `<div class="grow"><div class="cb"></div><div class="offc" style="grid-column:2 / -1;padding:12px;color:var(--muted);font-size:13.5px">No shoretenders today.</div></div>`}</section>`;
-  const ot = st.openTender.on ? `<section class="otbar"><b>Open Tender</b><span>since <b class="mono">${fmtT(st.openTender.since)}</b> · ${esc(st.openTender.by)}</span>${canOpenTender() ? `<button class="btn small" data-act="ot-off">Cancel…</button>` : ""}</section>` : "";
+  const ot = false ? `<section class="otbar"><b>Open Tender</b><span>since <b class="mono">${fmtT(st.openTender.since)}</b> · ${esc(st.openTender.by)}</span>${canOpenTender() ? `<button class="btn small" data-act="ot-off">Cancel…</button>` : ""}</section>` : "";
   const cap = capacity(day, st, now, est);
   const ems = st.list.filter(u => u.flag && u.flag.status === "emergency");
   const em = ems.length ? `<section class="embar"><b>Emergency</b><span>${ems.map(u => `${esc(u.full)} since <b class="mono">${fmtT(u.flag.since)}</b>${u.flag.text ? " · " + esc(u.flag.text) : ""}`).join(" · ")}</span></section>` : "";
@@ -1271,31 +1477,41 @@ function boardHTML(){
   const statsOpen = (lsGet("tom.stats." + S.role) ?? (isAdmin() ? "1" : "0")) === "1";
   const stats = `<details class="stats" id="statsBox" ${statsOpen ? "open" : ""}><summary>Statistics</summary>${capHTML(cap, true)}<div class="sumgrid">${sumTiles(sumS)}</div></details>`;
   const sugBar = isAdmin() && cap.sug ? `<div class="sug ${cap.sug.k} sugbar">${cap.sug.k === "up" ? "▲" : "▼"} ${cap.sug.t}</div>` : "";
-  return dayline + em + ot + statusPanel + sugBar + board + stats;
+  const panel = sugBar && /<\/div><\/section>$/.test(statusPanel) ? statusPanel.replace(/<\/div><\/section>$/, sugBar + "</div></section>") : statusPanel + sugBar;
+  const editBar = S.edit && isAdmin() ? `<div class="editbar"><b>Edit mode</b><span>Tap a tender, or the column where it really is, to correct its position.</span><button class="btn small" data-act="editmode">Done</button></div>` : "";
+  return `<div class="pinwrap${pinned() ? " pinned" : ""}">${dayline}${em}${ot}${panel}${editBar}</div>` + board + stats;
 }
 
 function rowHTML(u){
   const now = Date.now();
   const openIs = S.data.issues.filter(i => i.status === "open" && i.unitName === u.name).length;
-  const cb = `<button class="cb" data-act="sheet" data-u="${u.id}" aria-label="${esc(u.full)} details">
+  const cb = `<button class="cb" data-act="${isAdmin() ? "unit" : "sheet"}" data-u="${u.id}" aria-label="${esc(u.full)} details">
       <span class="bn${u.kind === "shore" && u.name.length > 4 ? " long" : ""}"><span class="nm">${nameHTML(u.name)}</span></span>
-      <span class="drv"><span class="dl">Driver </span><b>${esc(u.driver || "—")}</b></span>
+      ${u.kind === "shore" ? `<span class="drv">Shoretender</span>` : `<span class="drv"><span class="dl">Driver </span><b>${esc(u.driver || "—")}</b></span>`}
       ${u.flag ? `<span class="flagl f-${u.flag.status}">${u.flag.status === "emergency" ? "■ EMERGENCY" : u.flag.status === "pvi" ? "■ PVI/PDI" : "■ Technical issue"}${u.flag.text ? `<em>${esc(u.flag.text)}</em>` : ""}</span>` : ""}
       ${openIs || u.note ? `<span class="marks">${openIs ? `<span class="iss">⚠ ${openIs} issue${openIs > 1 ? "s" : ""}</span>` : ""}${u.note ? `<span class="nt">✎ note</span>` : ""}</span>` : ""}</button>`;
   if (!u.active){
-    return `<div class="grow off">${cb}<div class="offc">${boatSVG(false, "muted" + (u.kind === "shore" ? " shore" : ""), u.num)}<div><b>Not in service</b><div>${u.hoisted ? "Hoisted " + fmtT(u.hoisted) : u.kind === "tender" ? "Stowed" : "Released"}</div></div></div>
+    return `<div class="grow off">${cb}<div class="offc"${isAdmin() ? ` role="button" tabindex="0" data-act="${S.edit ? "fixcell" : "unit"}" data-col="ship" data-u="${u.id}" title="Tap to lower"` : ""}>${boatSVG(false, "muted" + (u.kind === "shore" ? " shore" : ""), u.num)}<div><b>Not in service</b><div>${u.hoisted ? "Hoisted " + fmtT(u.hoisted) : u.kind === "tender" ? "Stowed" : "Released"}</div></div></div>
       <div class="ca">${isAdmin() ? `<button class="btn" data-act="activate" data-u="${u.id}">${u.kind === "tender" ? "Lower" : "Return"}</button>` : ""}</div></div>`;
   }
   const since = u.since ? `${fmtT(u.since)} · ${fmtShort((now - u.since) / 60000)}` : "";
   // bow faces the next move: at ship → shore (right), at shore → ship (left), stand-by waits facing the ship
   const flip = (u.loc === "transit" && u.dir === "ship") || u.loc === "shore" || (u.loc === "ship" && u.berth === "SB");
-  const eta = ST ? etaShip(ST, u) : null;
+  const eta = ST ? (u.loc === "transit" && u.dir === "shore" ? etaShore(ST, u) : etaShip(ST, u)) : null;
   const canPlan = (u.loc === "transit" && u.dir === "ship") || (u.loc === "ship" && u.berth === "SB");
   const next = canPlan && u.plan ? `<span class="nextb">${u.loc === "transit" ? "" : "→ "}<b><span class="ln">${berthName(u.plan)}</span><span class="sn">${berthShort(u.plan)}</span></b></span>` : "";
-  const etaTxt = eta ? `<span class="eta${now - eta > 3 * 60000 ? " late" : ""}">ETA<span class="lng"> ship</span> <b class="mono">${fmtT(eta)}</b><span class="lng"> · ${etaRel(eta, now)}</span></span>` : "";
-  const tag = u.loc === "ship" ? (u.berth === "SB" ? `<span class="tag sb">Stand-by</span>` : `<span class="tag berth"><span class="ln">${berthName(u.berth)}</span><span class="sn">${berthShort(u.berth)}</span></span>`)
+  const etaTxt = eta ? `<span class="eta${now - eta > 3 * 60000 ? " late" : ""}">ETA<span class="lng"> ${u.dir === "shore" ? "shore" : "ship"}</span> <b class="mono">${fmtT(eta)}</b><span class="lng"> · ${etaRel(eta, now)}</span></span>` : "";
+  const tag = u.loc === "ship" ? (u.berth === "FALLS" ? `<span class="tag falls">At the falls</span>` : u.berth === "SB" ? `<span class="tag sb${u.pax > 0 ? " wait" : ""}">Stand-by${u.pax > 0 ? " · " + u.pax : ""}</span>` : `<span class="tag berth"><span class="ln">${berthName(u.berth)}</span><span class="sn">${berthShort(u.berth)}</span></span>`)
     : u.loc === "transit" ? `<span class="tag dir">${u.dir === "shore" ? "→ to shore" : "← to ship"}</span>` : "";
-  const tok = `<div class="tok" role="button" tabindex="0" data-act="info" data-u="${u.id}" title="Details"><div class="vis">${ringSVG(u.pax, u.cap)}${boatSVG(flip, u.kind === "shore" ? "shore" : "", u.num)}</div>${tag}${next}<span class="xtra">${etaTxt}<span class="since mono">${since}</span></span></div>`;
+  const pauseTag = u.paused ? `<span class="tag paused">Paused · ${fmtT(u.pauseSince)}</span>` : "";
+  const tbdTag = u.paxTbd ? `<span class="tag tbd">Pax ?</span>` : "";
+  let mv = "", xs = "";
+  if (u.paused){}
+  else if (u.loc === "transit"){ const e2 = u.dir === "ship" ? eta : (ST ? etaShore(ST, u) : null);
+    const pr = e2 && u.since ? Math.min(1, Math.max(0, (now - u.since) / Math.max(60000, e2 - u.since))) : 0.5;
+    mv = " mv"; xs = ` style="--x:${(u.dir === "shore" ? pr : 1 - pr).toFixed(3)}"`; }
+  else if (u.loc === "ship" && u.berth === "SB" && !u.paused) mv = " idle";
+  const tok = `<div class="tok${mv}${u.paused ? " paused" : ""}"${xs} role="button" tabindex="0" data-act="${S.edit && isAdmin() ? "fixcell" : isAdmin() ? "unit" : "info"}" data-col="${u.loc}" data-u="${u.id}" title="${isAdmin() ? "Tap for actions" : "Details"}"><div class="vis">${u.paxTbd ? ringQ(u.cap) : ringSVG(u.pax, u.cap)}${boatSVG(flip, u.kind === "shore" ? "shore" : "", u.num)}</div>${tag}${pauseTag}${tbdTag}${next}<span class="xtra">${etaTxt}<span class="since mono">${since}</span></span></div>`;
   const cell = loc => u.loc === loc ? tok : "";
   let acts = "";
   if (isAdmin()){
@@ -1308,7 +1524,8 @@ function rowHTML(u){
     else if (u.loc === "transit") acts = u.dir === "shore" ? B("arrive-shore", "Arrived Shore", "dark") : B("arrive-ship", "Arrived Ship", "dark") + B("plan", u.plan ? "Change pontoon" : "Assign pontoon", "small ghost");
     else if (u.loc === "shore") acts = B("depart-ship", "Depart → Ship", "primary");
   }
-  return `<div class="grow${u.flag ? " fl-" + u.flag.status : ""}">${cb}<div class="cs">${cell("ship")}</div><div class="ct">${cell("transit")}</div><div class="ch">${cell("shore")}</div><div class="ca">${acts}</div></div>`;
+  const ec = col => S.edit && isAdmin() ? ` data-act="fixcell" data-u="${u.id}" data-col="${col}" role="button" tabindex="0"` : "";
+  return `<div class="grow${u.flag ? " fl-" + u.flag.status : ""}${S.edit && isAdmin() ? " editing" : ""}">${cb}<div class="cs"${ec("ship")}>${cell("ship")}</div><div class="ct"${ec("transit")}>${cell("transit")}</div><div class="ch"${ec("shore")}>${cell("shore")}</div><div class="ca">${acts}</div></div>`;
 }
 
 function logRows(st, opts){
@@ -1355,10 +1572,16 @@ function issuesHTML(){
       const repeat = all.filter(x => x.unitName === i.unitName && x.category === i.category && x.id !== i.id && x.t < i.t).length;
       return `<div class="issue"><div class="who2">${nameHTML(i.unitName)}</div>
       <div class="body"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="cat">${esc(i.category)}</span><span class="status ${i.status}">${i.status}</span>${repeat ? `<span class="pill warn">Seen ${repeat}× before on ${esc(fullName(i.unitName))}</span>` : ""}</div>
-        <p>${esc(i.text)}</p><span class="when mono">${new Date(i.t).toLocaleDateString("en-GB", {day:"2-digit", month:"short", year:"numeric"})} · ${fmtT(i.t)}${i.port ? " · " + esc(i.port) : ""}</span>
+        <p>${esc(i.text)}</p><span class="when mono">${dLabel(i.t, {day:"2-digit", month:"short", year:"numeric"})} · ${fmtT(i.t)}${i.port ? " · " + esc(i.port) : ""}</span>
         ${i.status === "resolved" && (i.resolution || i.resolvedAt) ? `<div class="res">${i.resolvedAt ? `<span class="mono">${fmtT(i.resolvedAt)}</span> ` : ""}${esc(i.resolution || "Resolved")}</div>` : ""}</div>
       ${canIssues() ? `<div class="side-acts">${i.status === "open" ? `<button class="btn small" data-act="resolve" data-id="${i.id}">Resolve</button>` : `<button class="btn small" data-act="reopen" data-id="${i.id}">Reopen</button>`}<button class="btn small" data-act="edit-issue" data-id="${i.id}">Edit</button></div>` : ""}</div>`;
     }).join("") : `<div class="emptystate" style="padding:24px"><p>No issues match this filter.</p></div>`}</div></section>`;
+}
+function storageUse(){ const n = (lsGet("tom.deck.offline.v1") || "").length; return `${(n / 1048576).toFixed(1)} MB of about 5 MB${n > 3.5 * 1048576 ? " · nearly full: save a backup and delete old days" : ""}`; }
+function backupHTML(){
+  return `<div class="backup"><h3 class="bh">Backup</h3>
+    <p class="hint" style="margin:0 0 8px">Storage used: <b>${storageUse()}</b>. Everything is stored only in this browser. Save a backup file regularly (for example after each tender day) and keep it somewhere safe.</p>
+    <div class="row-btns"><button class="btn" data-act="backup-export">Save backup file</button><button class="btn" data-act="backup-import">Restore from file…</button><input type="file" id="backupFile" accept=".json,application/json" hidden></div></div>`;
 }
 function historyHTML(){
   if (S.hist){
@@ -1378,7 +1601,7 @@ function historyHTML(){
       <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b>${esc(d.port)}</b><span class="status ${d.status === "open" ? "open" : "resolved"}">${d.status === "open" ? "Today" : "Closed"}</span></div>
       <span class="d">${fmtDate(d.date)} · last tender ${esc(d.lastTender || "—")}</span>
       <div class="g"><div><span>Trips</span><i>${s.tripsOut != null ? s.tripsOut + s.tripsBack : "—"}</i></div><div><span>Pax ashore</span><i>${s.paxOut != null ? num(s.paxOut) : "—"}</i></div><div><span>Round trip</span><i>${s.cycleAvg != null ? s.cycleAvg + "′" : "—"}</i></div></div></button>`; }).join("")}</div>`
-      : `<p style="color:var(--muted);margin:0">Closed tender days appear here.</p>`}</section>`;
+      : `<p style="color:var(--muted);margin:0">Closed tender days appear here.</p>`}${CONFIG.standalone ? backupHTML() : ""}</section>`;
 }
 function loginHTML(){
   return `<div class="wrap login"><form id="loginForm" autocomplete="on">
@@ -1424,11 +1647,14 @@ function modal({title, body, submit="Save", danger=false, onSubmit, extra="", on
     <div class="mb">${body}</div>
     <footer>${extra}<button type="button" class="btn" data-close="1">${submit ? "Cancel" : "Close"}</button>${submit ? `<button type="submit" class="btn ${danger ? "arm" : "primary"}">${esc(submit)}</button>` : ""}</footer></form></div>`;
   const form = root.querySelector("form");
-  root.querySelector(".overlay").addEventListener("click", e => { if (e.target.dataset.close) closeModal(); });
+  /* a tap outside closes only read-only windows; forms close with ✕ or Cancel, so nothing typed is lost */
+  root.querySelector(".overlay").addEventListener("click", e => { if (e.target.dataset.close && !submit) closeModal(); });
   root.querySelectorAll("button[data-close]").forEach(b => b.addEventListener("click", closeModal));
   form.addEventListener("submit", e => { e.preventDefault(); const r = onSubmit && onSubmit(form); if (r !== false) closeModal(); });
   if (onOpen) onOpen(form);
-  const first = form.querySelector("input.big, input:not([type=hidden]):not([type=checkbox]), textarea"); if (first && !form.dataset.nofocus) setTimeout(() => first.focus(), 30);
+  const first = form.querySelector("input.kpin, input.big, input:not([type=hidden]):not([type=checkbox]), textarea");
+  /* on touch screens only the number pad field takes focus, so the system keyboard does not pop up */
+  if (first && !form.dataset.nofocus && (first.classList.contains("kpin") || matchMedia("(hover: hover) and (pointer: fine)").matches)) setTimeout(() => first.focus(), 30);
 }
 function closeModal(){ $("#modal-root").innerHTML = ""; sheetUnit = null; }
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
@@ -1443,7 +1669,18 @@ function readTime(form, id, dayDate, fallback){
   if (!v || v === el.dataset.init) return fallback ?? Date.now();
   return hmToMs(dayDate || ymd(Date.now()), v) ?? Date.now();
 }
-const driverList = () => `<datalist id="drvList">${(ST ? ST.drivers : []).map(d => `<option value="${esc(d)}">`).join("")}</datalist>`;
+const driverList = () => { const ds = (ST ? ST.drivers : []).filter(Boolean).slice(-12);
+  return `<datalist id="drvList">${ds.map(d => `<option value="${esc(d)}">`).join("")}</datalist>${ds.length ? `<div class="dchips" aria-label="Drivers today">${ds.map(d => `<button type="button" data-drv="${esc(d)}">${esc(d)}</button>`).join("")}</div>` : ""}`; };
+document.addEventListener("click", e => { const b = e.target.closest && e.target.closest(".dchips [data-drv]"); if (!b) return;
+  const f = b.closest("form"), inp = f && (f.querySelector("#mDrv") || f.querySelector("#mV")); if (inp){ inp.value = b.dataset.drv; inp.dispatchEvent(new Event("input", {bubbles:true})); }
+  b.parentElement.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); });
+/* system keyboard: keep the window above it, and close it when the person taps an empty part of the window */
+if (window.visualViewport){
+  const vv = window.visualViewport, onVV = () => { const kb = innerHeight - vv.height > 120; document.body.classList.toggle("kb-open", kb); document.documentElement.style.setProperty("--vvh", vv.height + "px"); };
+  vv.addEventListener("resize", onVV); onVV();
+}
+document.addEventListener("pointerdown", e => { const a = document.activeElement; if (!a || !/^(INPUT|TEXTAREA)$/.test(a.tagName) || a.getAttribute("inputmode") === "none") return;
+  if (e.target.closest && e.target.closest(".modal") && !e.target.closest("input, textarea, select, button, label, .kp, .choice, .dchips")) a.blur(); });
 function berthChoice(st, current, id="mBerth"){
   const fb = freeBerths(st), def = current || fb[0] || "SB";
   const btn = (b, sub) => { const dis = b !== "SB" && !fb.includes(b) && current !== b; return `<button type="button" data-berth="${b}" aria-pressed="${def === b}" ${dis ? "disabled" : ""}>${b === "SB" ? "Stand-by" : berthShort(b) + "<small>pontoon</small>"}<small>${sub}</small></button>`; };
@@ -1461,51 +1698,208 @@ function addEv(type, unit, extra, t, msg){
   return e;
 }
 
-function departModal(u, dir){
+/* departure form, used in its own window and at the top of the tender card */
+function departForm(u, dir){
   const isShore = dir === "shore", st = ST;
-  modal({
-    title: `${u.full} · Depart → ${isShore ? "Shore" : "Ship"}`, submit: "Log departure",
-    body: `<div class="paxprev" id="pv">${ringSVG(u.pax || 0, u.cap, 96)}</div>
-      <label class="fld"><span>Pax on board</span><input id="mPax" class="big" type="number" inputmode="numeric" min="0" step="1" placeholder="0" value="${u.pax || ""}" required>${isShore ? "" : `<span class="hint">${num(Math.max(0, st.ashore))} currently ashore</span>`}</label>
-      <div class="quick"><button type="button" class="btn" data-q="0">Empty</button>${u.cap ? `<button type="button" class="btn" data-q="${u.cap}">Full · ${u.cap}</button>` : ""}</div>
-      <div id="mWarn"></div>
-      <div class="two"><label class="fld"><span>Driver</span><input id="mDrv" list="drvList" value="${esc(u.driver)}" autocomplete="off"></label>${timeField("mT")}</div>${driverList()}
-      ${!isShore ? `<div class="toggles"><label class="lastchk"><input type="checkbox" id="mLastT">Last tender from shore</label></div>` : ""}`,
-    onOpen: f => {
-      const upd = () => { const p = Math.max(0, parseInt(f.querySelector("#mPax").value || "0", 10) || 0); f.querySelector("#pv").innerHTML = ringSVG(p, u.cap, 96);
-        f.querySelector("#mWarn").innerHTML = u.cap && p > u.cap ? `<div class="warnbox">${p} is above the max load of ${u.cap}.</div>` : (!isShore && p > st.ashore ? `<div class="warnbox">More than the ${num(st.ashore)} counted ashore. Check the number or sync Ashore.</div>` : ""); };
-      f.querySelector("#mPax").addEventListener("input", upd);
-      f.querySelectorAll("[data-q]").forEach(b => b.addEventListener("click", () => { f.querySelector("#mPax").value = b.dataset.q; upd(); }));
-    },
-    onSubmit: f => {
-      const v = f.querySelector("#mPax").value;
-      if (v === "" || isNaN(+v)){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Enter the number of pax (0 if empty).</div>`; return false; }
-      const p = Math.max(0, Math.round(+v));
-      const lt = !!(f.querySelector("#mLastT") && f.querySelector("#mLastT").checked);
-      addEv("depart", u.id, Object.assign({dir, pax: p, driver: f.querySelector("#mDrv").value.trim()}, lt ? {last:true} : {}), readTime(f, "mT", day().date), `${lt ? "LAST TENDER · " : ""}${u.full} departed → ${isShore ? "Shore" : "Ship"} · ${p} pax`);
-    }
-  });
+  const html = `<div class="dform">
+      <div class="dleft"><div class="paxprev" id="pv">${ringSVG(u.pax || 0, u.cap, 96)}</div>
+        <label class="fld"><span>Pax on board</span>${kpInput("mPax", u.pax || "")}${isShore ? "" : `<span class="hint">${num(Math.max(0, st.ashore))} currently ashore</span>`}</label>
+        <div id="mWarn"></div>
+        ${u.kind === "shore" ? timeField("mT") : `<div class="two"><label class="fld"><span>Driver</span><input id="mDrv" list="drvList" value="${esc(u.driver)}" autocomplete="off"></label>${timeField("mT")}</div>${driverList()}`}
+        ${!isShore ? `<div class="toggles"><label class="lastchk"><input type="checkbox" id="mLastT">Last tender from shore</label></div>` : ""}</div>
+      <div class="dright">${kpHTML("mPax", {full: u.cap})}<button type="button" class="btn later" id="mLater">Pax later · log the departure now</button></div></div>`;
+  const open = f => {
+    const upd = () => { const p = Math.max(0, parseInt(f.querySelector("#mPax").value || "0", 10) || 0); f.querySelector("#pv").innerHTML = ringSVG(p, u.cap, 96);
+      f.querySelector("#mWarn").innerHTML = u.cap && p > u.cap ? `<div class="warnbox">${p} is above the max load of ${u.cap}.</div>` : (!isShore && p > st.ashore ? `<div class="warnbox">More than the ${num(st.ashore)} counted ashore. Check the number or Sync.</div>` : ""); };
+    f.querySelector("#mPax").addEventListener("input", upd);
+    const lb = f.querySelector("#mLater"); if (lb) lb.addEventListener("click", () => { f.dataset.later = "1"; f.requestSubmit ? f.requestSubmit() : f.dispatchEvent(new Event("submit", {cancelable:true})); });
+  };
+  const submit = f => {
+    const lt = !!(f.querySelector("#mLastT") && f.querySelector("#mLastT").checked);
+    if (f.dataset.later === "1"){
+      addEv("depart", u.id, Object.assign({dir, pax: 0, paxTbd: true, driver: f.querySelector("#mDrv") ? f.querySelector("#mDrv").value.trim() : ""}, lt ? {last:true} : {}), readTime(f, "mT", day().date), `${lt ? "LAST TENDER · " : ""}${u.full} departed → ${isShore ? "Shore" : "Ship"} · pax to confirm`);
+      return; }
+    const v = f.querySelector("#mPax").value;
+    if (v === "" || isNaN(+v)){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Enter the number of pax (Empty if none), or use Pax later.</div>`; return false; }
+    const p = Math.max(0, Math.round(+v));
+    addEv("depart", u.id, Object.assign({dir, pax: p, driver: f.querySelector("#mDrv") ? f.querySelector("#mDrv").value.trim() : ""}, lt ? {last:true} : {}), readTime(f, "mT", day().date), `${lt ? "LAST TENDER · " : ""}${u.full} departed → ${isShore ? "Shore" : "Ship"} · ${p} pax`);
+  };
+  return {html, open, submit};
+}
+function departModal(u, dir){
+  const F = departForm(u, dir);
+  modal({title: `${u.full} · Depart → ${dir === "shore" ? "Shore" : "Ship"}`, submit: "Log departure", body: F.html, onOpen: F.open, onSubmit: F.submit});
+}
+function confirmPaxForm(u){
+  const html = `<div class="dform">
+      <div class="dleft"><div class="ua-title">Pax on board · departed ${fmtT(u.since)}</div><div class="paxprev" id="pv">${ringQ(u.cap, 96)}</div>
+        <label class="fld"><span>Pax on board</span>${kpInput("mPax", "")}</label><div id="mWarn"></div></div>
+      <div class="dright">${kpHTML("mPax", {full: u.cap})}</div></div>`;
+  const open = f => { const inp = f.querySelector("#mPax"); inp.addEventListener("input", () => { const v = inp.value; f.querySelector("#pv").innerHTML = v === "" ? ringQ(u.cap, 96) : ringSVG(Math.max(0, +v || 0), u.cap, 96);
+    f.querySelector("#mWarn").innerHTML = u.cap && +v > u.cap ? `<div class="warnbox">${+v} is above the max load of ${u.cap}.</div>` : ""; }); };
+  const read = f => { const v = f.querySelector("#mPax").value; if (v === "" || isNaN(+v)){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Enter the number of pax.</div>`; return null; } return Math.max(0, Math.round(+v)); };
+  const save = (n) => { if (u.depEv) S.store.updateEvent(day().id, u.depEv, {pax: n, paxTbd: false}); };
+  return {html, open, read, save, submit: f => { const n = read(f); if (n == null) return false; save(n); toast(`${u.full} · ${n} pax on board`); }};
+}
+function arriveShipForm(u){
+  if (u.paxTbd){
+    const P = confirmPaxForm(u), A = arriveShipForm(Object.assign({}, u, {paxTbd:false}));
+    return {html: P.html + A.html.replace(/^<p[^>]*>.*?<\/p>/, ""), open: f => { P.open(f); A.open(f); },
+      submit: f => { const n = P.read(f); if (n == null) return false; P.save(n); const b = f.querySelector("#mBerth").dataset.val;
+        addEv("arrive", u.id, {at:"ship", berth:b}, readTime(f, "mT", day().date), b === "SB" ? `${u.full} on stand-by · ${n} waiting` : `${u.full} alongside ${berthName(b)} · ${n} back on board`); }};
+  }
+  const pl = u.plan ? {b:u.plan} : null;
+  const html = `<p style="margin:0;color:var(--muted)">${u.pax} pax on board. They count as back on board when the tender is alongside a pontoon.</p>${berthChoice(ST, pl && freeBerths(ST).includes(pl.b) ? pl.b : null)}${timeField("mT")}`;
+  const submit = f => { const b = f.querySelector("#mBerth").dataset.val;
+    addEv("arrive", u.id, {at:"ship", berth:b}, readTime(f, "mT", day().date), b === "SB" ? `${u.full} on stand-by · ${u.pax} waiting` : `${u.full} alongside ${berthName(b)} · ${u.pax} back on board`); };
+  return {html, open: f => bindChoice(f), submit};
 }
 function arriveShipModal(u){
-  const pl = u.plan ? {b:u.plan} : null;
-  modal({title:`${u.full} · Arrived at ship`, submit:"Log arrival",
-    body: `<p style="margin:0;color:var(--muted)">${u.pax} pax on board. They count as back on board when the tender is alongside a pontoon.</p>${berthChoice(ST, pl && freeBerths(ST).includes(pl.b) ? pl.b : null)}${timeField("mT")}`,
-    onOpen: f => bindChoice(f),
-    onSubmit: f => { const b = f.querySelector("#mBerth").dataset.val;
-      addEv("arrive", u.id, {at:"ship", berth:b}, readTime(f, "mT", day().date), b === "SB" ? `${u.full} on stand-by · ${u.pax} waiting` : `${u.full} alongside ${berthName(b)} · ${u.pax} back on board`); }});
+  const F = arriveShipForm(u);
+  modal({title:`${u.full} · Arrived at ship`, submit:"Log arrival", body: F.html, onOpen: F.open, onSubmit: F.submit});
+}
+function fallsModal(u){
+  modal({title:`${u.full} · To the falls`, submit:"Log", body:`<p style="margin:0;color:var(--muted)">The tender leaves the ${u.berth === "SB" ? "stand-by" : "pontoon"} for hoisting. The pontoon is free again; log “Out of water” when it is hoisted.</p>${timeField("mT")}`,
+    onSubmit: f => { addEv("falls", u.id, {}, readTime(f, "mT", day().date), `${u.full} at the falls`); }});
+}
+
+/* edit mode: put a tender where it really is, logging the steps that were missed */
+function fixModal(u, col){
+  const pos = x => !x.active ? "off" : x.loc === "transit" ? (x.dir === "shore" ? "TS" : "TH") : x.loc === "shore" ? "SHORE" : "SHIP";
+  const cur = pos(u);
+  const targets = [["FWD","Forward pontoon","ship"],["MID","Midship pontoon","ship"],["SB","Stand-by","ship"],["TS","→ To shore","transit"],["SHORE","Ashore","shore"],["TH","← To ship","transit"]];
+  const curKey = cur === "SHIP" ? u.berth : cur;
+  let def = col === "ship" ? (cur === "SHIP" ? u.berth : (freeBerths(ST)[0] || "SB")) : col === "shore" ? "SHORE" : col === "transit" ? (cur === "TS" ? "TS" : cur === "TH" ? "TH" : cur === "SHORE" ? "TH" : "TS") : curKey;
+  if (def === "FALLS") def = "SB";
+  const lastEv = (S.data.events || []).filter(e => e.unit === u.id).sort((a,b) => b.t - a.t || (b.c||0) - (a.c||0))[0];
+  const lastTxt = lastEv ? (ST.log.find(l => l.e.id === lastEv.id) || {}).text || lastEv.type : "";
+  modal({title:`Correct ${u.full}`, submit:"Save correction",
+    body:`<p style="margin:0;color:var(--muted)">Now: <b>${!u.active ? "not in service" : cur === "SHIP" ? berthName(u.berth) : cur === "TS" ? "in transit to shore" : cur === "TH" ? "in transit to ship" : "ashore"}</b>. Where is it really?</p>
+      <div class="choice fixc" id="mPos" data-val="${def}">${targets.map(([k, l]) => { const dis = (k === "FWD" || k === "MID") && ST.occ[k] && ST.occ[k].id !== u.id;
+        return `<button type="button" data-berth="${k}" aria-pressed="${k === def}" ${dis ? "disabled" : ""}>${l}${dis ? `<small>${esc(ST.occ[k].full)}</small>` : ""}</button>`; }).join("")}</div>
+      <div class="dform"><div class="dleft">
+        ${timeField("mT", null, "Since (24h)")}
+        <label class="fld" id="mPaxF"><span>Pax on the last trip · leave empty if not known</span>${kpInput("mPax", "")}</label>
+        <div class="hint" id="mPlan"></div></div>
+        <div class="dright" id="mKp">${kpHTML("mPax", {full: u.cap})}</div></div>
+      ${lastEv ? `<div class="undo-row"><span>Last entry: <b class="mono">${fmtT(lastEv.t)}</b> ${esc(lastTxt)}</span><button type="button" class="btn danger small" id="mUndo">Undo last entry</button></div>` : ""}`,
+    onOpen: f => {
+      const box = f.querySelector("#mPos");
+      const plan = () => { const tgt = box.dataset.val, steps = fixSteps(u, tgt);
+        const needPax = steps.some(x => x.type === "depart");
+        f.querySelector("#mPaxF").style.display = f.querySelector("#mKp").style.display = needPax ? "" : "none";
+        f.querySelector("#mPlan").innerHTML = steps.length ? "Will log: " + steps.map(x => x.label).join(" → ") + (steps.length > 3 ? `<br><b>That is ${steps.length} entries: if the last entry was a mistake, use Undo instead.</b>` : "") : "No change."; };
+      box.querySelectorAll("button").forEach(b => b.addEventListener("click", () => { box.dataset.val = b.dataset.berth; box.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); plan(); }));
+      plan();
+      const ub = f.querySelector("#mUndo"); if (ub) ub.addEventListener("click", () => { if (ub.dataset.armed){ S.store.deleteEvent(day().id, lastEv.id); closeModal(); toast("Last entry undone"); } else { ub.dataset.armed = 1; ub.textContent = "Tap again to undo"; } });
+    },
+    onSubmit: f => {
+      const tgt = f.querySelector("#mPos").dataset.val, steps = fixSteps(u, tgt); if (!steps.length) return;
+      const t = readTime(f, "mT", day().date), v = f.querySelector("#mPax").value, paxKnown = v !== "" && !isNaN(+v), pax = paxKnown ? Math.max(0, Math.round(+v)) : 0;
+      const lastDep = steps.map(x => x.type).lastIndexOf("depart");
+      steps.forEach((x, i) => { const ex = Object.assign({fix:true}, x.extra);
+        if (x.type === "depart"){ if (i === lastDep && paxKnown) ex.pax = pax; else { ex.pax = 0; ex.paxTbd = true; } }
+        addEv(x.type, u.id, ex, t, null); });
+      toast(`${u.full} corrected · ${steps.length} entr${steps.length === 1 ? "y" : "ies"} at ${fmtT(t)}`);
+    }});
+}
+function fixSteps(u, tgt){
+  const order = ["SHIP","TS","SHORE","TH"];
+  const tMacro = tgt === "TS" || tgt === "TH" || tgt === "SHORE" ? tgt : "SHIP";
+  const steps = []; let cur, berth = u.berth;
+  if (!u.active){ steps.push({type:"activate", label:"Lowered", extra:{cap:u.cap || (u.kind === "shore" ? SHORE_CAP : DEFAULT_CAP), driver:u.driver || "", berth:"SB"}}); cur = "SHIP"; berth = "SB"; }
+  else cur = u.loc === "transit" ? (u.dir === "shore" ? "TS" : "TH") : u.loc === "shore" ? "SHORE" : "SHIP";
+  let guard = 0;
+  while (cur !== tMacro && guard++ < 6){
+    const nx = order[(order.indexOf(cur) + 1) % 4];
+    if (nx === "TS") steps.push({type:"depart", label:"Departed → Shore", extra:{dir:"shore"}});
+    if (nx === "SHORE") steps.push({type:"arrive", label:"Arrived Shore", extra:{at:"shore"}});
+    if (nx === "TH") steps.push({type:"depart", label:"Departed → Ship", extra:{dir:"ship"}});
+    if (nx === "SHIP"){ const b = tMacro === "SHIP" ? tgt : "SB"; steps.push({type:"arrive", label:"Arrived Ship · " + berthShort(b), extra:{at:"ship", berth:b}}); berth = b; }
+    cur = nx;
+  }
+  if (tMacro === "SHIP" && berth !== tgt) steps.push({type:"berth", label:"→ " + berthShort(tgt), extra:{berth:tgt}});
+  return steps;
+}
+
+/* the tender card (Deck): the next action on top, details and other actions below */
+function unitModal(u){
+  sheetUnit = u.id;
+  let top = "", F = null, submit = null, title = u.full;
+  const B = (m, label, cls = "") => `<button type="button" class="btn ${cls}" data-m="${m}">${label}</button>`;
+  if (u.active && u.paused){
+    top = `<div class="ua-title">Paused since ${fmtT(u.pauseSince)}</div><div class="ua-row">${B("resume", "Resume service", "primary big")}</div>`;
+  } else if (!u.active){
+    top = `<div class="ua-row">${B("activate", u.kind === "tender" ? "Lower " + u.full : "Return to service", "primary big")}</div>`;
+  } else if (u.loc === "ship" && u.berth === "FALLS"){
+    F = {html:`<div class="ua-title">At the falls since ${fmtT(u.since)} · log when it is out of the water</div>${timeField("mT")}`, submit: f => { addEv("deactivate", u.id, {}, readTime(f, "mT", day().date), `${u.full} out of the water · hoisted`); }};
+    submit = "Out of water"; title = `${u.full} · At the falls`;
+  } else if (u.loc === "ship" && u.berth === "SB"){
+    const fb = freeBerths(ST);
+    top = `<div class="ua-title">Stand-by at the ship${u.pax ? ` · ${u.pax} pax waiting` : ""}</div><div class="ua-row">${fb.length ? fb.map(b => `<button type="button" class="btn sea big" data-m="berth" data-b="${b}">→ ${berthName(b)}</button>`).join("") : `<span class="hint">Both pontoons are occupied</span>`}</div>
+      <div class="ua-row">${B("depart-shore", "Depart → Shore from stand-by", "ghost")}${u.pax === 0 && u.kind === "tender" ? B("falls", "To the falls (hoist)", "ghost") : ""}</div>`;
+  } else if (u.loc === "ship"){
+    F = departForm(u, "shore"); submit = "Depart → Shore"; title = `${u.full} · Depart → Shore`;
+  } else if (u.loc === "transit" && u.paxTbd && u.dir === "shore"){
+    F = confirmPaxForm(u); submit = "Save pax"; title = `${u.full} · Pax to confirm`;
+  } else if (u.loc === "transit" && u.dir === "shore"){
+    top = `<div class="ua-row">${B("arr-shore", "Arrived Shore", "dark big")}</div>`;
+  } else if (u.loc === "transit" && u.paxTbd){
+    F = confirmPaxForm(u); submit = "Save pax"; title = `${u.full} · Pax to confirm`;
+    top = ""; 
+  } else if (u.loc === "transit"){
+    F = arriveShipForm(u); submit = "Arrived Ship"; title = `${u.full} · Arrived at ship`;
+  } else if (u.loc === "shore"){
+    F = departForm(u, "ship"); submit = "Depart → Ship"; title = `${u.full} · Depart → Ship`;
+  }
+  const more = [];
+  if (u.active){
+    if ((u.loc === "transit" && u.dir === "ship") || (u.loc === "ship" && u.berth === "SB")) more.push(B("plan", u.plan ? "Change pontoon (" + berthShort(u.plan) + ")" : "Assign pontoon"));
+    if (lastDepEv(u)) more.push(B("fixpax", "Correct pax · " + fmtT(lastDepEv(u).t)));
+    if (u.loc === "ship" && u.berth !== "FALLS") more.push(B("move", "Change berth"));
+    if (u.loc === "ship" && u.berth !== "SB" && u.berth !== "FALLS" && u.pax === 0) more.push(u.kind === "tender" ? B("falls", "To the falls (hoist)") : B("stow", "Release from service"));
+    if (u.kind === "shore" && u.loc === "ship" && u.berth === "SB" && u.pax === 0) more.push(B("stow", "Release from service"));
+    more.push(B("status", u.flag ? "Status: " + esc(STATUS[u.flag.status]) : "Set status"));
+    if (u.kind !== "shore") more.push(B("driver", "Change driver"));
+    more.push(B("cap", `Max load (${u.cap ?? "—"})`));
+  }
+  more.push(B("note", u.note ? "Edit note" : "Add note"));
+  if (u.kind !== "shore") more.push(B("issue", "Report issue"));
+  modal({title, submit,
+    body: `${top || F ? `<div class="ua">${top}${F ? F.html : ""}${F && submit ? `<button type="submit" class="btn primary big ua-go">${esc(submit)}</button>` : ""}</div>` : ""}
+      ${u.berth === "FALLS" && u.active ? `<div class="ua-row">${B("to-sb", "Back to stand-by (not hoisted)", "ghost")}</div>` : ""}
+      ${u.kind === "shore" && u.active && !u.paused && u.loc !== "transit" ? `<div class="ua-row">${B("pause", `<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true" style="vertical-align:-2px;margin-right:6px"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>Pause (break)`, "ghost")}</div>` : ""}
+      ${u.loc === "transit" && u.paxTbd && u.dir === "ship" ? `<div class="ua-row">${B("arr-ship", "Arrived Ship (enter pax and pontoon)", "ghost")}</div>` : ""}
+      <details class="ua-more" ${F ? "" : "open"}><summary>Details & more actions</summary>${infoBody(u, false)}<div class="ua-grid">${more.join("")}</div></details>`,
+    onOpen: f => { if (!F || u.loc === "transit") f.dataset.nofocus = 1; if (F && F.open) F.open(f);
+      f.querySelectorAll("[data-m]").forEach(b => b.addEventListener("click", () => {
+        const m = b.dataset.m;
+        if (m === "activate") return activateModal(u);
+        if (m === "arr-shore"){ closeModal(); addEv("arrive", u.id, {at:"shore"}, null, `${u.full} alongside Shore · ${u.pax} landed`); return; }
+        if (m === "berth"){ closeModal(); addEv("berth", u.id, {berth: b.dataset.b}, Date.now(), `${u.full} → ${berthName(b.dataset.b)}`); return; }
+        if (m === "to-sb"){ closeModal(); addEv("berth", u.id, {berth: "SB"}, Date.now(), `${u.full} back to stand-by`); return; }
+        if (m === "falls") return fallsModal(u);
+        if (m === "arr-ship") return arriveShipModal(u);
+        if (m === "pause"){ closeModal(); addEv("pause", u.id, {on:true}, Date.now(), `${u.full} paused`); return; }
+        if (m === "resume"){ closeModal(); addEv("pause", u.id, {on:false}, Date.now(), `${u.full} back in service`); return; }
+        if (m === "note") return simpleModal(`${u.full} · Note`, "Note", "text", u.note, v => addEv("note", u.id, {text: v}), false);
+        sheetAct(u, m);
+      })); },
+    onSubmit: F ? F.submit : null});
+  const go = $("#modal-root .ua-go"); if (go){ const ft = $("#modal-root footer button[type=submit]"); if (ft) ft.remove(); }
 }
 function activateModal(u){
   const tender = u.kind === "tender";
   modal({
     title: tender ? `Lower ${u.full}` : `Return ${u.full} to service`, submit: tender ? "Log lowering" : "Return to service",
     body: `<div class="two"><label class="fld"><span>Max load (pax)</span><input id="mCap" type="number" inputmode="numeric" min="1" value="${u.cap ?? (tender ? DEFAULT_CAP : SHORE_CAP)}" required></label>
-      <label class="fld"><span>Driver</span><input id="mDrv" list="drvList" value="${esc(u.driver)}" autocomplete="off"></label></div>
+      ${tender ? `<label class="fld"><span>Driver</span><input id="mDrv" list="drvList" value="${esc(u.driver)}" autocomplete="off"></label>` : ""}</div>
       <p class="hint" style="margin:0">${tender ? "The tender goes to Stand-by. Bring it alongside a pontoon from the board." : "The boat goes to Stand-by at the ship."}</p>
       ${timeField("mT")}${driverList()}<div id="mWarn"></div>`,
     onSubmit: f => {
       const cap = parseInt(f.querySelector("#mCap").value, 10);
       if (!cap || cap < 1){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Set the max load.</div>`; return false; }
-      addEv("activate", u.id, {cap, driver: f.querySelector("#mDrv").value.trim(), berth: "SB"}, readTime(f, "mT", day().date), tender ? `${u.full} lowered · stand-by` : `${u.full} back on service · stand-by`);
+      addEv("activate", u.id, {cap, driver: f.querySelector("#mDrv") ? f.querySelector("#mDrv").value.trim() : "", berth: "SB"}, readTime(f, "mT", day().date), tender ? `${u.full} lowered · stand-by` : `${u.full} back on service · stand-by`);
     }
   });
 }
@@ -1514,13 +1908,13 @@ function shoreModal(){
     title: "Add shoretender", submit: "Add to board",
     body: `<label class="fld"><span>Boat name</span><input id="mName" placeholder="e.g. Kotor Star" required></label>
       <div class="two"><label class="fld"><span>Max load (pax)</span><input id="mCap" type="number" inputmode="numeric" min="1" value="${SHORE_CAP}" required></label>
-      <label class="fld"><span>Driver / crew</span><input id="mDrv" autocomplete="off"></label></div>
+      </div>
       <p class="hint" style="margin:0">The boat starts on Stand-by at the ship.</p>${timeField("mT")}<div id="mWarn"></div>`,
     onSubmit: f => {
       const name = f.querySelector("#mName").value.trim(), cap = parseInt(f.querySelector("#mCap").value, 10);
       if (!name || !cap){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Name and max load are required.</div>`; return false; }
       if (ST.list.some(u => u.name.toLowerCase() === name.toLowerCase())){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">${esc(name)} is already on the board.</div>`; return false; }
-      addEv("shore_add", "S" + uid(), {name, cap, berth: "SB", driver: f.querySelector("#mDrv").value.trim()}, readTime(f, "mT", day().date), `${name} added`);
+      addEv("shore_add", "S" + uid(), {name, cap, berth: "SB"}, readTime(f, "mT", day().date), `${name} added`);
     }
   });
 }
@@ -1536,31 +1930,66 @@ function pontoonModal(){
   });
 }
 function syncModal(){
-  modal({title:"Sync Ashore", submit:"Sync",
-    body: `<p style="margin:0;color:var(--muted)">Enter the official ashore figure (gangway / security count). The tender count continues from this number.</p>
-      <div class="sumgrid"><div><span>Tender count now</span><b>${num(ST.ashore)}</b></div></div>
-      <label class="fld"><span>Ashore (official)</span><input id="mV" class="big" type="number" inputmode="numeric" min="0" required></label>${timeField("mT")}<div id="mWarn"></div>`,
-    onSubmit: f => { const v = f.querySelector("#mV").value; if (v === "" || +v < 0){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Enter the ashore number.</div>`; return false; }
-      addEv("sync", null, {value: Math.round(+v)}, readTime(f, "mT", day().date), `Ashore synced to ${num(+v)}`); }});
+  const onT = ST.onTenders;
+  modal({title:"Sync with security count", submit:"Sync",
+    body: `<div class="fld"><span>The number I have is</span><div class="choice" id="mMode" data-val="off">
+        <button type="button" data-berth="off" aria-pressed="true">Off the ship<small>ashore + on tenders</small></button>
+        <button type="button" data-berth="ashore" aria-pressed="false">Ashore only<small>landed pax</small></button></div></div>
+      <label class="fld"><span id="mLbl">Off the ship (security)</span>${kpInput("mV", "")}</label>
+      <div class="sumgrid" id="mCalc"></div>${timeField("mT")}<div id="mWarn"></div>
+      ${kpHTML("mV", {empty:false})}<p class="hint" style="margin:0">Best done when no tender is loading or unloading at the ship.</p>`,
+    onOpen: f => {
+      const box = f.querySelector("#mMode"), inp = f.querySelector("#mV");
+      const upd = () => { const off = box.dataset.val === "off", v = inp.value === "" ? null : Math.round(+inp.value);
+        f.querySelector("#mLbl").textContent = off ? "Off the ship (security)" : "Ashore (official)";
+        const res = v == null ? null : off ? Math.max(0, v - onT) : v;
+        f.querySelector("#mCalc").innerHTML = (off ? `<div><span>Off</span><b>${v == null ? "—" : num(v)}</b></div><div><span>− On tenders</span><b>${num(onT)}</b></div>` : "") +
+          `<div><span>= Ashore</span><b style="color:var(--accent)">${res == null ? "—" : num(res)}</b></div><div><span>Tender count now</span><b>${num(ST.ashore)}</b></div>`;
+        f.querySelector("#mWarn").innerHTML = off && v != null && v < onT ? `<div class="warnbox">Lower than the ${num(onT)} pax on tenders. Check the number.</div>` : ""; };
+      box.querySelectorAll("button").forEach(b => b.addEventListener("click", () => { box.dataset.val = b.dataset.berth; box.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); upd(); }));
+      inp.addEventListener("input", upd); upd();
+    },
+    onSubmit: f => { const v = f.querySelector("#mV").value; if (v === "" || +v < 0){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Enter the number.</div>`; return false; }
+      const mode = f.querySelector("#mMode").dataset.val, val = Math.round(+v);
+      addEv("sync", null, mode === "off" ? {mode:"off", value: val} : {value: val}, readTime(f, "mT", day().date), mode === "off" ? `Off ${num(val)} − ${num(onT)} on tenders → Ashore ${num(Math.max(0, val - onT))}` : `Ashore synced to ${num(val)}`); }});
 }
 function dayModal(existing){
   const d = existing || {side:"STBD", fwd:true, mid:true};
   modal({title: existing ? "Edit tender day" : "Open tender day", submit: existing ? "Save" : "Open day",
     extra: existing ? `<button type="button" class="btn danger" id="mReset" style="margin-right:auto">Reset board…</button>` : "",
-    body: `<label class="fld"><span>Port</span><input id="mPort" value="${esc(d.port || "")}" placeholder="e.g. Kotor" required></label>
+    body: `<div class="dform dayform"><div class="dleft"><label class="fld"><span>Port</span><input id="mPort" value="${esc(d.port || "")}" placeholder="e.g. Kotor" required></label>
       <div class="two"><label class="fld"><span>Date</span><input id="mDate" type="date" value="${esc(d.date || ymd(Date.now()))}"></label>
       <label class="fld"><span>Last tender (24h)</span>${hmInput("mLast", d.lastTender || "")}</label></div>
       <div class="two"><label class="fld"><span>All aboard (24h)</span>${hmInput("mAA", d.allAboard || "")}</label><label class="fld"><span>Ship departure (24h)</span>${hmInput("mDep", d.departure || "")}</label></div>
-      <div class="two"><label class="fld"><span>VHF channel</span><input id="mVhf" value="${esc(d.vhf || "")}" placeholder="e.g. 72"></label><label class="fld"><span>UHF channel</span><input id="mUhf" value="${esc(d.uhf || "")}" placeholder="e.g. 3"></label></div>
-      <label class="fld"><span>Total on board (guests + crew)</span><input id="mTot" type="number" inputmode="numeric" min="0" value="${esc(d.total ?? "")}"><span class="hint">Reference only, from the ship’s system.</span></label>
+      <div class="four"><label class="fld"><span>VHF</span><input id="mVhf" value="${esc(d.vhf || "")}" placeholder="72"></label><label class="fld"><span>UHF</span><input id="mUhf" value="${esc(d.uhf || "")}" placeholder="3"></label>
+        <label class="fld"><span title="Guests + crew, from the ship’s system">Total on board</span><input id="mTot" type="number" inputmode="numeric" min="0" value="${esc(d.total ?? "")}"></label>
+        <label class="fld"><span title="Used for the first ETAs; real run times take over as trips are logged">Run to shore (min)</span><input id="mRun" value="${esc(d.estRun ?? "")}" placeholder="15"></label></div>
+      <div class="toggles"><label class="ovn"><input type="checkbox" id="mOvn" ${d.overnight ? "checked" : ""}>Overnight · ship departs the next day</label></div>
       ${existing ? "" : `<div class="fld"><span>Pontoon side</span><div class="choice" id="mSide" data-val="${d.side}" style="grid-template-columns:1fr 1fr"><button type="button" data-berth="PORT" aria-pressed="false">Port</button><button type="button" data-berth="STBD" aria-pressed="true">Starboard</button></div></div>
       <div class="toggles"><label><input type="checkbox" id="mFwd" checked>FWD pontoon</label><label><input type="checkbox" id="mMid" checked>MIDSHIP pontoon</label></div>`}
-      <span class="hint">Round trip time is worked out automatically from the logged trips.</span><div id="mWarn"></div>`,
-    onOpen: f => { bindChoice(f, "mSide"); const r = f.querySelector("#mReset"); if (r) r.addEventListener("click", () => resetDayModal()); },
+      <div id="mNext" class="hint"></div><div id="mWarn"></div></div>
+      <div class="dright"><div class="kp-for" id="kpFor">Last tender</div>${kpHTML("@focus", {empty:false})}<span class="hint">Tap a time or number field, then use the keypad.</span></div></div>`,
+    onOpen: f => { bindChoice(f, "mSide"); const r = f.querySelector("#mReset"); if (r) r.addEventListener("click", () => resetDayModal());
+      f.dataset.nofocus = 1;
+      const nums = [...f.querySelectorAll(".hm, #mVhf, #mUhf, #mTot, #mRun")];
+      const touch = !matchMedia("(hover: hover) and (pointer: fine)").matches;
+      nums.forEach(inp => { if (touch) inp.setAttribute("inputmode", "none"); inp.classList.add("kpt");
+        inp.addEventListener("focus", () => { inp.dataset.fresh = "1"; nums.forEach(x => x.classList.toggle("kpfocus", x === inp)); const l = inp.closest("label"); f.querySelector("#kpFor").textContent = l ? l.querySelector("span").textContent.replace(/\s*\(24h\)/, "") : ""; }); });
+      const first = f.querySelector("#mLast"); if (first) first.classList.add("kpfocus");
+      /* overnight: show which times fall on the next day */
+      const nextInfo = () => { const ovn = f.querySelector("#mOvn").checked;
+        const tmp = {date: f.querySelector("#mDate").value || ymd(Date.now()), overnight: ovn, lastTender: normHM(f.querySelector("#mLast").value), allAboard: normHM(f.querySelector("#mAA").value), departure: normHM(f.querySelector("#mDep").value)};
+        const T = dayTimes(tmp), nx = [["lastTender","Last tender"],["allAboard","All aboard"],["departure","Departure"]].filter(([k]) => T[k] && T[k].next).map(([,l]) => l);
+        const lt = tmp.lastTender, dp = tmp.departure;
+        const odd = !ovn && lt && dp && dp < lt;
+        f.querySelector("#mNext").innerHTML = ovn ? (nx.length ? `<b>Overnight:</b> ${nx.join(", ")} on the next day (+1).` : "<b>Overnight</b> ticked.")
+          : odd ? `Departure ${dp} is before the last tender ${lt}. <button type="button" class="btn small" id="mOvnYes">Departure next day</button>` : "";
+        const y = f.querySelector("#mOvnYes"); if (y) y.addEventListener("click", () => { f.querySelector("#mOvn").checked = true; nextInfo(); }); };
+      f.addEventListener("input", nextInfo); f.addEventListener("click", () => setTimeout(nextInfo, 0)); nextInfo(); },
     onSubmit: f => {
       const port = f.querySelector("#mPort").value.trim();
       if (!port){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Enter the port.</div>`; return false; }
-      const rec = {port, date: f.querySelector("#mDate").value || ymd(Date.now()), lastTender: normHM(f.querySelector("#mLast").value) || "", allAboard: normHM(f.querySelector("#mAA").value) || "", departure: normHM(f.querySelector("#mDep").value) || "", vhf: f.querySelector("#mVhf").value.trim(), uhf: f.querySelector("#mUhf").value.trim(), total: parseInt(f.querySelector("#mTot").value, 10) || 0};
+      const rec = {port, date: f.querySelector("#mDate").value || ymd(Date.now()), lastTender: normHM(f.querySelector("#mLast").value) || "", allAboard: normHM(f.querySelector("#mAA").value) || "", departure: normHM(f.querySelector("#mDep").value) || "", overnight: f.querySelector("#mOvn").checked, estRun: parseInt(f.querySelector("#mRun").value, 10) > 0 ? parseInt(f.querySelector("#mRun").value, 10) : null, vhf: f.querySelector("#mVhf").value.trim(), uhf: f.querySelector("#mUhf").value.trim(), total: parseInt(f.querySelector("#mTot").value, 10) || 0};
       if (existing) S.store.saveDay(Object.assign({id: existing.id}, rec));
       else S.store.saveDay(Object.assign({id: "d" + uid(), status:"open", openedAt: Date.now(), side: f.querySelector("#mSide").dataset.val, fwd: f.querySelector("#mFwd").checked, mid: f.querySelector("#mMid").checked}, rec));
       toast(existing ? "Day updated" : `Tender day open · ${port}`);
@@ -1605,29 +2034,71 @@ function sheetModal(u){
         ${(u.loc === "transit" && u.dir === "ship") || (u.loc === "ship" && u.berth === "SB") ? `<button type="button" class="btn" data-m="plan">${u.plan ? "Change assigned pontoon (" + berthName(u.plan) + ")" : "Assign pontoon for arrival"}</button>` : ""}
         ${u.loc === "ship" ? `<button type="button" class="btn" data-m="move">Change berth (FWD / MIDSHIP / stand-by)</button>` : ""}
         <button type="button" class="btn ${u.flag ? "danger" : ""}" data-m="status">${u.flag ? "Status: " + esc(STATUS[u.flag.status]) + " · change" : "Set status (technical issue, PVI/PDI, emergency)"}</button>
-        <button type="button" class="btn" data-m="driver">Change driver</button>
+        ${lastDepEv(u) ? `<button type="button" class="btn" data-m="fixpax">Correct pax (last departure ${fmtT(lastDepEv(u).t)})</button>` : ""}
+        ${u.kind === "shore" ? "" : `<button type="button" class="btn" data-m="driver">Change driver</button>`}
         <button type="button" class="btn" data-m="cap">Set max load (now ${u.cap ?? "—"})</button>
-        <button type="button" class="btn" data-m="issue">Report issue</button>
-        ${canHoist ? `<button type="button" class="btn danger" data-m="stow">${u.kind === "tender" ? "Hoist · not in service" : "Release from service"}</button>` : `<span class="hint">${u.kind === "tender" ? "Hoist" : "Release"} is available when the boat is at the ship and empty.</span>`}</div>`
-      : canIssues() ? `<div class="menu-list"><button type="button" class="btn" data-m="issue">Report issue</button></div>` : ""}`,
+        ${u.kind === "shore" ? "" : `<button type="button" class="btn" data-m="issue">Report issue</button>`}
+        ${canHoist ? (u.kind === "tender" && u.berth === "FALLS" ? `<button type="button" class="btn danger" data-m="stow">Out of water · hoisted</button>` : u.kind === "tender" ? `<button type="button" class="btn danger" data-m="falls">To the falls (hoist)</button>` : `<button type="button" class="btn danger" data-m="stow">Release from service</button>`) : `<span class="hint">${u.kind === "tender" ? "Hoist" : "Release"} is available when the boat is at the ship and empty.</span>`}</div>`
+      : canIssues() && u.kind !== "shore" ? `<div class="menu-list"><button type="button" class="btn" data-m="issue">Report issue</button></div>` : ""}`,
     onOpen: f => {
       f.dataset.nofocus = 1;
       const sn = f.querySelector("#mSaveNote"); if (sn) sn.addEventListener("click", () => { addEv("note", u.id, {text: f.querySelector("#mNote").value.trim()}, Date.now()); closeModal(); toast("Note saved"); });
-      f.querySelectorAll("[data-m]").forEach(b => b.addEventListener("click", () => {
-        const m = b.dataset.m;
-        if (m === "depart-shore") departModal(u, "shore");
-        if (m === "move") modal({title:`${u.full} · Berth`, submit:"Save", body: berthChoice(ST, u.berth), onOpen: f2 => bindChoice(f2),
-          onSubmit: f2 => { const nb = f2.querySelector("#mBerth").dataset.val; if (nb !== u.berth) addEv("berth", u.id, {berth: nb}, Date.now(), `${u.full} → ${berthName(nb)}`); }});
-        if (m === "driver") simpleModal(`${u.full} · Driver`, "Driver", "text", u.driver, v => addEv("driver", u.id, {driver: v}), true);
-        if (m === "cap") simpleModal(`${u.full} · Max load`, "Max load (pax)", "number", u.cap ?? "", v => addEv("cap", u.id, {cap: Math.max(1, parseInt(v, 10) || 1)}));
-        if (m === "issue") issueModal(null, u.name);
-        if (m === "status") statusModal(u);
-        if (m === "plan") planModal(u);
-        if (m === "stow") modal({title: u.kind === "tender" ? `Hoist ${u.full}` : `Release ${u.full}`, submit: u.kind === "tender" ? "Log hoisting" : "Release",
-          body: `<p style="margin:0;color:var(--muted)">${u.kind === "tender" ? "Logs the hoisting time. The row turns grey: Not in service." : "Takes the shoretender off the board."}</p>${timeField("mT")}`,
-          onSubmit: f2 => { addEv("deactivate", u.id, {}, readTime(f2, "mT", day().date), `${u.full} ${u.kind === "tender" ? "hoisted" : "released"}`); }});
-      }));
+      f.querySelectorAll("[data-m]").forEach(b => b.addEventListener("click", () => sheetAct(u, b.dataset.m)));
     }});
+}
+function sheetAct(u, m){
+  if (m === "depart-shore") departModal(u, "shore");
+  if (m === "move") modal({title:`${u.full} · Berth`, submit:"Save", body: berthChoice(ST, u.berth), onOpen: f2 => bindChoice(f2),
+    onSubmit: f2 => { const nb = f2.querySelector("#mBerth").dataset.val; if (nb !== u.berth) addEv("berth", u.id, {berth: nb}, Date.now(), `${u.full} → ${berthName(nb)}`); }});
+  if (m === "driver") simpleModal(`${u.full} · Driver`, "Driver", "text", u.driver, v => addEv("driver", u.id, {driver: v}), true);
+  if (m === "cap") simpleModal(`${u.full} · Max load`, "Max load (pax)", "number", u.cap ?? "", v => addEv("cap", u.id, {cap: Math.max(1, parseInt(v, 10) || 1)}));
+  if (m === "issue") issueModal(null, u.name);
+  if (m === "status") statusModal(u);
+  if (m === "plan") planModal(u);
+  if (m === "fixpax") fixPaxModal(u);
+  if (m === "stow") modal({title: u.kind === "tender" ? `Hoist ${u.full}` : `Release ${u.full}`, submit: u.kind === "tender" ? "Log hoisting" : "Release",
+    body: `<p style="margin:0;color:var(--muted)">${u.kind === "tender" ? "Logs the hoisting time. The row turns grey: Not in service." : "Takes the shoretender off the board."}</p>${timeField("mT")}`,
+    onSubmit: f2 => { addEv("deactivate", u.id, {}, readTime(f2, "mT", day().date), `${u.full} ${u.kind === "tender" ? "hoisted" : "released"}`); }});
+  if (m === "falls") fallsModal(u);
+}
+const fsOK = () => !!(document.fullscreenEnabled || document.webkitFullscreenEnabled || document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen);
+const fsOn = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
+const FS_ON = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>`;
+const FS_OFF = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>`;
+["fullscreenchange", "webkitfullscreenchange"].forEach(ev => document.addEventListener(ev, () => { if (S.role) render(); }));
+const pinned = () => lsGet("tom.pin") === "1";
+const EDIT_SVG = `<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>`;
+const animOn = () => lsGet("tom.anim") !== "0";
+const WAVE_SVG = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M2 9c2.5-2.5 5-2.5 7.5 0s5 2.5 7.5 0 3.5-1.5 5 0M2 16c2.5-2.5 5-2.5 7.5 0s5 2.5 7.5 0 3.5-1.5 5 0"/></svg>`;
+const PIN_SVG = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5M9 3h6l-1 6 3 3v2H7v-2l3-3z"/></svg>`;
+function setTopH(){ const t = document.querySelector(".top"); if (t) document.documentElement.style.setProperty("--toph", t.offsetHeight + "px"); }
+addEventListener("resize", setTopH);
+/* arrows: the condensed font draws → and ← low on the line; wrap them so CSS can centre them */
+const ARW = /[→←]/;
+function wrapArrows(root){
+  if (!root) return;
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {acceptNode: n => ARW.test(n.nodeValue) && !(n.parentElement && (n.parentElement.closest(".arw, textarea, option, script, style, title"))) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT});
+  const nodes = []; while (w.nextNode()) nodes.push(w.currentNode);
+  nodes.forEach(n => { const f = document.createDocumentFragment();
+    n.nodeValue.split(/([→←])/).forEach(part => { if (!part) return; if (part === "→" || part === "←"){ const sp = document.createElement("span"); sp.className = "arw"; sp.textContent = part; f.appendChild(sp); } else f.appendChild(document.createTextNode(part)); });
+    n.replaceWith(f); });
+}
+new MutationObserver(ms => { for (const m of ms) m.addedNodes.forEach(n => { if (n.nodeType === 1) wrapArrows(n); else if (n.nodeType === 3 && ARW.test(n.nodeValue) && n.parentElement) wrapArrows(n.parentElement); }); })
+  .observe(document.documentElement, {childList:true, subtree:true});
+function tzModal(){
+  const dev = devOff(), opts = []; for (let m = -12 * 60; m <= 14 * 60; m += 30) opts.push(m); [345, 525, 765].forEach(m => opts.push(m)); opts.sort((a,b) => a - b);
+  const cur = TZ == null ? "dev" : String(TZ);
+  modal({title:"Ship's time", submit:"Apply",
+    body:`<p style="margin:0;color:var(--muted)">All times in the app are shown and entered in this time. Times already logged are converted automatically.</p>
+      <label class="fld"><span>Time zone</span><select id="mTz">
+        <option value="dev" ${cur === "dev" ? "selected" : ""}>Device clock (${tzLabel(dev)})</option>
+        ${opts.map(m => `<option value="${m}" ${cur === String(m) ? "selected" : ""}>${tzLabel(m)}</option>`).join("")}</select></label>
+      <div class="sumgrid"><div><span>Ship's time</span><b class="mono" id="mNow"></b></div><div><span>Device clock</span><b class="mono">${(() => { const d = new Date(); return pad(d.getHours()) + ":" + pad(d.getMinutes()); })()}</b></div></div>
+      <p class="hint" style="margin:0">Set on this device only. Change it when the ship changes clocks.</p>`,
+    onOpen: f => { const sel = f.querySelector("#mTz"), upd = () => { const v = sel.value, m = v === "dev" ? new Date() : new Date(Date.now() + (+v) * 60000);
+        f.querySelector("#mNow").textContent = v === "dev" ? pad(m.getHours()) + ":" + pad(m.getMinutes()) : pad(m.getUTCHours()) + ":" + pad(m.getUTCMinutes()); };
+      sel.addEventListener("change", upd); upd(); },
+    onSubmit: f => { const v = f.querySelector("#mTz").value; TZ = v === "dev" ? null : +v; lsSet("tom.tz", TZ == null ? "" : String(TZ)); if (S.data) setData(S.data); render(); toast("Ship's time: " + (TZ == null ? "device clock" : tzLabel(TZ))); }});
 }
 function legendModal(){
   modal({title:"How to read the board", submit:null,
@@ -1647,6 +2118,7 @@ function legendModal(){
       <h4>Status panel</h4>
       <div><b class="lgnum">Ashore</b><p>Pax landed minus pax brought back. <b>Sync</b> replaces it with the official security count; later trips continue from there.</p></div>
       <div><b class="lgnum">On tenders</b><p>Pax underway plus pax waiting on a tender in stand-by.</p></div>
+      <div><b class="lgnum">Off ship</b><p>Ashore + On tenders: everyone off the ship, the same figure as the security “off” count. Shown large, with Ashore and On tenders below.</p></div>
       <div><b class="lgnum">Aboard</b><p>Total − Ashore − On tenders. Calculated, not counted.</p></div>
       <div><b class="lgnum">Total</b><p>Guests + crew on board at the start, from the ship’s system. Reference only.</p></div>
       <div><span class="lgdots"><i class="f"></i><i class="o"></i><i class="c"></i></span><p><b>Pontoons</b>: green free, orange occupied (tender shown), grey closed. Side in use shown beside the title.</p></div>
@@ -1701,14 +2173,14 @@ function planModal(u){
 }
 function etaShore(st, u){
   if (!(u.loc === "transit" && u.dir === "shore")) return null;
-  return u.since + (legAvg(st.legs.tOut) ?? legAvg(st.legs.tIn) ?? 15) * 60000;
+  return u.since + (legAvg(st.legs.tOut) ?? legAvg(st.legs.tIn) ?? estRun()) * 60000;
 }
-function infoModal(u){
+function infoBody(u, withFix){
   const now = Date.now();
   const toShip = u.loc === "transit" && u.dir === "ship", toShore = u.loc === "transit" && u.dir === "shore";
   const eta = toShip ? etaShip(ST, u) : toShore ? etaShore(ST, u) : null;
-  const st = !u.active ? "off" : u.loc === "transit" ? "transit" : u.loc === "shore" ? "shore" : u.berth === "SB" ? "sb" : "ship";
-  const state = {off:"Not in service", transit: toShip ? "Returning to the ship" : "Heading ashore", shore:"Alongside ashore", sb:"Stand-by at the ship", ship:"Alongside " + (u.berth ? berthName(u.berth) : "the ship")}[st];
+  const st = !u.active ? "off" : u.loc === "transit" ? "transit" : u.loc === "shore" ? "shore" : u.berth === "SB" ? "sb" : u.berth === "FALLS" ? "sb" : "ship";
+  const state = !u.active ? "Not in service" : u.berth === "FALLS" ? "At the falls · hoisting" : {transit: toShip ? "Returning to the ship" : "Heading ashore", shore:"Alongside ashore", sb:"Stand-by at the ship", ship:"Alongside " + (u.berth ? berthName(u.berth) : "the ship")}[st];
   let leg = "";
   if (eta){
     const pct = Math.round(Math.min(1, Math.max(0, (now - u.since) / Math.max(1, eta - u.since))) * 100), late = now - eta > 3 * 60000;
@@ -1717,31 +2189,79 @@ function infoModal(u){
       <div class="ti-bar"><i style="width:${pct}%"></i><span class="ti-b" style="left:${pct}%">${boatSVG(false, u.kind === "shore" ? "shore" : "", "")}</span></div>
       <div class="ti-pt r${late ? " late" : ""}"><span>${toShip ? "Due at ship" : "Due ashore"}</span><b class="mono">${fmtT(eta)}</b><small>${etaRel(eta, now)}</small></div></div>`;
   } else if (u.active && u.since){
-    leg = `<div class="ti-one"><span>${st === "sb" ? "On stand-by from" : "Arrived at"}</span><b class="mono">${fmtT(u.since)}</b></div>`;
+    leg = `<div class="ti-one"><span>${u.berth === "FALLS" ? "Left the pontoon at" : st === "sb" ? "On stand-by from" : "Arrived at"}</span><b class="mono">${fmtT(u.since)}</b></div>`;
+  } else if (!u.active && u.hoisted){
+    leg = `<div class="ti-one"><span>Out of the water at</span><b class="mono">${fmtT(u.hoisted)}</b></div>`;
   }
-  modal({title:`${u.full}`, submit:null,
-    body:`<div class="ti">
+  return `<div class="ti">
       <div class="ti-hero ti-${st}">
-        <div class="ti-txt"><small>${u.kind === "shore" ? "Shoretender" : (u.side === "STBD" ? "Starboard" : "Port") + " tender"}</small><b>${state}</b><span>Driver <strong>${esc(u.driver || "—")}</strong></span></div>
-        ${u.active ? `<div class="ti-pax">${ringSVG(u.pax, u.cap, 72)}<small>pax on board</small></div>` : ""}
+        <div class="ti-txt"><small>${u.kind === "shore" ? "Shoretender" : (u.side === "STBD" ? "Starboard" : "Port") + " tender"}</small><b>${state}</b>${u.kind === "shore" ? "" : `<span>Driver <strong>${esc(u.driver || "—")}</strong></span>`}</div>
+        ${u.active ? `<div class="ti-pax">${u.paxTbd ? ringQ(u.cap, 72) : ringSVG(u.pax, u.cap, 72)}<small>${u.paxTbd ? "pax to confirm" : "pax on board"}</small></div>` : ""}
       </div>
       ${u.flag ? `<div class="flagl f-${u.flag.status}" style="flex-direction:row;gap:6px;padding:6px 10px">■ ${esc(STATUS[u.flag.status])}${u.flag.text ? ` · <em>${esc(u.flag.text)}</em>` : ""}</div>` : ""}
       ${leg}
       ${u.plan && (toShip || st === "sb") ? `<div class="ti-pont"><span>Pontoon on arrival</span><b>${berthName(u.plan)}</b></div>` : ""}
       ${u.note ? `<div class="ti-note"><span>Note</span>${esc(u.note)}</div>` : ""}
-    </div>`});
+      ${withFix && isAdmin() && lastDepEv(u) ? `<button type="button" class="btn ti-fix" id="mFix">✎ Correct pax · last departure ${fmtT(lastDepEv(u).t)}</button>` : ""}
+    </div>`;
+}
+function infoModal(u){
+  modal({title:`${u.full}`, submit:null, body: infoBody(u, true),
+    onOpen: f => { f.dataset.nofocus = 1; const b = f.querySelector("#mFix"); if (b) b.addEventListener("click", () => fixPaxModal(u)); }});
+}
+const lastDepEv = u => (S.data.events || []).filter(e => e.type === "depart" && e.unit === u.id).sort((a, b) => b.t - a.t || (b.c || 0) - (a.c || 0))[0] || null;
+/* on-screen number pad: the system keyboard stays closed (inputmode=none); a PC keyboard still works */
+const kpInput = (id, val, cls = "big") => `<input id="${id}" class="${cls} kpin" type="text" inputmode="none" autocomplete="off" pattern="[0-9]*" value="${esc(val ?? "")}" data-fresh="1" required>`;
+const kpHTML = (id, o = {}) => `<div class="kp" data-for="${id}">${[1,2,3,4,5,6,7,8,9].map(n => `<button type="button" data-k="${n}">${n}</button>`).join("")}
+  ${o.empty !== false ? `<button type="button" data-k="empty" class="kq">Empty</button>` : `<button type="button" data-k="clear" class="kq">Clear</button>`}<button type="button" data-k="0">0</button><button type="button" data-k="bs" class="kq" aria-label="Delete">⌫</button>
+  ${o.full ? `<button type="button" data-k="full" data-v="${o.full}" class="kq kfull">Full · ${o.full}</button>` : ""}</div>`;
+document.addEventListener("click", e => {
+  const k = e.target.closest && e.target.closest(".kp [data-k]"); if (!k) return;
+  const kp = k.closest(".kp");
+  if (kp.dataset.for === "@focus"){
+    const t = kp.closest("form").querySelector(".kpfocus"); if (!t) return;
+    const isHM = t.classList.contains("hm"), key = k.dataset.k;
+    let d = t.dataset.fresh === "1" && /^\d$/.test(key) ? "" : (isHM ? t.value.replace(/\D/g, "") : t.value); t.dataset.fresh = "0";
+    if (key === "bs") d = d.slice(0, -1); else if (key === "clear") d = ""; else if (/^\d$/.test(key)) d = (d + key).slice(0, isHM ? 4 : 6);
+    t.value = isHM ? (d.length > 2 ? d.slice(0, 2) + ":" + d.slice(2) : d) : d;
+    t.dispatchEvent(new Event("input", {bubbles:true}));
+    if (isHM && d.length === 4){ const all = [...kp.closest("form").querySelectorAll(".kpt")], i = all.indexOf(t); if (all[i + 1]) all[i + 1].focus(); }
+    return;
+  }
+  const inp = document.getElementById(kp.dataset.for); if (!inp) return;
+  const key = k.dataset.k; let v = inp.dataset.fresh === "1" ? "" : String(inp.value || "");
+  if (key === "bs") v = String(inp.value || "").slice(0, -1);
+  else if (key === "empty") v = "0"; else if (key === "clear") v = ""; else if (key === "full") v = k.dataset.v;
+  else v = (v === "0" ? "" : v) + key;
+  if (v.length > 5) v = v.slice(0, 5);
+  inp.value = v; inp.dataset.fresh = (key === "empty" || key === "full") ? "1" : "0";
+  inp.dispatchEvent(new Event("input", {bubbles:true}));
+});
+document.addEventListener("input", e => { if (e.isTrusted && e.target.classList && e.target.classList.contains("kpin")){ e.target.dataset.fresh = "0"; e.target.value = e.target.value.replace(/\D/g, "").slice(0, 5); } });
+function fixPaxModal(u){
+  const e = lastDepEv(u); if (!e) return;
+  const toShore = e.dir === "shore";
+  modal({title:`${u.full} · Correct pax`, submit:"Save",
+    body:`<p style="margin:0;color:var(--muted)">Departed → ${toShore ? "Shore" : "Ship"} at <b class="mono">${fmtT(e.t)}</b> with <b>${e.pax ?? 0}</b> pax. Enter the right number: all counts are recalculated.</p>
+      <div class="paxprev" id="pv">${ringSVG(e.pax || 0, u.cap, 96)}</div>
+      <label class="fld"><span>Correct pax</span>${kpInput("mPax", e.pax ?? 0)}</label><div id="mWarn"></div>${kpHTML("mPax", {full: u.cap})}`,
+    onOpen: f => { const inp = f.querySelector("#mPax"), upd = () => { const v = Math.max(0, parseInt(inp.value || "0", 10) || 0); f.querySelector("#pv").innerHTML = ringSVG(v, u.cap, 96);
+        f.querySelector("#mWarn").innerHTML = u.cap && v > u.cap ? `<div class="warnbox">${v} is above the max load of ${u.cap}.</div>` : ""; };
+      inp.addEventListener("input", upd); },
+    onSubmit: f => { const v = f.querySelector("#mPax").value; if (v === "" || isNaN(+v)){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Enter the number of pax.</div>`; return false; }
+      const n = Math.max(0, Math.round(+v)); if (n !== (e.pax ?? 0)){ S.store.updateEvent(day().id, e.id, {pax: n}); toast(`${u.full} · pax corrected ${e.pax ?? 0} → ${n}`); } }});
 }
 function statusModal(u){
-  const cur = u.flag ? u.flag.status : "ok";
+  const cur = u.flag ? u.flag.status : "ok", sh = u.kind === "shore";
   const opt = (v, l, d) => `<button type="button" data-berth="${v}" aria-pressed="${cur === v}">${l}<small>${d}</small></button>`;
   modal({title:`${u.full} · Status`, submit:"Save status",
-    body:`<div class="choice" id="mSt" data-val="${cur}" style="grid-template-columns:1fr 1fr">${opt("ok","Normal","in service")}${opt("tech","Technical issue","stays in service, shown to all")}${opt("pvi","PVI/PDI","shown to all; hoist when convenient")}${opt("emergency","Emergency","red alert to all")}</div>
+    body:`<div class="choice" id="mSt" data-val="${cur}" style="grid-template-columns:1fr 1fr">${opt("ok","Normal","in service")}${opt("tech","Technical issue", sh ? "shown to all · their own maintenance" : "stays in service, shown to all")}${opt("pvi","PVI/PDI", sh ? "shown to all · release when convenient" : "shown to all; hoist when convenient")}${opt("emergency","Emergency","red alert to all")}</div>
       <label class="fld"><span>Details</span><input id="mStx" value="${esc(u.flag ? u.flag.text : "")}" placeholder="e.g. port engine overheating, returning to ship"></label>
-      <label class="toggles"><label><input type="checkbox" id="mStLog" ${canIssues() ? "checked" : "disabled"}>Also add to the maintenance log (technical issue)</label></label>${timeField("mT")}`,
+      ${sh ? "" : `<label class="toggles"><label><input type="checkbox" id="mStLog" ${canIssues() ? "checked" : "disabled"}>Also add to the maintenance log (technical issue)</label></label>`}${timeField("mT")}`,
     onOpen: f => { f.dataset.nofocus = 1; bindChoice(f, "mSt"); },
     onSubmit: f => { const v = f.querySelector("#mSt").dataset.val, tx = f.querySelector("#mStx").value.trim(), t = readTime(f, "mT", day().date);
       addEv("status", u.id, {status:v, text:tx}, t, v === "ok" ? `${u.full} back to normal` : `${u.full} · ${STATUS[v]}`);
-      if (v === "tech" && f.querySelector("#mStLog").checked && tx) S.store.saveIssue({id:"i" + uid(), unitName:u.name, category:"Other", text:tx, t, status:"open", port:day().port, dayId:day().id}); }});
+      if (v === "tech" && f.querySelector("#mStLog") && f.querySelector("#mStLog").checked && tx) S.store.saveIssue({id:"i" + uid(), unitName:u.name, category:"Other", text:tx, t, status:"open", port:day().port, dayId:day().id}); }});
 }
 function refreshSheet(){ /* keep an open sheet static; data refresh is shown on the board */ }
 function simpleModal(title, label, type, value, apply, drivers){
@@ -1818,6 +2338,19 @@ document.addEventListener("click", e => {
   const act = el.dataset.act, u = el.dataset.u && ST ? ST.units[el.dataset.u] : null;
   keepAwake();
   switch (act){
+    case "tz": tzModal(); break;
+    case "editmode": S.edit = !S.edit; render(); break;
+    case "fixcell": fixModal(u, el.dataset.col); break;
+    case "anim": lsSet("tom.anim", animOn() ? "0" : "1"); render(); toast(animOn() ? "Animations on" : "Animations off"); break;
+    case "pin": lsSet("tom.pin", pinned() ? "0" : "1"); render(); toast(pinned() ? "Pinned at the top" : "Unpinned · scrolls with the page"); break;
+    case "fs": { const d = document, el = d.documentElement;
+      if (fsOn()) (d.exitFullscreen || d.webkitExitFullscreen).call(d);
+      else {
+        const req = el.requestFullscreen || el.webkitRequestFullscreen;
+        const fail = err => toast(window.self !== window.top ? "Full screen is blocked inside this preview · open the app directly" : "Full screen not available here" + (err && err.name ? " (" + err.name + ")" : ""));
+        try { const r = req.call(el); if (r && r.catch) r.catch(fail); } catch(err){ fail(err); }
+      }
+      break; }
     case "theme": { lsSet("tb.theme", isDark() ? "light" : "dark"); applyTheme(); render(); break; }
     case "signout": S.store.signOut(); break;
     case "demo-role": S.role = el.dataset.r; render(); break;
@@ -1847,6 +2380,7 @@ document.addEventListener("click", e => {
     case "pontoons": pontoonModal(); break;
     case "sheet": sheetModal(u); break;
     case "info": infoModal(u); break;
+    case "unit": unitModal(u); break;
     case "plan": planModal(u); break;
     case "depart-shore": departModal(u, "shore"); break;
     case "depart-ship": departModal(u, "ship"); break;
@@ -1869,6 +2403,13 @@ document.addEventListener("click", e => {
     case "hist-open": openHist(el.dataset.id); break;
     case "reset-day": resetDayModal(); break;
     case "del-day": { const d = S.data.days.find(x => x.id === S.hist); if (d) deleteDayModal(d); break; }
+    case "backup-export": {
+      const blob = new Blob([S.store.exportAll()], {type:"application/json"}), a = document.createElement("a");
+      a.href = URL.createObjectURL(blob); a.download = "tendering-ops-backup-" + ymd(Date.now()) + ".json";
+      document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); toast("Backup saved"); break; }
+    case "backup-import": { const inp = $("#backupFile"); if (!inp) break; inp.value = ""; inp.onchange = () => { const f = inp.files && inp.files[0]; if (!f) return;
+      f.text().then(txt => { JSON.parse(txt); confirmTyped({title:"Restore backup", text:"This replaces ALL data on this device with the backup file.", word:"RESTORE", button:"Restore",
+        onConfirm: () => { try { S.store.importAll(txt); S.hist = null; S.histEvents = null; toast("Backup restored"); } catch(e){ toast(e.message); } }}); }).catch(() => toast("Not a valid backup file")); }; inp.click(); break; }
     case "hist-back": S.hist = null; S.histEvents = null; render(); break;
     case "csv-hist": { const d = S.data.days.find(x => x.id === S.hist); if (d && S.histEvents) csvFor(d, compute(d, S.histEvents)); break; }
   }
@@ -1915,8 +2456,8 @@ setInterval(() => { if (S.role && !$("#modal-root").innerHTML && S.view === "boa
   } else {
     S.store = createLocalStore();
     S.role = "deck";
-    S.store.seedIfEmpty();
-    S.store.onChange(setData); heartbeat();
+    if (!CONFIG.standalone) S.store.seedIfEmpty();
+    S.store.onChange(setData); if (!CONFIG.standalone) heartbeat();
   }
 })();
 </script>
