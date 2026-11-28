@@ -822,6 +822,50 @@ body.kb-open .modal{max-height:calc(var(--vvh, 100vh) - 12px);overflow-y:auto}
 .rp-dif{display:block;font-style:normal;font-size:12px;font-weight:700;color:var(--accent);text-transform:none;letter-spacing:0;margin-top:2px}
 .rph p{margin:0 0 8px}
 .rph .warnbox{margin:4px 0 10px}
+
+.home{display:flex;flex-direction:column;gap:16px}
+.home-h{display:flex;align-items:center;gap:18px;padding:6px 4px}
+.home-h .boat{width:150px;flex:none}
+.home-h h2{font-family:var(--f-display);font-size:30px;margin:0;line-height:1}
+.home-h p{margin:6px 0 0;color:var(--muted);max-width:56ch}
+.htiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.htile{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:18px;cursor:pointer;font:inherit;color:inherit;min-height:132px;box-shadow:var(--shadow)}
+.htile svg{color:var(--sea)}
+.htile b{font-family:var(--f-display);font-size:22px;line-height:1.05}
+.htile span{color:var(--muted);font-size:14px}
+.htile:hover,.htile:focus-visible{border-color:var(--sea)}
+.htile.main{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.htile.main svg,.htile.main span{color:var(--accent-ink)}
+.htile.warn span{color:var(--warn);font-weight:700}
+@media (max-width:600px){ .home-h .boat{width:96px} .home-h h2{font-size:24px} }
+
+.tcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.tcard{display:flex;flex-direction:column;gap:10px;text-align:left;border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:14px;cursor:pointer;font:inherit;color:inherit}
+.tcard:hover,.tcard:focus-visible{border-color:var(--sea)}
+.tc-h{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.tc-h b{font-family:var(--f-display);font-size:24px;line-height:1}
+.tc-h span{color:var(--muted);font-size:13px}
+.tc-open{margin-left:auto;font-style:normal;font-size:12px;font-weight:700;color:var(--accent-ink);background:var(--accent);border-radius:999px;padding:2px 9px}
+.tc-g{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:6px}
+.tc-g div{background:var(--surface-2);border:1px solid var(--line);border-radius:9px;padding:6px 9px}
+.tc-g span{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.tc-g b{font-family:var(--f-display);font-size:22px;line-height:1.1}
+.tc-g b small{font-size:13px;color:var(--muted);margin-left:2px}
+.tc-f{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--muted)}
+.tc-i{font-size:13px;border-left:3px solid var(--line);padding:2px 0 2px 8px}
+.tc-i.open{border-left-color:var(--accent)}
+.tc-i.resolved{border-left-color:var(--ok)}
+.tc-i.none{color:var(--muted)}
+.tc-i i{font-style:normal;color:var(--muted);white-space:nowrap}
+.rp-kpis.tk{grid-template-columns:repeat(5,minmax(0,1fr))}
+.rp-kpis.tk b{font-size:26px}
+.til{display:flex;flex-direction:column;gap:8px}
+.til > div{border:1px solid var(--line);border-left:4px solid var(--ok);border-radius:10px;padding:9px 11px;display:flex;flex-direction:column;gap:4px}
+.til > div.open{border-left-color:var(--accent)}
+.til .h{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.til p{margin:0}
+.til .when{font-size:12.5px;color:var(--muted)}
+.til .res{font-size:13px;color:var(--muted)}
 </style>
 
 <div id="app"></div>
@@ -1563,7 +1607,7 @@ const isAdmin = () => S.role === "deck";
 const canIssues = () => S.role === "deck" || S.role === "tech";
 const canOpenTender = () => S.role === "deck" || S.role === "hotel";
 const DEPT = {deck:"DECK", hotel:"HOTEL", tech:"TECH"};
-const VIEWS = CONFIG.standalone ? ["board","log","issues","history","reports"] : ["board","log","issues","chat","feedback","history","reports"];
+const VIEWS = CONFIG.standalone ? ["board","log","issues","history","ports","reports"] : ["board","log","issues","chat","feedback","history","ports","reports"];
 let ST = null;
 const BOOT_T = Date.now();
 function setData(d){
@@ -1590,6 +1634,7 @@ function render(){
   else if (S.view === "chat") body = chatHTML();
   else if (S.view === "feedback") body = feedbackHTML();
   else if (S.view === "reports") body = reportsHTML();
+  else if (S.view === "ports") body = portsHTML();
   else body = historyHTML();
   const rq = $("#repQ"), rqs = rq && document.activeElement === rq ? rq.selectionStart : null;
   const ta = $("#chatText"), keep = ta ? {v: ta.value, f: document.activeElement === ta, s: ta.selectionStart} : null;
@@ -1604,14 +1649,14 @@ function headerHTML(){
   const conn = CONFIG.standalone ? `<span class="chip" title="Works without internet · data is stored on this device"><span class="dot"></span>Offline · this device</span>` : S.store.mode === "demo" ? `<span class="chip"><span class="dot"></span>This device</span>`
     : d.offline ? `<span class="chip off" title="Changes are saved on this device and sync when back online"><span class="dot"></span>Offline${d.pending ? " · pending" : ""}</span>`
     : `<span class="chip"><span class="dot"></span>Live</span>`;
-  const tab = (id, label) => `<a href="#${id}" ${S.view === id ? 'aria-current="page"' : ""}>${label}</a>`;
+  const tab = (id, label) => `<a href="#${id}" ${S.view === id || (id === "history" && S.view === "reports") ? 'aria-current="page"' : ""}>${label}</a>`;
   const openIssues = d.issues.filter(i => i.status === "open").length;
   const demo = S.store.mode === "demo" && !CONFIG.standalone ? `<div class="demo"><div class="wrap"><span><b>Demo mode</b> · sample data on this device only.</span>
     <span class="seg" role="group" aria-label="View as">${["deck","hotel","tech"].map(r => `<button data-act="demo-role" data-r="${r}" aria-pressed="${S.role === r}">${DEPT[r][0] + DEPT[r].slice(1).toLowerCase()}</button>`).join("")}</span>
     <button class="linkish" data-act="demo-reset">Reset sample</button></div></div>` : "";
   return `<header class="top"><div class="wrap">
     <div class="brand">${boatSVG(false)}<div><b>Tendering Operations</b><span>${esc(CONFIG.shipName)} · <i class="credit">made by Erio</i></span></div></div>
-    <nav class="tabs">${tab("board","Board")}${tab("log","Log")}${tab("issues","Issues" + (openIssues ? ` <i class="badge warnb">${openIssues}</i>` : ""))}${CONFIG.standalone ? "" : tab("chat","Chat" + (unreadCount() ? ` <i class="badge">${unreadCount()}</i>` : "")) + tab("feedback","Feedback")}${tab("history","History")}${tab("reports","Reports")}</nav>
+    <nav class="tabs">${tab("board", d.currentDay ? "Board" : "Home")}${d.currentDay ? tab("log","Log") : ""}${tab("issues","Tenders" + (openIssues ? ` <i class="badge warnb">${openIssues}</i>` : ""))}${CONFIG.standalone ? "" : (d.currentDay ? tab("chat","Chat" + (unreadCount() ? ` <i class="badge">${unreadCount()}</i>` : "")) : "") + tab("feedback","Feedback")}${tab("history","History")}${tab("ports","Ports")}</nav>
     <div class="who">${conn}${CONFIG.standalone ? "" : `<button class="chip onlbtn" data-act="online" title="Who is online"><span class="dot"></span>${Math.max(1, onlineList().length)} online</button>`}${S.data.currentDay && ST && ST.openTender.on && S.view !== "board" ? `<span class="chip ot">Open Tender</span>` : ""}
       <button class="chip tzbtn" data-act="tz" title="${dayTZ() ? "Ship's time for this tender day" : "Time shown in the app"} · tap for details"><b class="mono">${fmtT(Date.now())}</b> ${tzLabel(TZ ?? devOff())}${dayTZ() ? " · ship" : ""}</button>
       ${fsOK() ? `<button class="icon-btn fsbtn" data-act="fs" title="${fsOn() ? "Exit full screen" : "Full screen"}" aria-label="${fsOn() ? "Exit full screen" : "Full screen"}">${fsOn() ? FS_OFF : FS_ON}</button>` : ""}
@@ -1731,6 +1776,25 @@ function feedbackModal(){
       S.store.saveFeedback({id:"f" + uid(), t:Date.now(), dept:DEPT[S.role], name:f.querySelector("#mFn").value.trim(), rank:f.querySelector("#mFr").value.trim(), kind:f.querySelector("#mFk").dataset.val, text, status:"new"}); toast("Thanks · feedback sent"); }});
 }
 
+function homeHTML(){
+  const days = (S.data.days || []).filter(d => d.status !== "open"), last = days.slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""))[0];
+  const ports = typeof portsAll === "function" ? portsAll() : [], openIss = (S.data.issues || []).filter(i => i.status === "open").length;
+  const I = {
+    open:`<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>`,
+    report:`<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg>`,
+    hist:`<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>`,
+    port:`<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>`,
+    tend:`<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15h18l-2.5 4h-13z"/><path d="M6 15v-4h9l3 4M9 11V8h4v3"/></svg>`};
+  const tile = (act, icon, title, sub, cls = "", extra = "") => `<button class="htile ${cls}" ${act}>${icon}<b>${title}</b><span>${sub}</span>${extra}</button>`;
+  return `<section class="home"><div class="home-h">${boatSVG(false)}<div><h2>No tender operation open</h2><p>${isAdmin() ? "Open a tender day to start, or look back at past days, ports and tenders." : "The board fills in as soon as the Bridge opens today’s tender operation."}</p></div></div>
+    <div class="htiles">
+      ${isAdmin() ? tile('data-act="open-day"', I.open, "Open tender day", "Start logging lowering, trips and passengers", "main") : ""}
+      ${last ? tile(`data-act="hist-open" data-id="${last.id}"`, I.report, "Last day report", `${esc(last.port)} · ${fmtDate(last.date)}`) : ""}
+      ${tile('data-act="go" data-v="history"', I.hist, "History", days.length ? `${days.length} tender day${days.length > 1 ? "s" : ""}` : "No days yet")}
+      ${tile('data-act="go" data-v="ports"', I.port, "Ports", ports.length ? `${ports.length} port${ports.length > 1 ? "s" : ""} on record` : "Added when a day is opened")}
+      ${tile('data-act="go" data-v="issues"', I.tend, "Tenders", openIss ? `${openIss} open issue${openIss > 1 ? "s" : ""}` : "No open issues", openIss ? "warn" : "")}
+    </div></section>`;
+}
 function noDayHTML(){
   return `<div class="emptystate">${boatSVG(false)}<h2>No tender operation open</h2>
     <p>${isAdmin() ? "Open a tender day to start logging lowering times, trips and passengers." : "The board fills in as soon as the Bridge opens today’s tender operation."}</p>
@@ -1739,7 +1803,7 @@ function noDayHTML(){
 
 function boardHTML(){
   const day = S.data.currentDay;
-  if (!day) return noDayHTML();
+  if (!day) return homeHTML();
   const st = ST, now = Date.now(), est = estimate(day, st, now);
   const syncs = st.log.filter(l => l.e.type === "sync");
   const lastSync = syncs.length ? syncs[syncs.length - 1] : null;
@@ -1849,10 +1913,11 @@ function issueUnits(){
   return [...set];
 }
 function issuesHTML(){
+  if (S.tv.mode !== "issues") return tendersHTML();
   const all = S.data.issues;
   const list = all.filter(i => (S.issueUnit === "all" || i.unitName === S.issueUnit) && (S.issueStatus === "all" || i.status === S.issueStatus));
   const units = issueUnits();
-  return `<section class="panel"><div class="panel-head"><h2>Tender issues · maintenance log</h2><button class="icon-btn hbtn" data-act="help" data-k="issues" aria-label="Help">?</button>
+  return `<section class="panel"><div class="panel-head"><h2>All issues</h2>${tvSegHTML()}<button class="icon-btn hbtn" data-act="help" data-k="issues" aria-label="Help">?</button>
       <div class="filters">
         <select class="f" id="issueUnit" data-act="issue-unit" aria-label="Filter by unit"><option value="all">All units</option>${units.map(n => `<option value="${esc(n)}" ${S.issueUnit === n ? "selected" : ""}>${esc(fullName(n))}</option>`).join("")}</select>
         <select class="f" id="issueStatus" data-act="issue-status" aria-label="Filter by status">${[["all","Open + resolved"],["open","Open"],["resolved","Resolved"]].map(([v,l]) => `<option value="${v}" ${S.issueStatus === v ? "selected" : ""}>${l}</option>`).join("")}</select>
@@ -1903,7 +1968,6 @@ function importModal(o){
     }});
 }
 function historyHTML(){
-  if (S.histTab === "ports") return portsHTML();
   if (S.hist){
     const d = S.data.days.find(x => x.id === S.hist);
     if (!d){ S.hist = null; return historyHTML(); }
@@ -1916,11 +1980,11 @@ function historyHTML(){
       <h3 class="bh">Chat</h3>${S.histMsgs && S.histMsgs.length ? `<div class="mlist hist">${msgsHTML(S.histMsgs)}</div>` : `<p class="hint" style="margin:0">No chat messages on this day.</p>`}</section>`;
   }
   const days = S.data.days;
-  return `<section class="panel"><div class="panel-head"><h2>Tender days</h2>${histSegHTML()}<button class="icon-btn hbtn" data-act="help" data-k="history" aria-label="Help">?</button></div>
+  return `<section class="panel"><div class="panel-head"><h2>Tender days</h2><button class="icon-btn hbtn" data-act="help" data-k="history" aria-label="Help">?</button></div>
     ${days.length ? `<div class="days">${days.map(d => { const s = d.summary || {}; return `<button class="dayc" data-act="hist-open" data-id="${d.id}">
       <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b>${esc(d.port)}</b><span class="status ${d.status === "open" ? "open" : "resolved"}">${d.status === "open" ? "Today" : "Closed"}</span></div>
       <span class="d">${fmtDate(d.date)} · last tender ${esc(d.lastTender || "—")}</span>
-      <div class="g"><div><span>Trips</span><i>${s.tripsOut != null ? s.tripsOut + s.tripsBack : "—"}</i></div><div><span>Pax ashore</span><i>${s.paxOut != null ? num(s.paxOut) : "—"}</i></div><div><span>Round trip</span><i>${s.round != null ? s.round + "′" : "—"}</i></div></div></button>`; }).join("")}</div>`
+      <div class="g"><div><span>Trips</span><i>${s.tripsOut != null ? s.tripsOut + s.tripsBack : "—"}</i></div><div><span>Pax to shore</span><i>${s.paxOut != null ? num(s.paxOut) : "—"}</i></div><div><span>Round trip</span><i>${s.round != null ? s.round + "′" : "—"}</i></div></div></button>`; }).join("")}</div>`
       : `<p style="color:var(--muted);margin:0">Closed tender days appear here.</p>`}${CONFIG.standalone ? backupHTML() : S.store.mode === "live" && isAdmin() ? importHTML() : ""}</section>`;
 }
 function loginHTML(){
@@ -2785,7 +2849,7 @@ function reportsHTML(){
   if (!S.rep.id || !repDay()) S.rep.id = (S.data.currentDay || days[0]).id;
   const d = repDay(), evs = repEvents();
   if (evs == null){ if (!S.rep.loading){ S.rep.loading = true; repLoad(d.id).finally(() => S.rep.loading = false); } }
-  const head = `<div class="rp-head"><button class="btn" data-act="rep-back">← All days</button><h2>Day report</h2><select class="f" data-act="rep-day" aria-label="Tender day">${days.map(x => `<option value="${x.id}" ${x.id === d.id ? "selected" : ""}>${esc(x.port)} · ${fmtDate(x.date)}${x.status === "open" ? " · today" : ""}</option>`).join("")}</select><span class="sp"></span>
+  const head = `<div class="rp-head"><button class="btn" data-act="rep-back">← History</button><h2>Day report</h2><select class="f" data-act="rep-day" aria-label="Tender day">${days.map(x => `<option value="${x.id}" ${x.id === d.id ? "selected" : ""}>${esc(x.port)} · ${fmtDate(x.date)}${x.status === "open" ? " · today" : ""}</option>`).join("")}</select><span class="sp"></span>
     ${isAdmin() && d.status !== "open" ? `<button class="btn danger" data-act="del-day">Delete day</button>` : ""}<button class="btn" data-act="rep-xlsx" ${evs ? "" : "disabled"}>Export Excel</button><button class="btn primary" data-act="rep-pdf" ${evs ? "" : "disabled"}>Export PDF</button></div>`;
   if (!evs) return `<section class="panel">${head}<p>Loading…</p></section>`;
   const R = reportOf(d, evs), st = R.st;
@@ -3039,7 +3103,7 @@ function histSegHTML(){ return `<span class="hseg" role="tablist"><a href="#hist
 function portsHTML(){
   if (S.portSel) return portDetailHTML();
   const all = portsAll();
-  return `<section class="panel"><div class="panel-head"><h2>Ports</h2>${histSegHTML()}</div>
+  return `<section class="panel"><div class="panel-head"><h2>Ports</h2></div>
     ${S.data.portsOK === false ? `<div class="warnbox">The port database is not enabled on the server yet. Ports below come from the tender days; details cannot be saved until it is enabled.</div>` : ""}
     ${all.length ? `<div class="plist">${all.map(P => { const days = portDays(P), last = days[0];
       return `<button class="pcard" data-act="port-open" data-id="${esc(P.id)}"><div class="t"><b>${esc(P.name)}</b><span>${days.length} visit${days.length === 1 ? "" : "s"}${last ? " · " + fmtDate(last.date).replace(/^\w+, /, "") : ""}</span></div>
@@ -3050,16 +3114,16 @@ function portsHTML(){
 function portDetailHTML(){
   const P = portsAll().find(x => x.id === S.portSel); if (!P){ S.portSel = null; return portsHTML(); }
   const st = S.portStats && S.portStats.id === P.id ? S.portStats.v : null;
-  if (!st && !S.portStatsLoading){ S.portStatsLoading = true; portStats(P).then(v => { S.portStats = {id:P.id, v}; S.portStatsLoading = false; if (S.view === "history") render(); }).catch(() => { S.portStatsLoading = false; }); }
+  if (!st && !S.portStatsLoading){ S.portStatsLoading = true; portStats(P).then(v => { S.portStats = {id:P.id, v}; S.portStatsLoading = false; if (S.view === "ports") render(); }).catch(() => { S.portStatsLoading = false; }); }
   const days = portDays(P), byId = id => st && st.facts.find(f => f.id === id), ed = isAdmin() && S.data.portsOK !== false;
   return `<section class="panel"><div class="panel-head"><button class="btn" data-act="port-back">← All ports</button><h2>${esc(P.name)}</h2>${ed ? `<button class="btn" data-act="port-edit">Edit port</button>` : ""}</div>
     <div class="pdet"><div class="card"><h3>Port details</h3>${portBoxHTML(P, st, false, true)}
-        <div class="sumgrid"><div><span>Visits</span><b>${days.length}</b></div><div><span>Last visit</span><b>${days[0] ? fmtDate(days[0].date).replace(/^\w+, /, "") : "—"}</b></div><div><span>Avg pax ashore</span><b>${st && st.facts.length ? num(st.facts.reduce((a, f) => a + f.paxOut, 0) / st.facts.length) : "—"}</b></div></div></div>
+        <div class="sumgrid"><div><span>Visits</span><b>${days.length}</b></div><div><span>Last visit</span><b>${days[0] ? fmtDate(days[0].date).replace(/^\w+, /, "") : "—"}</b></div></div></div>
       <div class="card"><h3>Shoretenders${ed ? `<button class="btn small" data-act="port-shore">Edit</button>` : ""}</h3>
         ${(P.shore || []).length ? `<div class="shl">${P.shore.map(x => `<div><b>${esc(x.name)}</b><span class="cap">max ${x.cap}</span></div>`).join("")}</div>` : `<p class="hint" style="margin:0">Shoretenders used here are added automatically when the day closes.</p>`}
         <h3>Notes</h3>${P.notes ? `<div class="pm-note">${esc(P.notes)}</div>` : `<p class="hint" style="margin:0">No notes yet.</p>`}</div></div>
     <h3 class="bh">Tender days in ${esc(P.name)}</h3>
-    <div class="vlist"><button class="hd" tabindex="-1"><span>Date</span><span>Pax ashore</span><span>Round trip</span><span>Pontoon side</span><span></span></button>${days.map(d => { const f = byId(d.id);
+    <div class="vlist"><button class="hd" tabindex="-1"><span>Date</span><span>Pax to shore</span><span>Round trip</span><span>Pontoon side</span><span></span></button>${days.map(d => { const f = byId(d.id);
       return `<button data-act="port-day" data-id="${d.id}"><b>${fmtDate(d.date)}${d.status === "open" ? " · today" : ""}</b><span>${f ? num(f.paxOut) : d.summary ? num(d.summary.paxOut) : "…"}</span><span class="mono">${f ? mins(f.round) : "…"}</span><span>${d.side === "PORT" ? "Port" : d.side === "STBD" ? "Starboard" : "—"}</span><span class="go">Report →</span></button>`; }).join("")}</div></section>`;
 }
 function portEditModal(P){
@@ -3096,10 +3160,74 @@ async function portModal(){
   const d = day(); if (!d) return; const P = portOf(d.port, d.portId) || {id:portIdOf(d.port), name:d.port, shore:[], virtual:true};
   const st = await portStats(P);
   modal({title:`${P.name}`, submit:"",
-    body:`${portBoxHTML(P, st, false)}${isAdmin() ? `<button type="button" class="btn" id="mGoPort">Open in History → Ports</button>` : ""}`,
-    onOpen: f => { f.dataset.nofocus = 1; const g = f.querySelector("#mGoPort"); if (g) g.addEventListener("click", () => { closeModal(); S.histTab = "ports"; S.portSel = P.id; S.portStats = null; location.hash = "history"; if (S.view === "history") render(); }); },
+    body:`${portBoxHTML(P, st, false)}${isAdmin() ? `<button type="button" class="btn" id="mGoPort">Open in Ports</button>` : ""}`,
+    onOpen: f => { f.dataset.nofocus = 1; const g = f.querySelector("#mGoPort"); if (g) g.addEventListener("click", () => { closeModal(); S.portSel = P.id; S.portStats = null; location.hash = "ports"; if (S.view === "ports") render(); }); },
     onSubmit: () => {}});
 }
+
+
+/* ---------------- Tenders: how much each tender was used, and its problems ---------------- */
+S.tv = {mode:"tenders", sel:null, per:"30", from:"", to:""};
+S.tFacts = S.tFacts || {};
+const tvSegHTML = () => `<span class="hseg" role="tablist"><a href="#issues" data-act="tv-mode" data-v="tenders" ${S.tv.mode !== "issues" ? 'aria-current="page"' : ""}>Tenders</a><a href="#issues" data-act="tv-mode" data-v="issues" ${S.tv.mode === "issues" ? 'aria-current="page"' : ""}>All issues</a></span>`;
+/* per day, per own tender: time in the water and how many times lowered (read once per closed day) */
+function factsOf(d, ev){ const R = reportOf(d, ev), out = {}; R.own.forEach(r => { out[r.u.id] = {water: r.water, low: r.segs.length, first: r.first}; }); return out; }
+const isLive = d => S.data.currentDay && S.data.currentDay.id === d.id;
+async function tenderDayFacts(d){ if (S.tFacts[d.id]) return S.tFacts[d.id]; const f = factsOf(d, await S.store.getEvents(d.id)); S.tFacts[d.id] = f; return f; }
+const dayFactsNow = d => isLive(d) ? factsOf(d, S.data.events) : S.tFacts[d.id];
+function tvRange(){ const t = ymd(Date.now()), back = n => ymd(Date.now() - n * 864e5);
+  if (S.tv.per === "7") return [back(7), t]; if (S.tv.per === "30") return [back(30), t]; if (S.tv.per === "90") return [back(90), t];
+  if (S.tv.per === "custom") return [S.tv.from || "0000-00-00", S.tv.to || "9999-12-31"]; return ["0000-00-00", "9999-12-31"]; }
+function tvLoad(){
+  if (S.tvLoading) return; const need = (S.data.days || []).filter(d => !isLive(d) && !S.tFacts[d.id] && !(S.tFail || {})[d.id]); if (!need.length) return;
+  S.tvLoading = true; (async () => { for (const d of need){ try { await tenderDayFacts(d); } catch(e){ (S.tFail = S.tFail || {})[d.id] = 1; } } S.tvLoading = false; if (S.view === "issues") render(); })();
+}
+function tenderUse(id){
+  const [a, b] = tvRange(), days = (S.data.days || []).slice().sort((x, y) => (y.date || "").localeCompare(x.date || ""));
+  const rows = days.map(d => ({d, f: (dayFactsNow(d) || {})[id]})).filter(x => x.f);
+  const inP = rows.filter(x => x.d.date >= a && x.d.date <= b), sum = (L, k) => L.reduce((q, x) => q + x.f[k], 0);
+  return {rows, inP, water: sum(inP, "water"), low: sum(inP, "low"), days: inP.length, waterAll: sum(rows, "water"), last: rows[0] || null};
+}
+function tenderIssues(name){ const [a, b] = tvRange(), all = (S.data.issues || []).filter(i => i.unitName === name).sort((x, y) => y.t - x.t);
+  return {all, open: all.filter(i => i.status === "open"), inP: all.filter(i => { const d = ymd(i.t); return d >= a && d <= b; })}; }
+function tvPeriodHTML(){ const P = [["7","7 days"],["30","30 days"],["90","90 days"],["all","All"],["custom","Dates"]];
+  return `<div class="rp-flt"><span class="lbl">Period</span>${P.map(([v, l]) => `<button class="fchip" data-act="tv-per" data-v="${v}" aria-pressed="${S.tv.per === v}">${l}</button>`).join("")}
+    ${S.tv.per === "custom" ? `<input class="f" type="date" id="tvFrom" value="${esc(S.tv.from)}" aria-label="From"><span class="lbl">to</span><input class="f" type="date" id="tvTo" value="${esc(S.tv.to)}" aria-label="To">` : ""}</div>`; }
+function tendersHTML(){
+  tvLoad();
+  if (S.tv.sel) return tenderDetailHTML();
+  const cards = TENDERS.map(t => { const id = t.id, name = "T" + t.num, U = tenderUse(id), I = tenderIssues(name), lastI = I.all[0];
+    return `<button class="tcard" data-act="tv-open" data-id="${id}"><div class="tc-h"><b>Tender ${t.num}</b><span>${t.side === "PORT" ? "Port" : "Stbd"} side</span>${I.open.length ? `<em class="tc-open">${I.open.length} open issue${I.open.length > 1 ? "s" : ""}</em>` : ""}</div>
+      <div class="tc-g"><div><span>Running hours</span><b>${hhmm(U.water)}<small>h</small></b></div><div><span>Lowered</span><b>${U.low}×</b></div><div><span>Issues</span><b>${I.inP.length}</b></div></div>
+      <div class="tc-f"><span>${U.last ? `Last used ${fmtDate(U.last.d.date).replace(/^\w+, /, "")} · ${esc(U.last.d.port)}` : "Not used yet"}</span><span>Total running ${hhmm(U.waterAll)} h</span></div>
+      ${lastI ? `<div class="tc-i ${lastI.status}"><b>${esc(lastI.category)}</b> · ${esc(lastI.text.length > 80 ? lastI.text.slice(0, 78) + "…" : lastI.text)} <i>${dLabel(lastI.t, {day:"numeric", month:"short"})} · ${lastI.status}</i></div>` : `<div class="tc-i none">No issues reported</div>`}</button>`; }).join("");
+  return `<section class="panel"><div class="panel-head"><h2>Tenders</h2>${tvSegHTML()}${canIssues() ? `<button class="btn primary" data-act="new-issue">Report issue</button>` : ""}</div>
+    ${tvPeriodHTML()}${S.tvLoading ? `<p class="hint" style="margin:0">Reading the tender days…</p>` : ""}<div class="tcards">${cards}</div></section>`;
+}
+function tenderDetailHTML(){
+  const t = TENDERS.find(x => x.id === S.tv.sel); if (!t){ S.tv.sel = null; return tendersHTML(); }
+  const name = "T" + t.num, U = tenderUse(t.id), I = tenderIssues(name);
+  const rep30 = i => I.all.filter(x => x.category === i.category && Math.abs(x.t - i.t) < 30 * 864e5).length;
+  const dur = i => i.resolvedAt ? (() => { const h = (i.resolvedAt - i.t) / 3600e3; return h < 48 ? Math.max(1, Math.round(h)) + " h" : Math.round(h / 24) + " days"; })() : "";
+  return `<section class="panel"><div class="panel-head"><button class="btn" data-act="tv-back">← All tenders</button><h2>Tender ${t.num}</h2>${canIssues() ? `<button class="btn primary" data-act="tv-issue" data-u="${name}">Report issue</button>` : ""}<button class="btn" data-act="tv-xlsx">Export Excel</button></div>
+    ${tvPeriodHTML()}
+    <div class="rp-kpis tk"><div><span>Running hours</span><b>${hhmm(U.water)}<small>h</small></b></div><div><span>Lowered</span><b>${U.low}×</b></div><div><span>Open issues</span><b style="${I.open.length ? "color:var(--accent)" : ""}">${I.open.length}</b></div><div><span>Issues in period</span><b>${I.inP.length}</b></div><div><span>Total running hours</span><b>${hhmm(U.waterAll)}<small>h</small></b></div></div>
+    <div class="pdet"><div class="card"><h3>Use, day by day</h3>
+      ${U.inP.length ? `<div class="tablebox"><table><thead><tr><th>Date</th><th>Port</th><th style="text-align:right">Running hours</th><th style="text-align:right">Lowered</th><th></th></tr></thead><tbody>${U.inP.map(x => `<tr><td>${fmtDate(x.d.date)}</td><td>${esc(x.d.port)}</td><td class="num mono">${hhmm(x.f.water)}</td><td class="num">${x.f.low}×</td><td class="ra"><button class="btn small" data-act="port-day" data-id="${x.d.id}">Report</button></td></tr>`).join("")}</tbody></table></div>` : `<p class="hint" style="margin:0">Not used in this period.</p>`}</div>
+      <div class="card"><h3>Issues</h3>
+      ${I.all.length ? `<div class="til">${I.all.map(i => `<div class="${i.status}"><div class="h"><b>${esc(i.category)}</b><span class="status ${i.status}">${i.status}</span>${rep30(i) > 1 ? `<span class="pill warn">${rep30(i)}× in 30 days</span>` : ""}</div><p>${esc(i.text)}</p>
+        <span class="when">${dLabel(i.t, {day:"numeric", month:"short", year:"numeric"})} ${fmtT(i.t)}${i.port ? " · " + esc(i.port) : ""}${i.status === "resolved" ? ` · resolved in ${dur(i)}` : ""}</span>${i.resolution ? `<div class="res">${esc(i.resolution)}</div>` : ""}
+        ${canIssues() ? `<div class="row-btns">${i.status === "open" ? `<button class="btn small" data-act="resolve" data-id="${i.id}">Resolve</button>` : ""}<button class="btn small" data-act="edit-issue" data-id="${i.id}">Edit</button></div>` : ""}</div>`).join("")}</div>` : `<p class="hint" style="margin:0">No issues reported for Tender ${t.num}.</p>`}</div></div></section>`;
+}
+function tvXLSX(){
+  const t = TENDERS.find(x => x.id === S.tv.sel); if (!t) return; const name = "T" + t.num, U = tenderUse(t.id), I = tenderIssues(name), [a, b] = tvRange();
+  const use = [["Date", "Port", "Running hours (h:mm)", "Running hours (decimal)", "Lowered"], ...U.inP.map(x => [x.d.date, x.d.port, hhmm(x.f.water), Math.round(x.f.water / 36e3) / 100, x.f.low]), ["Total", "", hhmm(U.water), Math.round(U.water / 36e3) / 100, U.low]];
+  const iss = [["Date", "Time", "Category", "Description", "Status", "Resolved", "What was done", "Port"], ...I.all.map(i => [ymd(i.t), fmtT(i.t), i.category, i.text, i.status, i.resolvedAt ? ymd(i.resolvedAt) + " " + fmtT(i.resolvedAt) : "", i.resolution || "", i.port || ""])];
+  const blob = xlsxBlob([{name:"Use", rows:use, bold:[use.length - 1], widths:[12, 18, 18, 18, 14]}, {name:"Issues", rows:iss, widths:[11, 7, 20, 60, 10, 17, 50, 16]}]);
+  const el = document.createElement("a"); el.href = URL.createObjectURL(blob); el.download = `tender-${t.num}_${a === "0000-00-00" ? "all" : a}_${b === "9999-12-31" ? ymd(Date.now()) : b}.xlsx`;
+  document.body.appendChild(el); el.click(); setTimeout(() => { URL.revokeObjectURL(el.href); el.remove(); }, 500); toast("Excel saved · " + el.download);
+}
+document.addEventListener("change", e => { if (e.target && (e.target.id === "tvFrom" || e.target.id === "tvTo")){ S.tv[e.target.id === "tvFrom" ? "from" : "to"] = e.target.value; render(); } });
 
 /* ---------------- event wiring ---------------- */
 document.addEventListener("click", e => {
@@ -3126,7 +3254,13 @@ document.addEventListener("click", e => {
     case "demo-reset": S.store.reset(); toast("Sample data reloaded"); break;
     case "open-day": dayModal(null); break;
     case "port": portModal(); break;
-    case "htab": e.preventDefault(); S.histTab = el.dataset.v; S.portSel = null; render(); break;
+    case "tv-mode": e.preventDefault(); S.tv.mode = el.dataset.v; S.tv.sel = null; render(); break;
+    case "tv-per": S.tv.per = el.dataset.v; render(); break;
+    case "tv-open": S.tv.sel = el.dataset.id; render(); window.scrollTo(0, 0); break;
+    case "tv-back": S.tv.sel = null; render(); break;
+    case "tv-issue": issueModal(null, el.dataset.u); break;
+    case "tv-xlsx": tvXLSX(); break;
+    case "go": location.hash = el.dataset.v; break;
     case "port-open": S.portSel = el.dataset.id; S.portStats = null; render(); window.scrollTo(0, 0); break;
     case "port-back": S.portSel = null; render(); break;
     case "port-day": S.rep.id = el.dataset.id; S.rep.ev = null; S.rep.unit = "all"; S.rep.kind = "all"; S.rep.q = ""; location.hash = "reports"; break;
