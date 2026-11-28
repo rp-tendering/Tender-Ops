@@ -814,6 +814,14 @@ body.kb-open .modal{max-height:calc(var(--vvh, 100vh) - 12px);overflow-y:auto}
 @media (max-width:900px){ .pdet{grid-template-columns:1fr} .pm-g{grid-template-columns:repeat(2,minmax(0,1fr))} }
 
 .m.ashore .s.synclate{color:var(--accent);font-weight:700}
+
+.rp-kpis > div,.rp-times > div{position:relative}
+.rpq{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-weight:700;font-size:12px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0}
+.rpq:hover,.rpq:focus-visible{color:var(--sea);border-color:var(--sea)}
+.rpq.in{position:static;margin-left:4px;vertical-align:2px}
+.rp-dif{display:block;font-style:normal;font-size:12px;font-weight:700;color:var(--accent);text-transform:none;letter-spacing:0;margin-top:2px}
+.rph p{margin:0 0 8px}
+.rph .warnbox{margin:4px 0 10px}
 </style>
 
 <div id="app"></div>
@@ -2766,7 +2774,8 @@ function timesCells(R){
 }
 function kpiCells(R){
   const st = R.st;
-  return [["Pax to shore", num(st.paxOut)], ["Pax back", num(st.paxBack)], ["Trips", String(st.tripsOut + st.tripsBack), `${st.tripsOut} out · ${st.tripsBack} back`],
+  const dif = st.paxOut - st.paxBack;
+  return [["Pax to shore", num(st.paxOut)], ["Pax back", num(st.paxBack), dif ? `<em class="rp-dif">${num(Math.abs(dif))} ${dif > 0 ? "fewer" : "more"} than to shore</em>` : ""], ["Trips", String(st.tripsOut + st.tripsBack), `${st.tripsOut} out · ${st.tripsBack} back`],
     ["Round trip", dayLegs(st).round != null ? Math.round(dayLegs(st).round) + "<small>min</small>" : "—", legTxt(dayLegs(st))], ["Tenders used", String(R.own.length) + (R.shore.length ? `<small>+${R.shore.length} shore</small>` : "")],
     ["Tender hours", hhmm(R.waterOwn) + "<small>h</small>"]];
 }
@@ -2786,9 +2795,9 @@ function reportsHTML(){
   const unitNames = R.rows.map(r => r.u.name);
   return `<section class="panel">${head}
     <div class="rp-sub">${esc(d.port)} · ${fmtDate(d.date)} · ${d.status === "open" ? "in progress" : "closed"} · times in ship’s time ${tzLabel(TZ ?? devOff())}</div>
-    <div class="rp-kpis">${kpiCells(R).map(([k, v, s]) => `<div><span>${k}</span><b>${v}</b>${s ? `<span style="text-transform:none;letter-spacing:0">${s}</span>` : ""}</div>`).join("")}</div>
-    <div class="rp-times">${timesCells(R).map(([k, v, x, late]) => `<div class="${late ? "late" : ""}"><span>${k}</span><b>${esc(v)}</b>${x}</div>`).join("")}</div>
-    <div class="rp-sec"><h3>Running hours <small>time in the water, from lowered to out of the water</small></h3>
+    <div class="rp-kpis">${kpiCells(R).map(([k, v, s]) => `<div>${repQ(k)}<span>${k}</span><b>${v}</b>${s ? `<span style="text-transform:none;letter-spacing:0">${s}</span>` : ""}</div>`).join("")}</div>
+    <div class="rp-times">${timesCells(R).map(([k, v, x, late]) => `<div class="${late ? "late" : ""}">${repQ(k)}<span>${k}</span><b>${esc(v)}</b>${x}</div>`).join("")}</div>
+    <div class="rp-sec"><h3>Running hours <small>time in the water, from lowered to out of the water</small>${repQ("Running hours", true)}</h3>
       <div class="tablebox"><table class="rp-run"><thead><tr><th>Tender</th><th>Lowered</th><th>Out of water</th><th style="text-align:right">In water</th><th style="text-align:right">Trips</th><th style="text-align:right">Pax out</th><th style="text-align:right">Pax back</th><th>Drivers</th><th>${tlAxis(R) || "Timeline"}</th></tr></thead>
       <tbody>${R.own.map(tenderRow).join("")}${R.shore.map(tenderRow).join("")}</tbody>
       <tfoot><tr><td>Own tenders</td><td></td><td></td><td class="mono num">${hhmm(R.waterOwn)}</td><td class="num">${R.own.reduce((a, r) => a + r.u.tripsOut + r.u.tripsBack, 0)}</td><td class="num">${num(R.own.reduce((a, r) => a + r.u.paxOut, 0))}</td><td class="num">${num(R.own.reduce((a, r) => a + r.u.paxBack, 0))}</td><td></td><td></td></tr></tfoot></table></div></div>
@@ -2805,10 +2814,37 @@ function reportsHTML(){
 document.addEventListener("input", e => { if (e.target && e.target.id === "repQ"){ S.rep.q = e.target.value; const d = repDay(), ev = repEvents(); if (!d || !ev) return; const L = repLogBody(reportOf(d, ev)); $("#repRows").innerHTML = L.rows; $("#repCount").textContent = L.count; } });
 function repCountScreen(R){
   const C = repCountCheck(R), st = R.st, sgn = n => (n > 0 ? "+" : n < 0 ? "−" : "±") + num(Math.abs(n)), off = C.diff - C.end;
-  return `<div class="rp-sec"><h3>Passenger count <small>tender counts against the off-ship count</small></h3>
+  return `<div class="rp-sec"><h3>Passenger count <small>tender counts against the off-ship count</small>${repQ("Passenger count", true)}</h3>
     <div class="rp-times"><div><span>Pax to shore</span><b>${num(st.paxOut)}</b></div><div><span>Pax back</span><b>${num(st.paxBack)}</b></div><div><span>Difference</span><b>${num(C.diff)}</b></div><div><span>Corrected by syncs</span><b>${sgn(C.corr)}</b></div><div><span>Ashore at the end</span><b>${num(C.end)}</b></div></div>
     ${C.syncs.length ? `<div class="tablebox"><table><thead><tr><th>Sync</th><th style="text-align:right">Off ship</th><th style="text-align:right">Correction</th><th>Trips since the sync before</th></tr></thead><tbody>${C.syncs.map(x => `<tr><td class="t">${fmtT(x.t)}</td><td class="num">${x.off != null ? num(x.off) : "—"}</td><td class="num" style="${Math.abs(x.d) >= 50 ? "color:var(--accent);font-weight:700" : ""}">${sgn(x.d)}</td><td>${x.trips ? `${x.nOut} trips to shore (${num(x.pax)} pax) · ${x.nBack} back · ${x.boats.map(esc).join(", ")}` : "no trips"}</td></tr>`).join("")}</tbody></table></div>` : `<p class="rp-empty">No syncs on this day.</p>`}
     ${off ? `<p class="hint" style="margin:0">Tender counts were ${num(Math.abs(off))} ${off > 0 ? "above" : "below"} the off-ship count; the syncs corrected it. The difference may come from incorrect counts reported by the tenders or from numbers entered incorrectly by the operator.</p>` : ""}</div>`;
+}
+const repQ = (k, inline) => `<button type="button" class="rpq${inline ? " in" : ""}" data-act="rep-help" data-k="${esc(k)}" aria-label="What is ${esc(k)}?">?</button>`;
+/* what each figure means and how it is worked out, with this day's numbers */
+function repHelp(k){
+  const d = repDay(), ev = repEvents(); if (!d || !ev) return;
+  const R = reportOf(d, ev), st = R.st, G = dayLegs(st), C = repCountCheck(R), dif = st.paxOut - st.paxBack, m = v => v == null ? "—" : Math.round(v) + " min";
+  const H = {
+    "Pax to shore": `<p>All the passengers entered at each <b>departure from the ship to shore</b> (own tenders and shoretenders), added up: <b>${num(st.paxOut)}</b> in ${st.tripsOut} trips.</p><p>These are the tender counts, not the security count. The security (off-ship) count is used only by Sync.</p>`,
+    "Pax back": `<p>All the passengers entered at each <b>departure from shore to the ship</b>, added up: <b>${num(st.paxBack)}</b> in ${st.tripsBack} trips.</p>
+      ${dif ? `<div class="warnbox">Pax back is <b>${num(Math.abs(dif))}</b> ${dif > 0 ? "lower" : "higher"} than pax to shore. ${C.end === 0 ? "Everyone was back at the end (ashore 0 after the last sync), so" : "Part of it is still counted ashore; the rest"} the difference comes from the counts: <b>incorrect numbers reported by the tenders</b> or <b>numbers entered incorrectly by the operator</b>. The syncs with the security count corrected it by ${C.corr > 0 ? "+" : "−"}${num(Math.abs(C.corr))}.</div>
+      <p>See <b>Passenger count</b> below: each sync shows its correction and the trips made since the sync before, to find where the difference started.</p>` : `<p>Same as pax to shore: the counts match.</p>`}`,
+    "Trips": `<p>Every departure logged: <b>${st.tripsOut}</b> from the ship to shore and <b>${st.tripsBack}</b> from shore to the ship, own tenders and shoretenders together.</p>`,
+    "Round trip": `<p>From <b>departure at the ship</b> until <b>back at the ship</b>: the typical time of the day, <b>${m(G.round)}</b>.</p>
+      <p>Made of: run to shore ${m(G.out)} · at the pier ${m(G.pier)} · run back ${m(G.back)}.</p>
+      <p><b>Time at the ship</b> (${m(G.ship)}: boarding and waiting for a pontoon) is not part of the round trip and is shown apart.</p>
+      <p class="hint">Typical = the middle value of all the trips of the day (median), so one odd trip does not change it. Trips logged late or corrected are left out.</p>`,
+    "Tenders used": `<p>Own tenders lowered on this day: <b>${R.own.length}</b>${R.shore.length ? `, plus <b>${R.shore.length}</b> shoretender${R.shore.length > 1 ? "s" : ""} put on service` : ""}.</p>`,
+    "Tender hours": `<p>Time in the water of the <b>own tenders</b>, from lowered to out of the water, added up: <b>${hhmm(R.waterOwn)}</b>. A tender lowered twice counts both times.</p><p>Shoretenders are not included: their time on service is in Running hours.</p>`,
+    "First lowered": `<p>The first own tender lowered: <b>${fmtT(st.firstLowered)}</b>.</p>`,
+    "Last tender (planned)": `<p>The last tender time set when the day was opened (Edit day).</p>`,
+    "Last tender left shore": `<p>The departure from shore marked <b>LAST TENDER</b>. If nobody marked it, the last departure from shore with passengers, shown as <b>last logged</b>.</p><p>The minutes (e.g. +15′) are the difference from the planned last tender; orange when more than 5 minutes late.</p>`,
+    "All aboard": `<p>The all-aboard time set when the day was opened (Edit day).</p>`,
+    "Last hoisted": `<p>The last own tender out of the water: <b>${fmtT(st.lastHoisted)}</b>.</p>`,
+    "Departure": `<p>The ship's departure time set when the day was opened (Edit day).</p>`,
+    "Running hours": `<p>For each boat: when it was lowered and out of the water, and the time in the water in between (h:mm). Lowered again later? The times are added up and marked ×2.</p><p>Shoretenders show their time on service (*), from start to end of service; they are not in the own tenders total.</p><p>The bar shows the day: blue in the water, brown on service, white marks = departures to shore.</p>`,
+    "Passenger count": `<p><b>To shore − back = difference.</b> If all the counts were right and everyone came back, the difference would be 0.</p><p>Each <b>sync</b> sets the number ashore from the security count (off ship − people on tenders). Its correction shows how far the tender counts had drifted, and the trips since the sync before show where to look.</p><p>A large correction usually means <b>incorrect numbers reported by the tenders</b> or <b>numbers entered incorrectly by the operator</b>. Syncing about every hour keeps each correction small and easy to trace.</p>`};
+  modal({title: k, submit: "", body: `<div class="rph">${H[k] || ""}</div>`, onOpen: f => { f.dataset.nofocus = 1; }});
 }
 function repChatHTML(d){
   if (CONFIG.standalone) return "";
@@ -3059,7 +3095,7 @@ function portShoreModal(P){
 async function portModal(){
   const d = day(); if (!d) return; const P = portOf(d.port, d.portId) || {id:portIdOf(d.port), name:d.port, shore:[], virtual:true};
   const st = await portStats(P);
-  modal({title:`${P.name}`, submit:"Close",
+  modal({title:`${P.name}`, submit:"",
     body:`${portBoxHTML(P, st, false)}${isAdmin() ? `<button type="button" class="btn" id="mGoPort">Open in History → Ports</button>` : ""}`,
     onOpen: f => { f.dataset.nofocus = 1; const g = f.querySelector("#mGoPort"); if (g) g.addEventListener("click", () => { closeModal(); S.histTab = "ports"; S.portSel = P.id; S.portStats = null; location.hash = "history"; if (S.view === "history") render(); }); },
     onSubmit: () => {}});
@@ -3146,6 +3182,7 @@ document.addEventListener("click", e => {
     case "rep-unit": S.rep.unit = el.dataset.v; render(); break;
     case "rep-kind": S.rep.kind = el.dataset.v; render(); break;
     case "rep-pdf": repPDFModal(); break;
+    case "rep-help": repHelp(el.dataset.k); break;
     case "rep-xlsx": repXLSX(); break;
     case "reset-day": resetDayModal(); break;
     case "del-day": { const d = S.data.days.find(x => x.id === (S.view === "reports" ? S.rep.id : S.hist)); if (d) deleteDayModal(d); break; }
