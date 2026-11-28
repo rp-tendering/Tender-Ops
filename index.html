@@ -572,7 +572,7 @@ body:has(.overlay) .toast{visibility:hidden}
   .dayline h1{font-size:24px}
   .dayline .dinfo > span{padding:2px 9px;font-size:12.5px}
   .dayline .btn.small{padding:4px 9px;font-size:12.5px}
-  .m{padding:5px 12px} .m .v{font-size:23px} .m .l{font-size:11.5px} .m .q{display:none}
+  .m{padding:5px 12px} .m .v{font-size:23px} .m .l{font-size:11.5px} .m .q{display:none} .m.svc .q{display:block}
   .m.ashore{padding:6px 12px;flex-wrap:nowrap}
   .m.ashore .s{margin-top:1px}
   .sec.rec{display:flex;flex-direction:column;gap:3px}
@@ -1358,6 +1358,9 @@ function statusHTML(day, st, est, lastSync){
   } else {
     let head, cls = "ok";
     if (ld) head = "";
+    else if (!est.activeCount && est.shoreActive){ const cap = est.shoreActive * (est.perUnit || 0), short = est.trips > cap && est.remain != null && est.remain > 0;
+      cls = est.remain != null && est.remain <= 0 && est.trips ? "crit" : short ? "warn" : "ok";
+      head = est.A === 0 ? `Nobody ashore · shoretenders can be released` : `Shoretenders only · keep all <b>${est.shoreActive}</b><span class="rl">${est.trips} full trip${est.trips === 1 ? "" : "s"} still needed${short ? ` · they can make about ${cap} before the last tender: consider lowering a tender` : ""}</span>`; }
     else if (!est.activeCount) head = "No tenders in service";
     else if (!est.avgCap) head = "Set max loads to estimate";
     else if (est.A === 0) head = `Nobody ashore · <b>${est.activeCount}</b> tender${est.activeCount === 1 ? "" : "s"} can be recovered`;
@@ -2882,7 +2885,7 @@ function reportsHTML(){
     ${isAdmin() && d.status !== "open" ? `<button class="btn danger" data-act="del-day">Delete day</button>` : ""}<button class="btn" data-act="rep-xlsx" ${evs ? "" : "disabled"}>Export Excel</button><button class="btn primary" data-act="rep-pdf" ${evs ? "" : "disabled"}>Export PDF</button></div>`;
   if (!evs) return `<section class="panel">${head}<p>Loading…</p></section>`;
   const R = reportOf(d, evs), st = R.st;
-  const tenderRow = r => `<tr class="${r.u.kind === "shore" ? "shore" : ""}${notUsed(r) ? " unused" : ""}"><td><b>${esc(r.u.full)}</b>${notUsed(r) ? ` <span class="nu">not used</span>` : ""}</td><td class="mono">${fmtT(r.first)}</td><td class="mono">${r.last ? fmtT(r.last) : (r.segs.length ? "in water" : "—")}</td><td class="mono num">${hhmm(r.water)}${r.relowered ? ` <span class="pill">×${r.segs.length}</span>` : ""}${r.u.kind === "shore" ? `<small class="onsvc">on service</small>` : ""}</td>
+  const tenderRow = r => `<tr class="${r.u.kind === "shore" ? "shore" : ""}${notUsed(r) ? " unused" : ""}"><td><b>${esc(r.u.full)}</b>${notUsed(r) ? ` <span class="nu">not used</span>` : ""}</td><td class="mono">${fmtT(r.first)}</td><td class="mono">${r.last ? fmtT(r.last) : (r.segs.length ? (r.u.kind === "shore" ? "on service" : "in water") : "—")}</td><td class="mono num">${hhmm(r.water)}${r.relowered ? ` <span class="pill">×${r.segs.length}</span>` : ""}${r.u.kind === "shore" ? `<small class="onsvc">on service</small>` : ""}</td>
     <td class="num">${r.u.tripsOut + r.u.tripsBack}</td><td class="num">${num(r.u.paxOut)}</td><td class="num">${num(r.u.paxBack)}</td><td>${esc(r.drivers.join(", ") || "—")}</td><td class="tl">${tlHTML(R, r)}</td></tr>`;
   const L = repLogBody(R);
   const unitNames = R.rows.map(r => r.u.name);
@@ -2962,7 +2965,7 @@ function repKeyEvents(R){ return R.st.log.filter(l => KEY_TYPES.includes(l.e.typ
 /* PDF: page 1 is the day at a glance; the log is added only if asked */
 function reportPrintHTML(R, withLog){
   const d = R.d, {all, list} = repLogRows(R), fn = repFilterNote(), C = repCountCheck(R), sgn = n => (n > 0 ? "+" : n < 0 ? "−" : "±") + num(Math.abs(n));
-  const trow = r => `<tr class="${r.u.kind === "shore" ? "shore" : ""}"><td class="nw"><b>${esc(r.u.full)}</b>${notUsed(r) ? ` <span class="nu">not used</span>` : ""}</td><td class="pm">${fmtT(r.first)}</td><td class="pm">${r.last ? fmtT(r.last) : (r.segs.length ? "in water" : "—")}</td><td class="pm pn">${hhmm(r.water)}${r.relowered ? " (×" + r.segs.length + ")" : ""}${r.u.kind === "shore" ? "*" : ""}</td><td class="pn">${r.u.tripsOut + r.u.tripsBack}</td><td class="pn">${num(r.u.paxOut)}</td><td class="pn">${num(r.u.paxBack)}</td><td class="dr">${esc(r.drivers.join(", ") || "—")}</td><td class="tlc">${tlHTML(R, r)}</td></tr>`;
+  const trow = r => `<tr class="${r.u.kind === "shore" ? "shore" : ""}"><td class="nw"><b>${esc(r.u.full)}</b>${notUsed(r) ? ` <span class="nu">not used</span>` : ""}</td><td class="pm">${fmtT(r.first)}</td><td class="pm">${r.last ? fmtT(r.last) : (r.segs.length ? (r.u.kind === "shore" ? "on service" : "in water") : "—")}</td><td class="pm pn">${hhmm(r.water)}${r.relowered ? " (×" + r.segs.length + ")" : ""}${r.u.kind === "shore" ? "*" : ""}</td><td class="pn">${r.u.tripsOut + r.u.tripsBack}</td><td class="pn">${num(r.u.paxOut)}</td><td class="pn">${num(r.u.paxBack)}</td><td class="dr">${esc(r.drivers.join(", ") || "—")}</td><td class="tlc">${tlHTML(R, r)}</td></tr>`;
   const tl = R.rows.length && R.t0 != null ? `<div class="tlw"><div class="lg"><span><em></em>In the water</span>${R.shore.length ? `<span><em class="s"></em>Shoretender on service</span>` : ""}<span><em class="t"></em>Departure to shore</span>${R.rows.some(r => r.flags.length) ? `<span><em class="f"></em>Status reported</span>` : ""}${R.shore.length ? `<span>* Shoretenders: time on service, not in the own tenders total</span>` : ""}</div></div>` : "";
   const keys = repKeyEvents(R);
   const count = `<div class="cc"><div class="ccf"><div><span>To shore</span><b>${num(R.st.paxOut)}</b></div><div><span>Back</span><b>${num(R.st.paxBack)}</b></div><div><span>Difference</span><b>${num(C.diff)}</b></div><div><span>Syncs (${C.syncs.length})</span><b>${sgn(C.corr)}</b></div><div><span>Ashore end</span><b>${num(C.end)}</b></div></div>
