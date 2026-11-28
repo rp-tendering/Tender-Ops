@@ -729,7 +729,6 @@ body.kb-open .modal{max-height:calc(var(--vvh, 100vh) - 12px);overflow-y:auto}
 .tlbar .fl{position:absolute;top:-3px;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:var(--crit);border:2px solid var(--surface)}
 .tlaxis{position:relative;height:14px;font-family:var(--f-mono);font-size:10px;color:var(--muted)}
 .tlaxis i{position:absolute;font-style:normal;transform:translateX(-50%)}
-.tlaxis i:last-child{transform:translateX(-100%)}
 .rp-iss{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:10px;overflow:hidden}
 .rp-iss > div{display:grid;grid-template-columns:90px 120px 1fr auto;gap:10px;padding:9px 12px;border-top:1px solid var(--line);align-items:start}
 .rp-iss > div:first-child{border-top:0}
@@ -749,7 +748,72 @@ body.kb-open .modal{max-height:calc(var(--vvh, 100vh) - 12px);overflow-y:auto}
   body.printing > *:not(#print-root){display:none !important}
   body.printing #print-root{display:block}
   body.printing{background:#fff !important}
+  html:has(body.printing){background:#fff !important}
 }
+
+/* ---------- ports ---------- */
+.psrch{position:relative}
+.pres{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:-4px;background:var(--surface)}
+.pres button{display:flex;align-items:baseline;gap:8px;border:0;border-top:1px solid var(--line);background:none;padding:8px 11px;text-align:left;cursor:pointer;font-size:14px}
+.pres button:first-child{border-top:0}
+.pres button b{font-weight:700}
+.pres button span{color:var(--muted);font-size:12.5px}
+.pres button.new b{color:var(--sea)}
+.pres button:hover,.pres button:focus-visible{background:var(--surface-2)}
+.pm-box{border:1px solid color-mix(in srgb,var(--sea) 35%,var(--line));background:var(--sea-tint);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.pm-box .pm-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pm-box .pm-h b{font-family:var(--f-display);font-size:18px}
+.pm-box .pm-h span{color:var(--muted);font-size:13px}
+.pm-box .pm-h .btn{margin-left:auto}
+.pm-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.pm-g div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:5px 8px;min-width:0}
+.pm-g span{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.pm-g b{font-family:var(--f-mono);font-size:15px;white-space:nowrap}
+.pm-g b small{font-family:var(--f-body);font-size:11px;color:var(--muted);font-weight:500;margin-left:3px}
+.pm-st{font-size:13px}
+.pm-st i{font-style:normal;color:var(--muted)}
+.pm-note{font-size:13px;background:var(--surface);border-left:3px solid var(--accent);border-radius:6px;padding:6px 9px;white-space:pre-wrap}
+.pm-filled{box-shadow:0 0 0 2px color-mix(in srgb,var(--sea) 55%,transparent) !important}
+.pm-chips{display:flex;flex-wrap:wrap;gap:6px}
+.pm-chips button{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:7px 11px;font-weight:700;cursor:pointer;text-align:left;line-height:1.15}
+.pm-chips button small{display:block;font-weight:500;font-size:11.5px;color:var(--muted)}
+.pm-chips button[disabled]{opacity:.45;cursor:default}
+.pm-chips button[aria-pressed="true"]{border-color:var(--sea);background:var(--sea-tint)}
+.portbtn{width:30px;height:30px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);background:var(--surface);color:var(--sea);cursor:pointer;margin-left:2px;position:relative}
+.portbtn.has::after{content:"";position:absolute;top:-3px;right:-3px;width:8px;height:8px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}
+.hseg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface-2)}
+.hseg a{padding:7px 16px;font-weight:700;font-size:14px;color:var(--muted);text-decoration:none}
+.hseg a[aria-current="page"]{background:var(--ink);color:var(--surface)}
+.plist{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.pcard{display:flex;flex-direction:column;gap:6px;text-align:left;border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:12px;cursor:pointer;font:inherit;color:inherit}
+.pcard:hover{border-color:var(--sea)}
+.pcard .t{display:flex;align-items:baseline;gap:8px}
+.pcard .t b{font-family:var(--f-display);font-size:22px;line-height:1}
+.pcard .t span{color:var(--muted);font-size:13px;margin-left:auto;white-space:nowrap}
+.pcard .g{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.pcard .g b{color:var(--ink);font-family:var(--f-mono);font-weight:500}
+.pcard .psh{font-size:12.5px;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:500}
+.pcard .nt{font-size:12.5px;border-left:3px solid var(--accent);padding-left:7px;color:var(--ink)}
+.pdet{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px;align-items:start}
+.pdet .card{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px;background:var(--surface)}
+.pdet h3{font-family:var(--f-display);font-size:19px;margin:0;display:flex;align-items:center;gap:8px}
+.pdet h3 .btn{margin-left:auto}
+.shl{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.shl div{display:flex;align-items:center;gap:10px;padding:7px 10px;border-top:1px solid var(--line)}
+.shl div:first-child{border-top:0}
+.shl div b{flex:1}
+.shl input{width:100%}
+.shl .cap{font-family:var(--f-mono);color:var(--muted)}
+.vlist{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.vlist button{display:grid;grid-template-columns:1.2fr repeat(3,minmax(0,1fr)) auto;gap:8px;align-items:center;padding:8px 10px;border:0;border-top:1px solid var(--line);background:none;text-align:left;cursor:pointer;font:inherit;color:inherit}
+.vlist button:first-child{border-top:0}
+.vlist button:hover{background:var(--surface-2)}
+.vlist .hd{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);cursor:default}
+.vlist .hd:hover{background:none}
+.vlist .go{color:var(--sea);font-weight:700;font-size:13px}
+@media (max-width:900px){ .pdet{grid-template-columns:1fr} .pm-g{grid-template-columns:repeat(2,minmax(0,1fr))} }
+
+.m.ashore .s.synclate{color:var(--accent);font-weight:700}
 </style>
 
 <div id="app"></div>
@@ -759,7 +823,7 @@ body.kb-open .modal{max-height:calc(var(--vvh, 100vh) - 12px);overflow-y:auto}
   @bottom-left{content:var(--pfoot, "");font:500 8pt "Barlow",sans-serif;color:#5a6b7d}
   @bottom-right{content:"Page " counter(page) " of " counter(pages);font:500 8pt "Barlow",sans-serif;color:#5a6b7d}}
 #print-root{font-family:"Barlow",system-ui,sans-serif;color:#13212f;font-size:9.5pt;line-height:1.35;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-#print-root .pb{background:#13212f;color:#fff;border-radius:3mm;padding:5mm 6mm;display:flex;justify-content:space-between;align-items:flex-end;gap:6mm;position:relative;overflow:hidden}
+#print-root .pb{background:#13212f;color:#fff;border-radius:3mm;padding:4mm 6mm;display:flex;justify-content:space-between;align-items:flex-end;gap:6mm;position:relative;overflow:hidden}
 #print-root .pb::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1.4mm;background:#e4570f}
 #print-root .pb .l small{display:block;font-size:8pt;letter-spacing:.12em;text-transform:uppercase;color:#9fb3c6}
 #print-root .pb .l b{display:block;font-family:"Barlow Condensed",sans-serif;font-size:13pt;font-weight:600;letter-spacing:.02em}
@@ -771,13 +835,14 @@ body.kb-open .modal{max-height:calc(var(--vvh, 100vh) - 12px);overflow-y:auto}
 #print-root .kp div:first-child{border-left:0}
 #print-root .kp span,#print-root .tm span{display:block;font-size:7pt;letter-spacing:.09em;text-transform:uppercase;color:#5a6b7d}
 #print-root .kp b{font-family:"Barlow Condensed",sans-serif;font-size:19pt;line-height:1.05;font-weight:700}
+#print-root .kp .kx{display:block;font-style:normal;font-size:6.6pt;color:#5a6b7d;line-height:1.25;margin-top:.5mm}
 #print-root .kp b small{font-size:10pt;color:#5a6b7d;font-weight:600}
 #print-root .tm{display:grid;grid-template-columns:repeat(6,1fr);margin-top:2mm;background:#f3f5f8;border-radius:2mm}
 #print-root .tm div{padding:2mm 3mm}
 #print-root .tm b{font-family:"IBM Plex Mono",monospace;font-size:10pt;font-weight:500}
 #print-root .tm i{font-style:normal;color:#5a6b7d;font-size:7.5pt}
 #print-root .tm .late b{color:#b45309}
-#print-root h2{font-family:"Barlow Condensed",sans-serif;font-size:14pt;margin:6mm 0 2mm;font-weight:700;display:flex;align-items:baseline;gap:3mm;border-bottom:.5mm solid #13212f;padding-bottom:1mm;break-after:avoid}
+#print-root h2{font-family:"Barlow Condensed",sans-serif;font-size:14pt;margin:4.5mm 0 1.6mm;font-weight:700;display:flex;align-items:baseline;gap:3mm;border-bottom:.5mm solid #13212f;padding-bottom:1mm;break-after:avoid}
 #print-root h2 small{font-family:"Barlow",sans-serif;font-size:8.5pt;font-weight:500;color:#5a6b7d}
 #print-root table{width:100%;border-collapse:collapse}
 #print-root th{font-size:7pt;letter-spacing:.08em;text-transform:uppercase;color:#5a6b7d;text-align:left;font-weight:600;padding:1.4mm 2mm;border-bottom:.3mm solid #b8c4d0}
@@ -799,7 +864,6 @@ body.kb-open .modal{max-height:calc(var(--vvh, 100vh) - 12px);overflow-y:auto}
 #print-root .tlbar .fl{position:absolute;top:-1mm;width:2mm;height:2mm;margin-left:-1mm;border-radius:50%;background:#d63031;border:.4mm solid #fff}
 #print-root .tlaxis{position:relative;height:3.5mm;margin-left:24mm;font-family:"IBM Plex Mono",monospace;font-size:6.5pt;color:#5a6b7d}
 #print-root .tlaxis i{position:absolute;font-style:normal;transform:translateX(-50%)}
-#print-root .tlaxis i:last-child{transform:translateX(-100%)}
 #print-root td.nw{white-space:nowrap}
 #print-root .lg{font-size:7.5pt;color:#5a6b7d;margin-top:1.5mm;display:flex;gap:5mm}
 #print-root .lg em{display:inline-block;width:4mm;height:2.2mm;border-radius:.6mm;background:#1f6391;margin-right:1mm;vertical-align:middle}
@@ -814,6 +878,37 @@ body.kb-open .modal{max-height:calc(var(--vvh, 100vh) - 12px);overflow-y:auto}
 #print-root .log tr.k-lower td:nth-child(3),#print-root .log tr.k-hoist td:nth-child(3){color:#1f6391;font-weight:600}
 #print-root .fnote{font-size:8pt;color:#5a6b7d;margin:1mm 0 0}
 #print-root .none{color:#5a6b7d;font-size:9pt}
+#print-root td{background:transparent !important}
+#print-root .nu{font-size:6.5pt;font-weight:600;text-transform:uppercase;letter-spacing:.05em;border:.2mm solid #b8c4d0;border-radius:3mm;padding:0 1.2mm;margin-left:1mm;vertical-align:1px}
+#print-root .rh td{padding-top:1.1mm;padding-bottom:1.1mm}
+#print-root td.tlc,#print-root th.tlc{width:36%;padding-left:3mm;vertical-align:middle}
+#print-root th .tlaxis{margin-left:0;letter-spacing:0}
+#print-root td.dr{font-size:8pt;max-width:22mm}
+#print-root .tlbar{height:3.2mm}
+#print-root .tlw{margin-top:1mm}
+#print-root .lg{margin-top:0}
+#print-root .two-c{display:grid;grid-template-columns:1.1fr 1fr;gap:6mm}
+#print-root .two-c h2{margin-top:4mm}
+#print-root .cc{display:flex;flex-direction:column;gap:2mm}
+#print-root .ccf{display:grid;grid-template-columns:repeat(5,1fr);background:#f3f5f8;border-radius:2mm}
+#print-root .ccf div{padding:1.6mm 2mm}
+#print-root .ccf span{display:block;font-size:6.5pt;letter-spacing:.07em;text-transform:uppercase;color:#5a6b7d}
+#print-root .ccf b{font-family:"Barlow Condensed",sans-serif;font-size:13pt}
+#print-root .cct td{border-bottom:.2mm solid #e2e7ed;font-size:8.5pt;padding:.9mm 2mm}
+#print-root .cct tr.sub td{font-weight:600}
+#print-root .cct tr.tot td{font-weight:700;border-top:.4mm solid #13212f;border-bottom:0}
+#print-root .ccs td,#print-root .ccs th{font-size:8pt;padding:.6mm 2mm}
+#print-root .ccs td.big{color:#b4460c;font-weight:700}
+#print-root .ccs td.cov{font-size:7pt;color:#5a6b7d;line-height:1.25}
+#print-root .ke td{font-size:8.3pt;padding:.8mm 2mm}
+#print-root .ke tr.k-ot td,#print-root .ke tr.k-last td,#print-root .ke tr.k-em td{font-weight:700}
+#print-root .logp{break-before:page}
+#print-root .logp h2{margin-top:0}
+#print-root .logcols{column-count:2;column-gap:6mm}
+#print-root .logcols table{font-size:7.4pt}
+#print-root .log td{font-size:7.4pt;padding:.5mm 1.2mm;line-height:1.25}
+#print-root .log th{padding:.8mm 1.2mm}
+#print-root .log .dv{color:#5a6b7d}
 </style>
 <div id="print-root"></div>
 <div id="modal-root"></div>
@@ -925,12 +1020,12 @@ function compute(day, events){
   for (const t of TENDERS){ units[t.id] = mkUnit({id:t.id, name:"T"+t.num, full:"Tender "+t.num, num:String(t.num), kind:"tender", side:t.side}); order.push(t.id); }
   let ashore = 0;
   const pont = pontoonsOf(day);
-  const cycles = [], log = [], drivers = new Set(), legs = {tOut:[], pier:[], tIn:[], ship:[]}, trips = [], changes = [];
+  const cycles = [], log = [], drivers = new Set(), legs = {tOut:[], pier:[], tIn:[], ship:[], round:[]}, trips = [], changes = [];
   let firstLowered = null, lastHoisted = null, recovery = {on:false, since:null}, lastDep = null, openTender = {on:false, since:null, by:""};
   const evs = (events || []).slice().sort((a,b) => a.t - b.t || a.c - b.c);
   const atBerth = (u, b) => { u.loc = "ship"; u.dir = null; u.berth = b; };
   for (const e of evs){
-    let u = units[e.unit], text = "", kind = e.type, pax = null;
+    let u = units[e.unit], text = "", kind = e.type, pax = null, meta = null;
     if (!u && !["sync","shore_add","pontoons","recovery","opentender"].includes(e.type)) continue;
     switch (e.type){
       case "shore_add":
@@ -980,7 +1075,9 @@ function compute(day, events){
           pax = u.pax; ashore += u.pax; text = `Alongside Shore · ${u.pax} landed`;
           Object.assign(u, {loc:"shore", berth:null, dir:null, pax:0, since:e.t});
         } else {
-          if (u.tDepShore != null && e.t - u.tDepShore < 90*60000 && !e.fix && e.t - u.tDepShore >= 60000) legs.tIn.push((e.t - u.tDepShore)/60000); u.tArrShip = e.t;
+          if (u.tDepShore != null && e.t - u.tDepShore < 90*60000 && !e.fix && e.t - u.tDepShore >= 60000) legs.tIn.push((e.t - u.tDepShore)/60000);
+          if (u.tDepShip != null && u.tDepShore != null && u.tDepShore > u.tDepShip && e.t - u.tDepShip < 240*60000 && e.t - u.tDepShip >= 10*60000 && !e.fix) legs.round.push((e.t - u.tDepShip)/60000);
+          u.tArrShip = e.t;
           const b = e.berth || "SB"; atBerth(u, b); u.since = e.t; if (b !== "SB") u.plan = null;
           if (b === "SB"){ text = `Stand-by at ship · ${u.pax} waiting on board`; }
           else { pax = u.pax; text = `Alongside ${berthName(b)} · ${u.pax} back on board`; u.pax = 0;
@@ -1008,13 +1105,13 @@ function compute(day, events){
       case "note": u.note = e.text || ""; text = e.text ? `Note: ${e.text}` : "Note cleared"; break;
       case "sync": { const prev = ashore;
         if (e.mode === "off"){ const onT = Object.values(units).filter(x => x.loc === "transit" || (x.loc === "ship" && x.berth === "SB")).reduce((a, x) => a + (x.pax || 0), 0); ashore = Math.max(0, +e.value - onT);
-          const d = ashore - prev; text = `Synced from Off ${num(+e.value)} − ${num(onT)} on tenders = Ashore ${num(ashore)} (count was ${num(prev)}, Δ ${d >= 0 ? "+" : "−"}${num(Math.abs(d))})`; }
-        else { ashore = +e.value; const d = ashore - prev; text = `Ashore synced to ${num(ashore)} (count was ${num(prev)}, Δ ${d >= 0 ? "+" : "−"}${num(Math.abs(d))})`; }
+          const d = ashore - prev; meta = {prev, now:ashore, off:+e.value, onT}; text = `Synced from Off ${num(+e.value)} − ${num(onT)} on tenders = Ashore ${num(ashore)} (count was ${num(prev)}, Δ ${d >= 0 ? "+" : "−"}${num(Math.abs(d))})`; }
+        else { ashore = +e.value; const d = ashore - prev; meta = {prev, now:ashore}; text = `Ashore synced to ${num(ashore)} (count was ${num(prev)}, Δ ${d >= 0 ? "+" : "−"}${num(Math.abs(d))})`; }
         break; }
       default: continue;
     }
     if (u && u.driver) drivers.add(u.driver);
-    log.push({e, unitName: u ? u.name : "—", unitId: u ? u.id : null, text, kind, pax, driver: (e.type === "depart" || e.type === "activate") ? (u ? u.driver : "") : (e.type === "driver" ? e.driver : "")});
+    log.push({e, meta, unitName: u ? u.name : "—", unitId: u ? u.id : null, text, kind, pax, driver: (e.type === "depart" || e.type === "activate") ? (u ? u.driver : "") : (e.type === "driver" ? e.driver : "")});
   }
   const list = order.map(id => units[id]);
   const onTenders = list.filter(u => u.loc === "transit" || (u.loc === "ship" && u.berth === "SB")).reduce((a,u) => a + u.pax, 0);
@@ -1143,11 +1240,11 @@ function capacity(day, st, now, est){
 function capHTML(cap, inStats){
   if (!cap.n) return "";
   const r = x => Math.round(x / 10) * 10, pct = Math.min(100, Math.round(cap.demand / Math.max(1, cap.lift) * 100));
-  const parts = cap.L.tOut ? `${Math.round(cap.L.tOut)} + ${Math.round(cap.L.pier)} + ${Math.round(cap.L.tIn)} + ${Math.round(cap.L.ship)}` : "";
+  const parts = cap.L.tOut ? `${Math.round(cap.L.tOut)} + ${Math.round(cap.L.pier)} + ${Math.round(cap.L.tIn)} · +${Math.round(cap.L.ship)}′ at ship` : "";
   return `<section class="capbar ${pct >= 90 ? "hi" : pct >= 70 ? "mid" : ""}">
     <div class="cb1"><span class="l">Demand</span><b>${r(cap.dOut)}</b><i>to shore</i><b>${r(cap.dIn)}</b><i>to ship</i><span class="u">pax/h</span></div>
     <div class="cb2"><span class="l">Lift</span><b>${r(cap.lift)}</b><span class="u">pax/h each way · ${cap.n} boats</span><span class="meter"><span style="width:${pct}%"></span></span></div>
-    <div class="cb3"><span class="l">Round trip</span><b>${Math.round(cap.cycle)}′</b>${parts ? `<span class="u" title="run to shore + at pier + run to ship + at ship">${parts}</span>` : ""}</div>
+    <div class="cb3"><span class="l">Round trip</span><b>${cap.L.tOut ? Math.round(cap.L.tOut + cap.L.pier + cap.L.tIn) : Math.round(cap.cycle)}′</b>${parts ? `<span class="u" title="run to shore + at pier + run to ship · then time at the ship before the next departure">${parts}</span>` : ""}</div>
     <div class="cb3"><span class="l">Loads</span><b>${Math.round(cap.fill * 100)}%</b></div>
     <div class="cb3"><span class="l">Boat at pier</span><b>every ${Math.round(cap.headway)}′</b></div>
     ${cap.sug && !inStats ? `<div class="sug ${cap.sug.k}">${cap.sug.k === "up" ? "▲" : "▼"} ${cap.sug.t}</div>` : ""}</section>`;
@@ -1166,7 +1263,8 @@ function statusHTML(day, st, est, lastSync){
   const people = `<div class="sec people">
     <div class="m ashore"><div class="am"><div class="l" title="Ashore + on tenders: everyone off the ship">Off ship</div><div class="v">${num(st.ashore + st.onTenders)}</div>
       <div class="brk"><span>Ashore <b>${num(st.ashore)}</b></span><span>On tenders <b>${num(st.onTenders)}</b></span></div>
-      <div class="s">${lastSync ? "synced " + fmtT(lastSync.e.t) : "tender count"}</div></div>
+      ${(() => { const busy = st.list.some(u => u.active && (u.loc === "transit" || u.loc === "shore" || u.pax > 0)), ref = lastSync ? lastSync.e.t : (st.trips.length ? st.trips[0].t : null), ago = ref != null ? (Date.now() - ref) / 60000 : 0, late = busy && ago >= 60;
+        return `<div class="s${late ? " synclate" : ""}">${lastSync ? "synced " + fmtT(lastSync.e.t) : "tender count"}${late ? ` · ${lastSync ? "" : "no sync · "}${fmtDur(ago)} ago` : ""}</div>`; })()}</div>
       ${isAdmin() ? `<button class="btn small sync" data-act="sync">Sync</button>` : ""}</div>
     <div class="m svc"><div class="l">In service</div><div class="svcr">${ringSVG(ownIn, own.length, 50).replace(/class="ring \w+"/, 'class="ring ok svcring"')}</div>${stIn ? `<div class="q">+${stIn} shoretender${stIn > 1 ? "s" : ""}</div>` : ""}</div>
     <div class="m"><div class="l">Aboard</div><div class="v">${num(st.aboard)}</div><div class="q">calculated</div></div>
@@ -1181,9 +1279,9 @@ function statusHTML(day, st, est, lastSync){
     ${prow("FWD")}${prow("MID")}
     ${sb.length ? `<div class="prow sb"><i></i><span class="pn">Stand-by</span><b>${sb.map(u => nameHTML(u.name)).join(", ")}</b></div>` : ""}</div>`;
 
-  const cycleTxt = est.cycleSrc === "today" ? `average of the last ${est.cycleN} round trips today`
-    : est.cycleSrc === "estimate" ? `estimated from the run time set for the day (2 × ${day.estRun} min + 10 min at the piers) until today’s first round trips are logged`
-    : est.cycleSrc === "default" ? "default until today’s first round trips are logged" : `from the last tender day (${esc(est.cycleSrc.slice(5))}) until today’s are logged`;
+  const cycleTxt = est.cycleSrc === "today" ? `average of the last ${est.cycleN} cycles today`
+    : est.cycleSrc === "estimate" ? `estimated from the run time set for the day (2 × ${day.estRun} min + 10 min at the piers) until today’s first cycles are logged`
+    : est.cycleSrc === "default" ? "default until today’s first cycles are logged" : `from the last tender day (${esc(est.cycleSrc.slice(5))}) until today’s are logged`;
   let rec;
   const ld = st.lastDep;
   const lastBox = ld ? (ld.arrived
@@ -1216,11 +1314,11 @@ function statusHTML(day, st, est, lastSync){
         <li>People ashore: <b>${num(est.A)}</b></li>
         <li>Load per trip: <b>${est.load ?? "—"}</b> (85% of the average max load ${est.avgCap ? Math.round(est.avgCap) : "—"}: guests reach the pier a few at a time)</li>
         <li>Trips still needed: ${num(est.A)} ÷ ${est.load ?? "—"} → <b>${est.trips ?? "—"}</b></li>
-        <li>Round trip: <b>${Math.round(est.cycle)} min</b>, ${cycleTxt}</li>
-        <li>Time to last tender ${esc(day.lastTender || "")}: <b>${fmtDur(est.remain)}</b> → each tender can still make <b>${est.perUnit ?? "—"}</b> full round trips</li>
+        <li>Cycle (round trip + time at the ship, from one departure to the next): <b>${Math.round(est.cycle)} min</b>, ${cycleTxt}</li>
+        <li>Time to last tender ${esc(day.lastTender || "")}: <b>${fmtDur(est.remain)}</b> → each tender can still make <b>${est.perUnit ?? "—"}</b> full cycles</li>
         <li>For the lift: ${est.final ? `${est.trips} trips + 1 sweep` : `${est.trips ?? "—"} trips ÷ ${est.perUnit ?? "—"} per tender`} → <b>${est.capNeed ?? "—"}</b> tenders</li>
         <li>For waiting time: a tender at the pier at least every ${est.maxWait} min (${Math.round(est.cycle)} ÷ ${est.maxWait}), never more than the loads left ashore (min 2) → <b>${est.waitNeed ?? "—"}</b> tenders</li>
-        <li>${est.final ? `Final round (less than one round trip left): one trip per tender plus one sweep for late arrivals → keep the larger figure, <b>${est.needed}</b> of ${est.activeCount}` : est.peak ? `Return peak still to come: more people ashore than 2 tenders can lift in an hour, so keep all <b>${est.activeCount}</b>` : `Keep the larger of the two → <b>${est.neededAll ?? "—"}</b> boats in all`}</li>
+        <li>${est.final ? `Final round (less than one cycle left): one trip per tender plus one sweep for late arrivals → keep the larger figure, <b>${est.needed}</b> of ${est.activeCount}` : est.peak ? `Return peak still to come: more people ashore than 2 tenders can lift in an hour, so keep all <b>${est.activeCount}</b>` : `Keep the larger of the two → <b>${est.neededAll ?? "—"}</b> boats in all`}</li>
         <li>Shoretenders in service: <b>${est.shoreActive || 0}</b>. They stay until the end and their trips are already counted, so our tenders needed = ${est.neededAll ?? "—"} − ${est.shoreActive || 0}${est.reason === "none" ? "" : ", at least one kept for the shore party"} → keep <b>${est.needed ?? "—"}</b> of ${est.activeCount} tenders</li></ol>
         <p class="hint">Advisory: the decision stays with the Bridge.</p>` : ""}
       ${isAdmin() ? `<button class="linkish" data-act="rec-stop">End recovery</button>` : ""}</div>`;
@@ -1239,7 +1337,7 @@ function createLocalStore(){
     const d = db();
     const days = Object.values(d.days).sort((a,b) => (b.date || "").localeCompare(a.date || "") || (b.openedAt||0) - (a.openedAt||0));
     const currentDay = days.find(x => x.status === "open") || null;
-    return {days, currentDay, events: currentDay ? (d.events[currentDay.id] || []) : [], issues: Object.values(d.issues).sort((a,b) => b.t - a.t), messages: Object.values(d.messages || {}).sort((a,b) => a.t - b.t), feedback: Object.values(d.feedback || {}), presence: Object.values(d.presence || {}), offline:false, pending:false};
+    return {days, currentDay, ports: Object.values(d.ports || {}), events: currentDay ? (d.events[currentDay.id] || []) : [], issues: Object.values(d.issues).sort((a,b) => b.t - a.t), messages: Object.values(d.messages || {}).sort((a,b) => a.t - b.t), feedback: Object.values(d.feedback || {}), presence: Object.values(d.presence || {}), offline:false, pending:false};
   }
   function emit(){ const s = snap(); listeners.forEach(f => f(s)); }
   window.addEventListener("storage", e => { if (e.key === KEY) emit(); });
@@ -1255,6 +1353,8 @@ function createLocalStore(){
     deleteEvent: (dayId, id) => mut(d => { d.events[dayId] = (d.events[dayId] || []).filter(x => x.id !== id); }),
     saveIssue: is => mut(d => { d.issues[is.id] = Object.assign({}, d.issues[is.id], clean(is)); }),
     deleteIssue: id => mut(d => { delete d.issues[id]; }),
+    savePort: x => mut(d => { d.ports = d.ports || {}; d.ports[x.id] = Object.assign({}, d.ports[x.id], clean(x)); }),
+    deletePort: id => mut(d => { if (d.ports) delete d.ports[id]; }),
     resetDay: dayId => mut(d => { d.events[dayId] = []; }),
     saveMessage: m => mut(d => { (d.messages = d.messages || {})[m.id] = clean(m); }),
     deleteMessages: ids => mut(d => { ids.forEach(id => { if (d.messages) delete d.messages[id]; }); }),
@@ -1275,9 +1375,9 @@ async function createFirebaseStore(){
   const fs = firebase.firestore();
   try { await fs.enablePersistence({synchronizeTabs:true}); } catch(e){}
   const auth = firebase.auth();
-  let days = [], events = [], issues = [], messages = [], feedback = [], presence = [], curId = null, unsubEv = null, unsubs = [], offline = !navigator.onLine, pending = false;
+  let days = [], events = [], issues = [], messages = [], feedback = [], presence = [], ports = [], portsOK = true, curId = null, unsubEv = null, unsubs = [], offline = !navigator.onLine, pending = false;
   const listeners = [];
-  const emit = () => { const currentDay = days.find(d => d.status === "open") || null; const s = {days, currentDay, events: currentDay && currentDay.id === curId ? events : [], issues, messages, feedback, presence, offline, pending}; listeners.forEach(f => f(s)); };
+  const emit = () => { const currentDay = days.find(d => d.status === "open") || null; const s = {days, currentDay, ports, portsOK, events: currentDay && currentDay.id === curId ? events : [], issues, messages, feedback, presence, offline, pending}; listeners.forEach(f => f(s)); };
   const fail = err => { console.error(err); toast(err.code === "permission-denied" ? "Access denied by the server" : "Sync error: " + (err.message || err)); };
   const dayRef = id => fs.collection("days").doc(id);
   function watchEvents(id){
@@ -1295,6 +1395,7 @@ async function createFirebaseStore(){
       emit();
     }, fail));
     unsubs.push(fs.collection("issues").orderBy("t","desc").limit(1000).onSnapshot(s => { issues = s.docs.map(d => d.data()); emit(); }, fail));
+    unsubs.push(fs.collection("ports").onSnapshot(s => { ports = s.docs.map(d => d.data()); portsOK = true; emit(); }, () => { portsOK = false; emit(); }));
     unsubs.push(fs.collection("presence").onSnapshot(s => { presence = s.docs.map(d => d.data()); emit(); }, () => {}));
     unsubs.push(fs.collection("feedback").orderBy("t","desc").limit(300).onSnapshot(s => { feedback = s.docs.map(d => d.data()); emit(); }, fail));
     unsubs.push(fs.collection("messages").orderBy("t","desc").limit(300).onSnapshot(s => { messages = s.docs.map(d => d.data()).reverse(); emit(); }, fail));
@@ -1315,6 +1416,8 @@ async function createFirebaseStore(){
     deleteEvent: (dayId, id) => w(dayRef(dayId).collection("events").doc(id).delete()),
     saveIssue: is => w(fs.collection("issues").doc(is.id).set(clean(is), {merge:true})),
     deleteIssue: id => w(fs.collection("issues").doc(id).delete()),
+    savePort: x => w(fs.collection("ports").doc(x.id).set(clean(x), {merge:true})),
+    deletePort: id => w(fs.collection("ports").doc(id).delete()),
     saveMessage: m => w(fs.collection("messages").doc(m.id).set(clean(m))),
     deleteMessages: async ids => { for (let i = 0; i < ids.length; i += 400){ const b = fs.batch(); ids.slice(i, i + 400).forEach(id => b.delete(fs.collection("messages").doc(id))); await b.commit().catch(fail); } },
     getMessages: async dayId => (await fs.collection("messages").where("dayId", "==", dayId).get()).docs.map(d => d.data()).sort((a,b) => a.t - b.t),
@@ -1437,8 +1540,13 @@ function makeSample(){
   return out;
 }
 
+const legMed = a => { const v = (a || []).filter(x => x != null && isFinite(x)).slice().sort((p, q) => p - q); if (!v.length) return null; const m = Math.floor(v.length / 2); return v.length % 2 ? v[m] : (v[m - 1] + v[m]) / 2; };
+/* the day's typical times, from every trip logged */
+function dayLegs(st){ const L = st.legs; return {round: legMed(L.round), out: legMed(L.tOut), pier: legMed(L.pier), back: legMed(L.tIn), ship: legMed(L.ship)}; }
+const legTxt = G => G.out != null ? `${Math.round(G.out)}′ out · ${Math.round(G.pier)}′ at pier · ${Math.round(G.back)}′ back${G.ship != null ? ` · ${Math.round(G.ship)}′ at ship` : ""}` : "";
 function summaryOf(st){
-  return {tripsOut:st.tripsOut, tripsBack:st.tripsBack, paxOut:st.paxOut, paxBack:st.paxBack, firstLowered:st.firstLowered, lastHoisted:st.lastHoisted, cycleAvg: st.cycleAvg != null ? Math.round(st.cycleAvg) : null, ashoreEnd:st.ashore};
+  const G = dayLegs(st);
+  return {round: G.round != null ? Math.round(G.round) : null, atShip: G.ship != null ? Math.round(G.ship) : null, tripsOut:st.tripsOut, tripsBack:st.tripsBack, paxOut:st.paxOut, paxBack:st.paxBack, firstLowered:st.firstLowered, lastHoisted:st.lastHoisted, cycleAvg: st.cycleAvg != null ? Math.round(st.cycleAvg) : null, ashoreEnd:st.ashore};
 }
 
 /* ---------------- app state ---------------- */
@@ -1459,7 +1567,8 @@ function setData(d){
   /* a day opened before this version has no ship's time yet: Deck's device stores its own */
   /* only a device where ship's time was chosen by hand (the bridge) does it, never an office ashore on its own clock */
   if (d.currentDay && !dayTZ() && isAdmin() && DEV_TZ != null && S.tzSavedFor !== d.currentDay.id){ S.tzSavedFor = d.currentDay.id; S.store.saveDay({id: d.currentDay.id, tz: DEV_TZ}); }
-  ST = d.currentDay ? compute(d.currentDay, d.events) : null; render(); refreshSheet(); }
+  ST = d.currentDay ? compute(d.currentDay, d.events) : null; render(); refreshSheet();
+  if (isAdmin() && !S.portsFilled && (d.days || []).length) setTimeout(portsBackfill, 1500); }
 
 /* ---------------- rendering ---------------- */
 function render(){
@@ -1629,7 +1738,8 @@ function boardHTML(){
 
   const statusPanel = statusHTML(day, st, est, lastSync);
   const lastInfo = est.remain != null ? (est.remain > 0 ? ` (in ${fmtDur(est.remain)})` : " (passed)") : "";
-  const dayline = `<section class="dayline"><h1>${esc(day.port || "Tender day")}</h1>
+  const PP = portOf(day.port, day.portId);
+  const dayline = `<section class="dayline"><h1>${esc(day.port || "Tender day")}</h1><button class="portbtn${PP && PP.notes ? " has" : ""}" data-act="port" title="Port data" aria-label="Port data"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></button>
     <span class="sub">${fmtDate(day.date)}</span>
     <span class="dinfo"><span>Last tender <b class="mono">${esc(day.lastTender || "—")}${plus1(day, "lastTender")}</b>${lastInfo}</span>${day.allAboard ? `<span>All aboard <b class="mono">${esc(day.allAboard)}${plus1(day, "allAboard")}</b></span>` : ""}${day.departure ? `<span>Departure <b class="mono">${esc(day.departure)}${plus1(day, "departure")}</b></span>` : ""}${day.vhf ? `<span class="chn">VHF&nbsp;<b>${esc(day.vhf)}</b></span>` : ""}${day.uhf ? `<span class="chn">UHF&nbsp;<b>${esc(day.uhf)}</b></span>` : ""}${st.openTender.on ? `<span class="otchip" title="Open Tender declared${st.openTender.by ? " by " + esc(st.openTender.by) : ""}"><i></i>Open Tender <b class="mono">${fmtT(st.openTender.since)}</b>${canOpenTender() ? `<button class="otx" data-act="ot-off" aria-label="Cancel Open Tender" title="Cancel Open Tender">✕</button>` : ""}</span>` : ""}</span>
     ${st.log.length ? `<span class="sub">· Last entry <b class="mono">${fmtT(Math.max(...st.log.map(l => l.e.t)))}</b></span>` : ""}
@@ -1710,7 +1820,7 @@ function sumTiles(s){
   return `<div><span>Trips to shore</span><b>${s.tripsOut}</b></div><div><span>Pax to shore</span><b>${num(s.paxOut)}</b></div>
     <div><span>Trips to ship</span><b>${s.tripsBack}</b></div><div><span>Pax back</span><b>${num(s.paxBack)}</b></div>
     <div><span>First lowered</span><b class="mono">${fmtT(s.firstLowered)}</b></div><div><span>Last hoisted</span><b class="mono">${fmtT(s.lastHoisted)}</b></div>
-    <div><span>Avg round trip</span><b>${s.cycleAvg != null ? s.cycleAvg + " min" : "—"}</b></div>`;
+    <div><span>Round trip</span><b>${s.round != null ? s.round + " min" : "—"}</b></div><div><span>Time at ship</span><b>${s.atShip != null ? s.atShip + " min" : "—"}</b></div>`;
 }
 function logHTML(){
   const day = S.data.currentDay;
@@ -1785,6 +1895,7 @@ function importModal(o){
     }});
 }
 function historyHTML(){
+  if (S.histTab === "ports") return portsHTML();
   if (S.hist){
     const d = S.data.days.find(x => x.id === S.hist);
     if (!d){ S.hist = null; return historyHTML(); }
@@ -1797,11 +1908,11 @@ function historyHTML(){
       <h3 class="bh">Chat</h3>${S.histMsgs && S.histMsgs.length ? `<div class="mlist hist">${msgsHTML(S.histMsgs)}</div>` : `<p class="hint" style="margin:0">No chat messages on this day.</p>`}</section>`;
   }
   const days = S.data.days;
-  return `<section class="panel"><div class="panel-head"><h2>Tender days</h2><button class="icon-btn hbtn" data-act="help" data-k="history" aria-label="Help">?</button></div>
+  return `<section class="panel"><div class="panel-head"><h2>Tender days</h2>${histSegHTML()}<button class="icon-btn hbtn" data-act="help" data-k="history" aria-label="Help">?</button></div>
     ${days.length ? `<div class="days">${days.map(d => { const s = d.summary || {}; return `<button class="dayc" data-act="hist-open" data-id="${d.id}">
       <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b>${esc(d.port)}</b><span class="status ${d.status === "open" ? "open" : "resolved"}">${d.status === "open" ? "Today" : "Closed"}</span></div>
       <span class="d">${fmtDate(d.date)} · last tender ${esc(d.lastTender || "—")}</span>
-      <div class="g"><div><span>Trips</span><i>${s.tripsOut != null ? s.tripsOut + s.tripsBack : "—"}</i></div><div><span>Pax ashore</span><i>${s.paxOut != null ? num(s.paxOut) : "—"}</i></div><div><span>Round trip</span><i>${s.cycleAvg != null ? s.cycleAvg + "′" : "—"}</i></div></div></button>`; }).join("")}</div>`
+      <div class="g"><div><span>Trips</span><i>${s.tripsOut != null ? s.tripsOut + s.tripsBack : "—"}</i></div><div><span>Pax ashore</span><i>${s.paxOut != null ? num(s.paxOut) : "—"}</i></div><div><span>Round trip</span><i>${s.round != null ? s.round + "′" : "—"}</i></div></div></button>`; }).join("")}</div>`
       : `<p style="color:var(--muted);margin:0">Closed tender days appear here.</p>`}${CONFIG.standalone ? backupHTML() : S.store.mode === "live" && isAdmin() ? importHTML() : ""}</section>`;
 }
 function loginHTML(){
@@ -2104,12 +2215,16 @@ function activateModal(u){
   });
 }
 function shoreModal(){
+  const P = portOf(day().port, day().portId), picks = P ? (P.shore || []) : [];
   modal({
     title: "Add shoretender", submit: "Add to board",
-    body: `<label class="fld"><span>Boat name</span><input id="mName" placeholder="e.g. Kotor Star" required></label>
+    body: `${picks.length ? `<div class="fld"><span>Used in ${esc(P.name)}</span><div class="pm-chips" id="mPick">${picks.map(x => { const on = ST.list.some(u => u.active && u.name.toLowerCase() === x.name.toLowerCase());
+      return `<button type="button" data-n="${esc(x.name)}" data-c="${x.cap}" ${on ? "disabled" : ""}>${esc(x.name)}<small>max ${x.cap}${on ? " · on the board" : ""}</small></button>`; }).join("")}</div></div>` : ""}<label class="fld"><span>Boat name</span><input id="mName" placeholder="e.g. Kotor Star" required></label>
       <div class="two"><label class="fld"><span>Max load (pax)</span><input id="mCap" type="number" inputmode="numeric" min="1" value="${SHORE_CAP}" required></label>
       </div>
       <p class="hint" style="margin:0">The boat starts on Stand-by at the ship.</p>${timeField("mT")}<div id="mWarn"></div>`,
+    onOpen: f => { const box = f.querySelector("#mPick"); if (!box) return; f.dataset.nofocus = 1;
+      box.querySelectorAll("button[data-n]").forEach(b => b.addEventListener("click", () => { f.querySelector("#mName").value = b.dataset.n; f.querySelector("#mCap").value = b.dataset.c; box.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); })); },
     onSubmit: f => {
       const name = f.querySelector("#mName").value.trim(), cap = parseInt(f.querySelector("#mCap").value, 10);
       if (!name || !cap){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Name and max load are required.</div>`; return false; }
@@ -2157,7 +2272,7 @@ function dayModal(existing){
   const d = existing || {side:"STBD", fwd:true, mid:true};
   modal({title: existing ? "Edit tender day" : "Open tender day", submit: existing ? "Save" : "Open day",
     extra: existing ? `<button type="button" class="btn danger" id="mReset" style="margin-right:auto">Reset board…</button>` : "",
-    body: `<div class="dform dayform"><div class="dleft"><label class="fld"><span>Port</span><input id="mPort" value="${esc(d.port || "")}" placeholder="e.g. Kotor" required></label>
+    body: `<div class="dform dayform"><div class="dleft"><label class="fld"><span>Port</span><input id="mPort" value="${esc(d.port || "")}" placeholder="Type to search · e.g. Kotor" required autocomplete="off"></label><div class="pres" id="mRes" hidden></div><div id="mMem"></div>
       <div class="two"><label class="fld"><span>Date</span><input id="mDate" type="date" value="${esc(d.date || ymd(Date.now()))}"></label>
       <label class="fld"><span>Last tender (24h)</span>${hmInput("mLast", d.lastTender || "")}</label></div>
       <div class="two"><label class="fld"><span>All aboard (24h)</span>${hmInput("mAA", d.allAboard || "")}</label><label class="fld"><span>Ship departure (24h)</span>${hmInput("mDep", d.departure || "")}</label></div>
@@ -2185,20 +2300,40 @@ function dayModal(existing){
         f.querySelector("#mNext").innerHTML = ovn ? (nx.length ? `<b>Overnight:</b> ${nx.join(", ")} on the next day (+1).` : "<b>Overnight</b> ticked.")
           : odd ? `Departure ${dp} is before the last tender ${lt}. <button type="button" class="btn small" id="mOvnYes">Departure next day</button>` : "";
         const y = f.querySelector("#mOvnYes"); if (y) y.addEventListener("click", () => { f.querySelector("#mOvn").checked = true; nextInfo(); }); };
-      f.addEventListener("input", nextInfo); f.addEventListener("click", () => setTimeout(nextInfo, 0)); nextInfo(); },
+      f.addEventListener("input", nextInfo); f.addEventListener("click", () => setTimeout(nextInfo, 0)); nextInfo();
+      /* ports: search the database while typing; a known port shows its data */
+      const pIn = f.querySelector("#mPort"), res = f.querySelector("#mRes"), mem = f.querySelector("#mMem"); let chosen = null;
+      const fill = P => { const set = (id, v) => { const el = f.querySelector(id); if (el && v != null && v !== "" && !el.value){ el.value = v; el.classList.add("pm-filled"); } };
+        set("#mVhf", P.vhf); set("#mUhf", P.uhf); set("#mRun", P._st && P._st.out != null ? Math.round(P._st.out) : null);
+        toast("VHF, UHF and run filled from the port data · check them"); };
+      const pick = async P => { chosen = P; pIn.value = P.name; res.hidden = true; mem.innerHTML = portBoxHTML(P, null, true);
+        const st = await portStats(P); if (chosen !== P) return; P._st = st; mem.innerHTML = portBoxHTML(P, st, true); f.querySelector("#mUseMem").addEventListener("click", () => fill(P)); };
+      const search = () => { const v = pIn.value.trim(), all = portsAll(); chosen = null; mem.innerHTML = "";
+        if (!v){ res.hidden = true; return; }
+        const hits = all.filter(P => portMatch(P.name, v) || portKey(P.name).includes(portKey(v)) || (P.aliases || []).some(a => portMatch(a, v))).slice(0, 6);
+        const exact = hits.find(P => portKey(P.name) === portKey(v));
+        res.innerHTML = hits.map(P => { const n = portDays(P).filter(x => x.id !== (existing && existing.id)).length; return `<button type="button" data-id="${esc(P.id)}"><b>${esc(P.name)}</b><span>${n} visit${n === 1 ? "" : "s"}</span></button>`; }).join("")
+          + (exact ? "" : `<button type="button" class="new" data-new="1"><b>+ New port “${esc(v)}”</b><span>added to the port database</span></button>`);
+        res.hidden = false;
+        res.querySelectorAll("button[data-id]").forEach(b => b.addEventListener("click", () => pick(all.find(P => P.id === b.dataset.id))));
+        const nb = res.querySelector("[data-new]"); if (nb) nb.addEventListener("click", () => { res.hidden = true; }); };
+      pIn.addEventListener("input", search);
+      if (pIn.value.trim()){ const P = portOf(pIn.value.trim(), existing && existing.portId); if (P) pick(P); } },
     onSubmit: f => {
       const port = f.querySelector("#mPort").value.trim();
       if (!port){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Enter the port.</div>`; return false; }
       const rec = {port, date: f.querySelector("#mDate").value || ymd(Date.now()), lastTender: normHM(f.querySelector("#mLast").value) || "", allAboard: normHM(f.querySelector("#mAA").value) || "", departure: normHM(f.querySelector("#mDep").value) || "", overnight: f.querySelector("#mOvn").checked, estRun: parseInt(f.querySelector("#mRun").value, 10) > 0 ? parseInt(f.querySelector("#mRun").value, 10) : null, vhf: f.querySelector("#mVhf").value.trim(), uhf: f.querySelector("#mUhf").value.trim(), total: parseInt(f.querySelector("#mTot").value, 10) || 0};
+      const P0 = portOf(port, null); if (P0 && portKey(P0.name) === portKey(port)) rec.port = P0.name; rec.portId = P0 && portMatch(P0.name, port) ? P0.id : portIdOf(port);
       if (existing) S.store.saveDay(Object.assign({id: existing.id}, rec));
-      else S.store.saveDay(Object.assign({id: "d" + uid(), status:"open", openedAt: Date.now(), tz: DEV_TZ ?? devOff(), side: f.querySelector("#mSide").dataset.val, fwd: f.querySelector("#mFwd").checked, mid: f.querySelector("#mMid").checked}, rec));
+      else { const nd = Object.assign({id: "d" + uid(), status:"open", openedAt: Date.now(), tz: DEV_TZ ?? devOff(), side: f.querySelector("#mSide").dataset.val, fwd: f.querySelector("#mFwd").checked, mid: f.querySelector("#mMid").checked}, rec);
+        S.store.saveDay(nd); if (!P0 || P0.virtual || !portMatch(P0.name, port)) S.store.savePort({id: rec.portId, name: rec.port, vhf: rec.vhf, uhf: rec.uhf, shore: [], created: Date.now(), updatedAt: Date.now()}); }
       toast(existing ? "Day updated" : `Tender day open · ${port}`);
     }});
 }
-function confirmTyped({title, text, word, button, onConfirm}){
+function confirmTyped({title, text, word, button, onConfirm, extra = ""}){
   modal({title, submit: button, danger:true,
-    body: `<div class="warnbox">${text}</div><label class="fld"><span>Type ${word} to confirm</span><input id="mConf" autocomplete="off" autocapitalize="characters"></label><div id="mWarn"></div>`,
-    onSubmit: f => { if (f.querySelector("#mConf").value.trim().toUpperCase() !== word){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Type ${word} exactly to confirm.</div>`; return false; } onConfirm(); }});
+    body: `<div class="warnbox">${text}</div>${extra}<label class="fld"><span>Type ${word} to confirm</span><input id="mConf" autocomplete="off" autocapitalize="characters"></label><div id="mWarn"></div>`,
+    onSubmit: f => { if (f.querySelector("#mConf").value.trim().toUpperCase() !== word){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Type ${word} exactly to confirm.</div>`; return false; } onConfirm(f); }});
 }
 function resetDayModal(){
   confirmTyped({title:"Reset today’s board", word:"RESET", button:"Reset board",
@@ -2214,7 +2349,11 @@ function closeDayModal(){
   const st = ST, active = st.list.filter(u => u.active);
   confirmTyped({title:"Close tender day", word:"CONFIRM", button:"Close day",
     text:`${active.length ? `<b>${active.map(u => esc(u.full)).join(", ")}</b> still in service. ` : ""}${st.ashore > 0 ? `<b>${num(st.ashore)}</b> still counted ashore. ` : ""}The day of ${esc(day().port)} moves to History with its full log and chat. The board stays empty until a new day is opened.`,
-    onConfirm: () => { S.store.saveDay({id: day().id, status:"closed", closedAt: Date.now(), summary: summaryOf(st)}); toast("Day closed and saved to History"); location.hash = "history"; }});
+    extra: (() => { const P = portOf(day().port, day().portId); return `<label class="fld"><span>Port notes · ${esc(day().port)} (optional)</span><textarea id="mPN" rows="2" placeholder="e.g. Strong current at the pier after 14:00">${esc(P && P.notes || "")}</textarea></label>`; })(),
+    onConfirm: f => { const d = Object.assign({}, day(), {status:"closed"}), t = f && f.querySelector("#mPN");
+      S.store.saveDay({id: d.id, status:"closed", closedAt: Date.now(), summary: summaryOf(st)});
+      portLearn(d, t ? {notes: t.value.trim()} : null);
+      toast("Day closed and saved to History"); location.hash = "history"; }});
 }
 
 /* tender sheet: details, note, less frequent actions */
@@ -2337,8 +2476,8 @@ function legendModal(){
       <div><span class="lgchip off">Offline</span><p>Connection lost. Numbers may be out of date; Deck entries sync when the connection returns.</p></div>
       <h4>Capacity bar</h4>
       <div><b class="lgnum">Demand</b><p>Pax moved in the last 30 min, per hour, each way. +25% when most trips leave nearly full (more are waiting than the boats show).</p></div>
-      <div><b class="lgnum">Lift</b><p>What the boats in service can move per hour each way: seats × loads ÷ round trip. The bar shows demand against lift.</p></div>
-      <div><b class="lgnum">Round trip</b><p>Measured from the log: run to shore + time at the pier + run to ship + time at the ship.</p></div>
+      <div><b class="lgnum">Lift</b><p>What the boats in service can move per hour each way: seats × loads ÷ cycle (round trip + time at the ship). The bar shows demand against lift.</p></div>
+      <div><b class="lgnum">Round trip</b><p>From departure at the ship until back at the ship: run to shore + time at the pier + run to ship. Time at the ship (boarding, waiting for a pontoon) is shown apart.</p></div>
       <div><b class="lgnum">Loads</b><p>How full the boats leave when busy, against the max load set.</p></div>
       <div><span class="sug up">▲ Lower 1 tender</span><p>Demand is close to the lift, trips leave full, or demand is rising fast.</p></div>
       <div><span class="sug down">▼ Can be hoisted</span><p>Shown only after 30 min of low demand and 30 min since the last change, and not in the last 2 h before the last tender. Slow to remove, quick to add.</p></div>
@@ -2600,8 +2739,8 @@ function tlHTML(R, r){
 }
 function tlAxis(R){
   if (R.t0 == null) return "";
-  const a = Math.floor(R.t0 / 3600e3) * 3600e3, b = Math.ceil(R.t1 / 3600e3) * 3600e3, W = Math.max(1, b - a), n = Math.round(W / 3600e3), step = n > 10 ? 2 : 1, out = [];
-  for (let t = a; t <= b; t += step * 3600e3) out.push(`<i style="left:${((t - a) / W * 100).toFixed(2)}%">${fmtT(t)}</i>`);
+  const a = Math.floor(R.t0 / 3600e3) * 3600e3, b = Math.ceil(R.t1 / 3600e3) * 3600e3, W = Math.max(1, b - a), n = Math.round(W / 3600e3), step = n > 12 ? 3 : n > 6 ? 2 : 1, out = [];
+  for (let t = a; t < b - 1800e3; t += step * 3600e3) out.push(`<i style="left:${((t - a) / W * 100).toFixed(2)}%">${fmtT(t)}</i>`);
   return `<div class="tlaxis">${out.join("")}</div>`;
 }
 function repLogRows(R){
@@ -2628,7 +2767,7 @@ function timesCells(R){
 function kpiCells(R){
   const st = R.st;
   return [["Pax to shore", num(st.paxOut)], ["Pax back", num(st.paxBack)], ["Trips", String(st.tripsOut + st.tripsBack), `${st.tripsOut} out · ${st.tripsBack} back`],
-    ["Avg round trip", st.cycleAvg != null ? Math.round(st.cycleAvg) + "<small>min</small>" : "—"], ["Tenders used", String(R.own.length) + (R.shore.length ? `<small>+${R.shore.length} shore</small>` : "")],
+    ["Round trip", dayLegs(st).round != null ? Math.round(dayLegs(st).round) + "<small>min</small>" : "—", legTxt(dayLegs(st))], ["Tenders used", String(R.own.length) + (R.shore.length ? `<small>+${R.shore.length} shore</small>` : "")],
     ["Tender hours", hhmm(R.waterOwn) + "<small>h</small>"]];
 }
 function reportsHTML(){
@@ -2653,6 +2792,7 @@ function reportsHTML(){
       <div class="tablebox"><table class="rp-run"><thead><tr><th>Tender</th><th>Lowered</th><th>Out of water</th><th style="text-align:right">In water</th><th style="text-align:right">Trips</th><th style="text-align:right">Pax out</th><th style="text-align:right">Pax back</th><th>Drivers</th><th>${tlAxis(R) || "Timeline"}</th></tr></thead>
       <tbody>${R.own.map(tenderRow).join("")}${R.shore.map(tenderRow).join("")}</tbody>
       <tfoot><tr><td>Own tenders</td><td></td><td></td><td class="mono num">${hhmm(R.waterOwn)}</td><td class="num">${R.own.reduce((a, r) => a + r.u.tripsOut + r.u.tripsBack, 0)}</td><td class="num">${num(R.own.reduce((a, r) => a + r.u.paxOut, 0))}</td><td class="num">${num(R.own.reduce((a, r) => a + r.u.paxBack, 0))}</td><td></td><td></td></tr></tfoot></table></div></div>
+    ${repCountScreen(R)}
     <div class="rp-sec"><h3>Issues <small>${R.issues.length ? R.issues.length + " reported" : "none reported"}</small></h3>
       ${R.issues.length ? `<div class="rp-iss">${R.issues.map(i => `<div><span class="mono">${fmtT(i.t)}</span><b>${esc(fullName(i.unitName))}</b><div><span class="cat">${esc(i.category)}</span><p>${esc(i.text)}</p>${i.status === "resolved" ? `<div class="res">${i.resolvedAt ? fmtT(i.resolvedAt) + " · " : ""}${esc(i.resolution || "Resolved")}</div>` : ""}</div><span class="status ${i.status}">${i.status}</span></div>`).join("")}</div>` : `<p class="rp-empty">No issues reported on this day.</p>`}</div>
     <div class="rp-sec"><h3>Log</h3>
@@ -2660,9 +2800,16 @@ function reportsHTML(){
       <div class="rp-flt"><span class="lbl">Type</span>${REP_KINDS.map(([v, l]) => `<button class="fchip" data-act="rep-kind" data-v="${v}" aria-pressed="${S.rep.kind === v}">${l}</button>`).join("")}
         <input class="f" id="repQ" type="search" placeholder="Search driver, event, time…" value="${esc(S.rep.q)}" aria-label="Search the log"><span class="rp-count" id="repCount">${L.count}</span></div>
       <div class="tablebox"><table><thead><tr><th>Time</th><th>Unit</th><th>Event</th><th style="text-align:right">Pax</th><th>Driver</th></tr></thead><tbody id="repRows">${L.rows}</tbody></table></div>
-      <p class="hint" style="margin:0">Excel and PDF include the log with the filters shown here.</p></div>${repChatHTML(d)}</section>`;
+      <p class="hint" style="margin:0">Excel has the full log; the PDF can add it. Both use the filters shown here.</p></div>${repChatHTML(d)}</section>`;
 }
 document.addEventListener("input", e => { if (e.target && e.target.id === "repQ"){ S.rep.q = e.target.value; const d = repDay(), ev = repEvents(); if (!d || !ev) return; const L = repLogBody(reportOf(d, ev)); $("#repRows").innerHTML = L.rows; $("#repCount").textContent = L.count; } });
+function repCountScreen(R){
+  const C = repCountCheck(R), st = R.st, sgn = n => (n > 0 ? "+" : n < 0 ? "−" : "±") + num(Math.abs(n)), off = C.diff - C.end;
+  return `<div class="rp-sec"><h3>Passenger count <small>tender counts against the off-ship count</small></h3>
+    <div class="rp-times"><div><span>Pax to shore</span><b>${num(st.paxOut)}</b></div><div><span>Pax back</span><b>${num(st.paxBack)}</b></div><div><span>Difference</span><b>${num(C.diff)}</b></div><div><span>Corrected by syncs</span><b>${sgn(C.corr)}</b></div><div><span>Ashore at the end</span><b>${num(C.end)}</b></div></div>
+    ${C.syncs.length ? `<div class="tablebox"><table><thead><tr><th>Sync</th><th style="text-align:right">Off ship</th><th style="text-align:right">Correction</th><th>Trips since the sync before</th></tr></thead><tbody>${C.syncs.map(x => `<tr><td class="t">${fmtT(x.t)}</td><td class="num">${x.off != null ? num(x.off) : "—"}</td><td class="num" style="${Math.abs(x.d) >= 50 ? "color:var(--accent);font-weight:700" : ""}">${sgn(x.d)}</td><td>${x.trips ? `${x.nOut} trips to shore (${num(x.pax)} pax) · ${x.nBack} back · ${x.boats.map(esc).join(", ")}` : "no trips"}</td></tr>`).join("")}</tbody></table></div>` : `<p class="rp-empty">No syncs on this day.</p>`}
+    ${off ? `<p class="hint" style="margin:0">Tender counts were ${num(Math.abs(off))} ${off > 0 ? "above" : "below"} the off-ship count; the syncs corrected it. The difference may come from incorrect counts reported by the tenders or from numbers entered incorrectly by the operator.</p>` : ""}</div>`;
+}
 function repChatHTML(d){
   if (CONFIG.standalone) return "";
   const live = S.data.currentDay && S.data.currentDay.id === d.id;
@@ -2674,31 +2821,56 @@ function repFilterNote(){ const f = S.rep, parts = []; if (f.unit !== "all") par
 function repFile(d, ext){ return `tender-report_${d.date}_${(d.port || "port").replace(/\W+/g, "-")}.${ext}`; }
 
 /* PDF: an A4 layout printed by the browser (Save as PDF) */
-function reportPrintHTML(R){
-  const d = R.d, st = R.st, {all, list} = repLogRows(R), fn = repFilterNote();
-  const trow = r => `<tr class="${r.u.kind === "shore" ? "shore" : ""}"><td><b>${esc(r.u.full)}</b>${notUsed(r) ? " · not used" : ""}</td><td class="pm">${fmtT(r.first)}</td><td class="pm">${r.last ? fmtT(r.last) : (r.segs.length ? "in water" : "—")}</td><td class="pm pn">${hhmm(r.water)}${r.relowered ? " (×" + r.segs.length + ")" : ""}${r.u.kind === "shore" ? "*" : ""}</td><td class="pn">${r.u.tripsOut + r.u.tripsBack}</td><td class="pn">${num(r.u.paxOut)}</td><td class="pn">${num(r.u.paxBack)}</td><td>${esc(r.drivers.join(", ") || "—")}</td></tr>`;
-  const tl = R.rows.length && R.t0 != null ? `<div class="tlw">${tlAxis(R)}${R.rows.map(r => `<div class="tlr"><b>${esc(r.u.name)}</b>${tlHTML(R, r)}</div>`).join("")}
-    <div class="lg"><span><em></em>In the water</span>${R.shore.length ? `<span><em class="s"></em>Shoretender on service</span>` : ""}<span><em class="t"></em>Departure to shore</span>${R.rows.some(r => r.flags.length) ? `<span><em class="f"></em>Status reported</span>` : ""}</div></div>` : "";
+function repCountCheck(R){
+  const st = R.st; let prevT = -Infinity;
+  const syncs = st.log.filter(l => l.e.type === "sync" && l.meta).map(l => { const deps = st.log.filter(x => x.e.type === "depart" && x.e.t > prevT && x.e.t <= l.e.t);
+    const boats = [...new Set(deps.map(x => x.unitName))]; const o = {t:l.e.t, d:l.meta.now - l.meta.prev, off:l.meta.off, now:l.meta.now, trips: deps.length, nOut: deps.filter(x => x.e.dir === "shore").length, nBack: deps.filter(x => x.e.dir === "ship").length, pax: deps.filter(x => x.e.dir === "shore").reduce((a, x) => a + (+x.e.pax || 0), 0), boats, since: prevT}; prevT = l.e.t; return o; });
+  const corr = syncs.reduce((a, x) => a + x.d, 0), diff = st.paxOut - st.paxBack;
+  return {syncs, corr, diff, end: st.ashore, ok: Math.abs(diff + corr - st.ashore) < 1};
+}
+const KEY_TYPES = ["opentender","status"];
+function repKeyEvents(R){ return R.st.log.filter(l => KEY_TYPES.includes(l.e.type) || l.kind === "last"); }
+/* PDF: page 1 is the day at a glance; the log is added only if asked */
+function reportPrintHTML(R, withLog){
+  const d = R.d, {all, list} = repLogRows(R), fn = repFilterNote(), C = repCountCheck(R), sgn = n => (n > 0 ? "+" : n < 0 ? "−" : "±") + num(Math.abs(n));
+  const trow = r => `<tr class="${r.u.kind === "shore" ? "shore" : ""}"><td class="nw"><b>${esc(r.u.full)}</b>${notUsed(r) ? ` <span class="nu">not used</span>` : ""}</td><td class="pm">${fmtT(r.first)}</td><td class="pm">${r.last ? fmtT(r.last) : (r.segs.length ? "in water" : "—")}</td><td class="pm pn">${hhmm(r.water)}${r.relowered ? " (×" + r.segs.length + ")" : ""}${r.u.kind === "shore" ? "*" : ""}</td><td class="pn">${r.u.tripsOut + r.u.tripsBack}</td><td class="pn">${num(r.u.paxOut)}</td><td class="pn">${num(r.u.paxBack)}</td><td class="dr">${esc(r.drivers.join(", ") || "—")}</td><td class="tlc">${tlHTML(R, r)}</td></tr>`;
+  const tl = R.rows.length && R.t0 != null ? `<div class="tlw"><div class="lg"><span><em></em>In the water</span>${R.shore.length ? `<span><em class="s"></em>Shoretender on service</span>` : ""}<span><em class="t"></em>Departure to shore</span>${R.rows.some(r => r.flags.length) ? `<span><em class="f"></em>Status reported</span>` : ""}${R.shore.length ? `<span>* Shoretenders: time on service, not in the own tenders total</span>` : ""}</div></div>` : "";
+  const keys = repKeyEvents(R);
+  const count = `<div class="cc"><div class="ccf"><div><span>To shore</span><b>${num(R.st.paxOut)}</b></div><div><span>Back</span><b>${num(R.st.paxBack)}</b></div><div><span>Difference</span><b>${num(C.diff)}</b></div><div><span>Syncs (${C.syncs.length})</span><b>${sgn(C.corr)}</b></div><div><span>Ashore end</span><b>${num(C.end)}</b></div></div>
+    <div class="ccs">${C.syncs.length ? `<table><thead><tr><th>Sync</th><th class="pn">Off ship</th><th class="pn">Correction</th><th>Trips since the sync before</th></tr></thead><tbody>${C.syncs.map(x => `<tr><td class="pm">${fmtT(x.t)}</td><td class="pn">${x.off != null ? num(x.off) : "—"}</td><td class="pn ${Math.abs(x.d) >= 50 ? "big" : ""}">${sgn(x.d)}</td><td class="cov">${x.trips ? `${x.nOut} to shore (${num(x.pax)} pax) · ${x.nBack} back${Math.abs(x.d) >= 50 ? `<br>${x.boats.map(esc).join(", ")}` : ""}` : "no trips"}</td></tr>`).join("")}</tbody></table>` : `<p class="none">No syncs on this day.</p>`}
+    <p class="fnote">${C.diff === 0 && C.corr === 0 ? "Tender counts match: nobody left unaccounted." : `Tender counts were ${num(Math.abs(C.diff - C.end))} ${C.diff - C.end > 0 ? "above" : "below"} the off-ship count; the syncs corrected it. The difference may come from incorrect counts reported by the tenders or from numbers entered incorrectly by the operator.`}</p></div></div>`;
   return `<div class="pb"><div class="l"><small>Tendering Operations · Day report</small><b>${esc(CONFIG.shipName)}</b></div>
       <div class="r"><h1>${esc(d.port)}</h1><span>${fmtDate(d.date)} · ship’s time ${tzLabel(TZ ?? devOff())}${d.status === "open" ? " · in progress" : ""}</span></div></div>
-    <div class="kp">${kpiCells(R).map(([k, v]) => `<div><span>${k}</span><b>${v}</b></div>`).join("")}</div>
+    <div class="kp">${kpiCells(R).map(([k, v, x]) => `<div><span>${k}</span><b>${v}</b>${x && k === "Round trip" ? `<i class="kx">${x.replace(/ · /g, "<br>")}</i>` : ""}</div>`).join("")}</div>
     <div class="tm">${timesCells(R).map(([k, v, x, late]) => `<div class="${late ? "late" : ""}"><span>${k}</span><b>${esc(v)}</b> ${x}</div>`).join("")}</div>
     <h2>Running hours <small>time in the water, from lowered to out of the water</small></h2>
-    <table><thead><tr><th>Tender</th><th>Lowered</th><th>Out of water</th><th class="pn">In water</th><th class="pn">Trips</th><th class="pn">Pax out</th><th class="pn">Pax back</th><th>Drivers</th></tr></thead>
+    <table class="rh"><thead><tr><th>Tender</th><th>Lowered</th><th>Out of water</th><th class="pn">In water</th><th class="pn">Trips</th><th class="pn">Pax out</th><th class="pn">Pax back</th><th>Drivers</th><th class="tlc">${tlAxis(R)}</th></tr></thead>
       <tbody>${R.own.map(trow).join("")}${R.shore.map(trow).join("")}</tbody>
-      <tfoot><tr><td>Own tenders</td><td></td><td></td><td class="pm pn">${hhmm(R.waterOwn)}</td><td class="pn">${R.own.reduce((a, r) => a + r.u.tripsOut + r.u.tripsBack, 0)}</td><td class="pn">${num(R.own.reduce((a, r) => a + r.u.paxOut, 0))}</td><td class="pn">${num(R.own.reduce((a, r) => a + r.u.paxBack, 0))}</td><td></td></tr></tfoot></table>
-    ${R.shore.length ? `<p class="fnote">* Shoretenders: time on service, from start to end of service. Not counted in the own tenders total.</p>` : ""}
+      <tfoot><tr><td class="nw">Own tenders</td><td></td><td></td><td class="pm pn">${hhmm(R.waterOwn)}</td><td class="pn">${R.own.reduce((a, r) => a + r.u.tripsOut + r.u.tripsBack, 0)}</td><td class="pn">${num(R.own.reduce((a, r) => a + r.u.paxOut, 0))}</td><td class="pn">${num(R.own.reduce((a, r) => a + r.u.paxBack, 0))}</td><td></td><td></td></tr></tfoot></table>
     ${tl}
-    <h2>Issues <small>${R.issues.length ? R.issues.length + " reported" : "none reported"}</small></h2>
-    ${R.issues.length ? `<table><thead><tr><th>Time</th><th>Tender</th><th>Category</th><th>Description</th><th>Status</th></tr></thead><tbody>${R.issues.map(i => `<tr><td class="pm">${fmtT(i.t)}</td><td class="nw"><b>${esc(fullName(i.unitName))}</b></td><td>${esc(i.category)}</td><td>${esc(i.text)}${i.status === "resolved" && i.resolution ? `<div class="fnote">${i.resolvedAt ? fmtT(i.resolvedAt) + " · " : ""}${esc(i.resolution)}</div>` : ""}</td><td><span class="st ${i.status}">${i.status}</span></td></tr>`).join("")}</tbody></table>` : `<p class="none">No issues reported on this day.</p>`}
-    <h2>Log <small>${fn ? `filtered: ${esc(fn)} · ` : ""}${list.length} of ${all.length} entries</small></h2>
-    <table class="log"><thead><tr><th style="width:13mm">Time</th><th style="width:22mm">Unit</th><th>Event</th><th class="pn" style="width:12mm">Pax</th><th style="width:26mm">Driver</th></tr></thead>
-      <tbody>${list.map(l => `<tr class="k-${l.kind}"><td class="pm">${fmtT(l.e.t)}</td><td>${esc(fullName(l.unitName))}</td><td>${esc(l.text)}</td><td class="pn">${l.pax != null ? l.pax : ""}</td><td>${esc(l.driver || "")}</td></tr>`).join("")}</tbody></table>`;
+    <div class="two-c"><div><h2>Passenger count</h2>${count}</div>
+      <div><h2>Key moments</h2>${keys.length ? `<table class="ke"><tbody>${keys.map(l => `<tr class="k-${l.kind}"><td class="pm">${fmtT(l.e.t)}</td><td>${l.unitName && l.unitName !== "—" ? `<b>${esc(l.unitName)}</b> ` : ""}${esc(l.text.replace(/ · not in service$/, "").replace(/ \(count was.*$/, ""))}</td></tr>`).join("")}</tbody></table>` : `<p class="none">No Open Tender, technical issues, PVI/PDI or emergencies.</p>`}
+        <h2>Issues <small>${R.issues.length ? R.issues.length + " reported" : "none reported"}</small></h2>
+        ${R.issues.length ? `<table class="ke"><tbody>${R.issues.map(i => `<tr><td class="pm">${fmtT(i.t)}</td><td><b>${esc(fullName(i.unitName))}</b> · ${esc(i.category)} <span class="st ${i.status}">${i.status}</span><div>${esc(i.text)}</div>${i.status === "resolved" && i.resolution ? `<div class="fnote">${i.resolvedAt ? fmtT(i.resolvedAt) + " · " : ""}${esc(i.resolution)}</div>` : ""}</td></tr>`).join("")}</tbody></table>` : `<p class="none">No issues reported on this day.</p>`}</div></div>
+    ${withLog ? `<div class="logp"><h2>Log <small>${fn ? `filtered: ${esc(fn)} · ` : ""}${list.length} of ${all.length} entries</small></h2>
+    <div class="logcols"><table class="log"><thead><tr><th>Time</th><th>Unit</th><th>Event</th><th class="pn">Pax</th></tr></thead>
+      <tbody>${list.map(l => `<tr class="k-${l.kind}"><td class="pm">${fmtT(l.e.t)}</td><td>${esc(l.unitName)}</td><td>${esc(l.text)}${l.driver ? ` <span class="dv">· ${esc(l.driver)}</span>` : ""}</td><td class="pn">${l.pax != null ? l.pax : ""}</td></tr>`).join("")}</tbody></table></div></div>` : ""}`;
 }
-function repPDF(){
+function repPDFModal(){
+  const d = repDay(), ev = repEvents(); if (!d || !ev) return;
+  const R = reportOf(d, ev), {all, list} = repLogRows(R), fn = repFilterNote();
+  modal({title:"Export PDF", submit:"Create PDF",
+    body:`<div class="choice imp" id="mPdf" data-val="sum" style="grid-template-columns:1fr">
+      <button type="button" data-berth="sum" aria-pressed="true">Day summary<small>Running hours, passenger count, key moments and issues · usually 1 page</small></button>
+      <button type="button" data-berth="log" aria-pressed="false">Summary + log<small>${fn ? `Log filtered (${esc(fn)}): ` : "Full log: "}${list.length} of ${all.length} entries · about ${Math.max(1, Math.ceil(list.length / 110))} more page${Math.ceil(list.length / 110) > 1 ? "s" : ""}</small></button></div>
+      <p class="hint" style="margin:0">Then choose “Save as PDF” in the print window. The complete log is always in Export Excel.</p>`,
+    onOpen: f => bindChoice(f, "mPdf"),
+    onSubmit: f => { const w = f.querySelector("#mPdf").dataset.val === "log"; setTimeout(() => repPDF(w), 50); }});
+}
+function repPDF(withLog){
   const d = repDay(), ev = repEvents(); if (!d || !ev) return;
   const R = reportOf(d, ev), root = $("#print-root");
-  root.innerHTML = reportPrintHTML(R);
+  root.innerHTML = reportPrintHTML(R, !!withLog);
   document.documentElement.style.setProperty("--pfoot", `"Generated ${dLabel(Date.now(), {day:"numeric", month:"short", year:"numeric"})} ${fmtT(Date.now())} ship’s time ${tzLabel(TZ ?? devOff())} · ${CONFIG.shipName} · Tendering Operations"`);
   const t = document.title; document.title = repFile(d, "pdf").replace(/\.pdf$/, "");
   document.body.classList.add("printing");
@@ -2744,7 +2916,7 @@ function repXLSX(){
   const d = repDay(), ev = repEvents(); if (!d || !ev) return;
   const R = reportOf(d, ev), st = R.st, {list} = repLogRows(R), tz = tzLabel(TZ ?? devOff()), fn = repFilterNote();
   const sum = [["Day report", ""], ["Ship", CONFIG.shipName], ["Port", d.port], ["Date", d.date], ["Status", d.status === "open" ? "In progress" : "Closed"], ["Ship's time", tz], ["", ""],
-    ["Pax to shore", st.paxOut], ["Pax back", st.paxBack], ["Trips to shore", st.tripsOut], ["Trips to ship", st.tripsBack], ["Avg round trip (min)", st.cycleAvg != null ? Math.round(st.cycleAvg) : ""],
+    ["Pax to shore", st.paxOut], ["Pax back", st.paxBack], ["Trips to shore", st.tripsOut], ["Trips to ship", st.tripsBack], ...(G => [["Round trip, ship → ship (min)", G.round != null ? Math.round(G.round) : ""], ["Run to shore (min)", G.out != null ? Math.round(G.out) : ""], ["At the pier (min)", G.pier != null ? Math.round(G.pier) : ""], ["Run to ship (min)", G.back != null ? Math.round(G.back) : ""], ["Time at ship (min)", G.ship != null ? Math.round(G.ship) : ""]])(dayLegs(st)),
     ["Own tenders used", R.own.length], ["Shoretenders used", R.shore.length], ["Own tender hours in water", hhmm(R.waterOwn)], ["Ashore at end (count)", st.ashore], ["Syncs", R.syncs], ["Issues reported", R.issues.length], ["", ""],
     ...timesCells(R).map(([k, v, x]) => [k, v + (x ? " " + x.replace(/<[^>]+>/g, "") : "")]), ["", ""], ["Generated", `${ymd(Date.now())} ${fmtT(Date.now())} ship's time ${tz}`]];
   const run = [["Tender", "Type", "Lowered", "Out of water", "In water (h:mm)", "In water (hours)", "Times lowered", "Trips to shore", "Trips to ship", "Pax to shore", "Pax back", "Drivers", "Note"],
@@ -2758,6 +2930,139 @@ function repXLSX(){
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = repFile(d, "xlsx");
   document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
   toast("Excel saved · " + a.download);
+}
+
+
+/* ---------------- ports: a small database that fills itself from the tender days ---------------- */
+const portKey = n => String(n || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+function lev(a, b){ const m = a.length, n = b.length; if (!m || !n) return m + n; let prev = Array.from({length:n + 1}, (_, j) => j);
+  for (let i = 1; i <= m; i++){ const cur = [i]; for (let j = 1; j <= n; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); prev = cur; } return prev[n]; }
+function portMatch(a, b){ const x = portKey(a).replace(/ /g, ""), y = portKey(b).replace(/ /g, ""); if (!x || !y) return false; if (x === y) return true;
+  if (Math.min(x.length, y.length) >= 4 && (x.startsWith(y) || y.startsWith(x))) return true;
+  return Math.min(x.length, y.length) >= 6 && lev(x, y) <= 2; }
+const median = a => { const v = a.filter(x => x != null && isFinite(x)).slice().sort((p, q) => p - q); if (!v.length) return null; const m = Math.floor(v.length / 2); return v.length % 2 ? v[m] : (v[m - 1] + v[m]) / 2; };
+const mins = v => v == null ? "—" : Math.round(v) + "′";
+const portIdOf = name => "p" + portKey(name).replace(/ /g, "-").slice(0, 40);
+/* ports on record, plus any port that only exists in old days (shown until Deck's device records it) */
+function portsAll(){
+  const rec = (S.data.ports || []).slice(), out = rec.map(x => Object.assign({}, x));
+  (S.data.days || []).forEach(d => { if (!d.port) return; if (!out.some(x => x.id === d.portId || portMatch(x.name, d.port))) out.push({id: portIdOf(d.port), name: d.port, virtual:true, shore:[], vhf:d.vhf || "", uhf:d.uhf || ""}); });
+  return out.sort((a, b) => a.name.localeCompare(b.name));
+}
+function portOf(name, portId){ const all = portsAll(); return (portId && all.find(x => x.id === portId)) || all.find(x => portMatch(x.name, name)) || null; }
+function portDays(P){ return (S.data.days || []).filter(d => d.portId === P.id || (!d.portId && portMatch(d.port, P.name)) || (P.aliases || []).some(a => portMatch(d.port, a))).sort((a, b) => (b.date || "").localeCompare(a.date || "")); }
+S.portMem = S.portMem || {};
+async function visitFacts(d){
+  if (S.portMem[d.id] && d.status !== "open") return S.portMem[d.id];
+  const ev = S.data.currentDay && S.data.currentDay.id === d.id ? S.data.events : await S.store.getEvents(d.id), st = compute(d, ev);
+  const f = {id:d.id, date:d.date, status:d.status, side:d.side || "", out: median(st.legs.tOut), pier: median(st.legs.pier), round: median(st.legs.round || []), cycle: st.cycleAvg, paxOut: st.paxOut, tenders: st.list.filter(u => u.kind === "tender" && u.lowered).length,
+    shore: st.list.filter(u => u.kind === "shore").map(u => ({name:u.name, cap:u.cap, used: u.tripsOut + u.tripsBack > 0})),
+    incidents: st.log.filter(l => l.e.type === "status" && l.e.status !== "ok").length + (S.data.issues || []).filter(i => i.dayId === d.id).length};
+  if (d.status !== "open") S.portMem[d.id] = f; return f;
+}
+async function portStats(P){
+  const days = portDays(P).filter(d => d.status !== "open").slice(0, 8), facts = [];
+  for (const d of days){ try { facts.push(await visitFacts(d)); } catch(e){} }
+  return {facts, n: days.length, last: days[0] || null, out: median(facts.map(f => f.out)), pier: median(facts.map(f => f.pier)), round: median(facts.map(f => f.round))};
+}
+/* Deck keeps the records up to date: new port when a day opens, details when it closes */
+async function portLearn(d, extra){
+  if (!isAdmin() || !d || !d.port) return;
+  const P = portOf(d.port, d.portId), id = P && !P.virtual ? P.id : (P ? P.id : portIdOf(d.port));
+  const rec = {id, name: P ? P.name : d.port, updatedAt: Date.now()};
+  if (!P || P.virtual) rec.created = Date.now();
+  if (d.vhf) rec.vhf = d.vhf; if (d.uhf) rec.uhf = d.uhf;
+  try { const f = await visitFacts(d); const shore = ((P && P.shore) || []).map(x => Object.assign({}, x));
+    f.shore.forEach(x => { const k = shore.find(y => y.name.toLowerCase() === x.name.toLowerCase()); if (k) k.cap = x.cap || k.cap; else shore.push({name:x.name, cap:x.cap}); });
+    rec.shore = shore; } catch(e){}
+  if (extra) Object.assign(rec, extra);
+  S.store.savePort(rec);
+  if (d.portId !== id) S.store.saveDay({id: d.id, portId: id});
+}
+/* first run of this version: record every port already in History */
+async function portsBackfill(){
+  if (S.portsFilled || !isAdmin() || S.data.portsOK === false) return; S.portsFilled = true;
+  const done = new Set();
+  for (const d of (S.data.days || []).filter(x => x.status !== "open").slice().reverse()){
+    const P = portOf(d.port, d.portId); if (P && !P.virtual && d.portId === P.id) continue;
+    await portLearn(d); done.add(portKey(d.port));
+  }
+}
+function portBoxHTML(P, st, withUse, compact){
+  const n = st ? st.n : 0;
+  return `<div class="pm-box">${compact ? "" : `<div class="pm-h"><b>${esc(P.name)}</b><span>${n ? `${n} visit${n > 1 ? "s" : ""} · last ${fmtDate(st.last.date)}` : "new port"}</span>${withUse ? `<button type="button" class="btn small" id="mUseMem">Use port data</button>` : ""}</div>`}
+    <div class="pm-g"><div><span>Run to shore</span><b>${mins(st && st.out)}${st && st.out != null ? "<small>real</small>" : ""}</b></div><div><span>Round trip</span><b>${mins(st && st.round)}</b></div>
+      <div><span>At the pier</span><b>${mins(st && st.pier)}</b></div><div><span>VHF · UHF</span><b>${esc(P.vhf || "—")} · ${esc(P.uhf || "—")}</b></div></div>
+    ${compact ? "" : `<div class="pm-st">${(P.shore || []).length ? `<b>Shoretenders</b> ${P.shore.map(x => `${esc(x.name)} <i>max ${x.cap}</i>`).join(" · ")}` : "<i>No shoretenders on record</i>"}</div>
+    ${P.notes ? `<div class="pm-note">${esc(P.notes)}</div>` : ""}`}</div>`;
+}
+
+/* History → Ports */
+S.portSel = null; S.histTab = "days";
+function histSegHTML(){ return `<span class="hseg" role="tablist"><a href="#history" data-act="htab" data-v="days" ${S.histTab !== "ports" ? 'aria-current="page"' : ""}>Days</a><a href="#history" data-act="htab" data-v="ports" ${S.histTab === "ports" ? 'aria-current="page"' : ""}>Ports</a></span>`; }
+function portsHTML(){
+  if (S.portSel) return portDetailHTML();
+  const all = portsAll();
+  return `<section class="panel"><div class="panel-head"><h2>Ports</h2>${histSegHTML()}</div>
+    ${S.data.portsOK === false ? `<div class="warnbox">The port database is not enabled on the server yet. Ports below come from the tender days; details cannot be saved until it is enabled.</div>` : ""}
+    ${all.length ? `<div class="plist">${all.map(P => { const days = portDays(P), last = days[0];
+      return `<button class="pcard" data-act="port-open" data-id="${esc(P.id)}"><div class="t"><b>${esc(P.name)}</b><span>${days.length} visit${days.length === 1 ? "" : "s"}${last ? " · " + fmtDate(last.date).replace(/^\w+, /, "") : ""}</span></div>
+        <div class="g"><span>VHF <b>${esc(P.vhf || "—")}</b></span><span>UHF <b>${esc(P.uhf || "—")}</b></span></div>
+        ${(P.shore || []).length ? `<div class="psh">Shoretenders: ${P.shore.map(x => `${esc(x.name)} ${x.cap}`).join(" · ")}</div>` : ""}${P.notes ? `<div class="nt">${esc(P.notes.length > 90 ? P.notes.slice(0, 88) + "…" : P.notes)}</div>` : ""}</button>`; }).join("")}</div>`
+      : `<p class="hint" style="margin:0">Ports are added automatically when a tender day is opened.</p>`}</section>`;
+}
+function portDetailHTML(){
+  const P = portsAll().find(x => x.id === S.portSel); if (!P){ S.portSel = null; return portsHTML(); }
+  const st = S.portStats && S.portStats.id === P.id ? S.portStats.v : null;
+  if (!st && !S.portStatsLoading){ S.portStatsLoading = true; portStats(P).then(v => { S.portStats = {id:P.id, v}; S.portStatsLoading = false; if (S.view === "history") render(); }).catch(() => { S.portStatsLoading = false; }); }
+  const days = portDays(P), byId = id => st && st.facts.find(f => f.id === id), ed = isAdmin() && S.data.portsOK !== false;
+  return `<section class="panel"><div class="panel-head"><button class="btn" data-act="port-back">← All ports</button><h2>${esc(P.name)}</h2>${ed ? `<button class="btn" data-act="port-edit">Edit port</button>` : ""}</div>
+    <div class="pdet"><div class="card"><h3>Port details</h3>${portBoxHTML(P, st, false, true)}
+        <div class="sumgrid"><div><span>Visits</span><b>${days.length}</b></div><div><span>Last visit</span><b>${days[0] ? fmtDate(days[0].date).replace(/^\w+, /, "") : "—"}</b></div><div><span>Avg pax ashore</span><b>${st && st.facts.length ? num(st.facts.reduce((a, f) => a + f.paxOut, 0) / st.facts.length) : "—"}</b></div></div></div>
+      <div class="card"><h3>Shoretenders${ed ? `<button class="btn small" data-act="port-shore">Edit</button>` : ""}</h3>
+        ${(P.shore || []).length ? `<div class="shl">${P.shore.map(x => `<div><b>${esc(x.name)}</b><span class="cap">max ${x.cap}</span></div>`).join("")}</div>` : `<p class="hint" style="margin:0">Shoretenders used here are added automatically when the day closes.</p>`}
+        <h3>Notes</h3>${P.notes ? `<div class="pm-note">${esc(P.notes)}</div>` : `<p class="hint" style="margin:0">No notes yet.</p>`}</div></div>
+    <h3 class="bh">Tender days in ${esc(P.name)}</h3>
+    <div class="vlist"><button class="hd" tabindex="-1"><span>Date</span><span>Pax ashore</span><span>Round trip</span><span>Pontoon side</span><span></span></button>${days.map(d => { const f = byId(d.id);
+      return `<button data-act="port-day" data-id="${d.id}"><b>${fmtDate(d.date)}${d.status === "open" ? " · today" : ""}</b><span>${f ? num(f.paxOut) : d.summary ? num(d.summary.paxOut) : "…"}</span><span class="mono">${f ? mins(f.round) : "…"}</span><span>${d.side === "PORT" ? "Port" : d.side === "STBD" ? "Starboard" : "—"}</span><span class="go">Report →</span></button>`; }).join("")}</div></section>`;
+}
+function portEditModal(P){
+  modal({title:`Edit ${P.name}`, submit:"Save",
+    body:`<label class="fld"><span>Port name</span><input id="mPn" value="${esc(P.name)}"></label>
+      <div class="two"><label class="fld"><span>VHF</span><input id="mPv" value="${esc(P.vhf || "")}"></label><label class="fld"><span>UHF</span><input id="mPu" value="${esc(P.uhf || "")}"></label></div>
+      <label class="fld"><span>Notes</span><textarea id="mPno" rows="3" placeholder="e.g. Strong current at the pier after 14:00">${esc(P.notes || "")}</textarea></label>
+      ${portsAll().filter(x => x.id !== P.id).length ? `<details class="ua-more"><summary>Merge with another port</summary><p class="hint">Use when the same port was written two ways. Its days and shoretenders move here.</p>
+        <select class="f" id="mMerge"><option value="">—</option>${portsAll().filter(x => x.id !== P.id).map(x => `<option value="${esc(x.id)}">${esc(x.name)}</option>`).join("")}</select></details>` : ""}`,
+    onOpen: f => { f.dataset.nofocus = 1; },
+    onSubmit: f => { const name = f.querySelector("#mPn").value.trim() || P.name;
+      const rec = {id:P.id, name, vhf:f.querySelector("#mPv").value.trim(), uhf:f.querySelector("#mPu").value.trim(), notes:f.querySelector("#mPno").value.trim(), shore:P.shore || [], updatedAt:Date.now()};
+      const m = f.querySelector("#mMerge") && f.querySelector("#mMerge").value;
+      if (m){ const O = portsAll().find(x => x.id === m); if (O){
+        (O.shore || []).forEach(x => { if (!rec.shore.some(y => y.name.toLowerCase() === x.name.toLowerCase())) rec.shore.push(x); });
+        rec.aliases = [...new Set([...(P.aliases || []), O.name, ...(O.aliases || [])])];
+        portDays(O).forEach(d => S.store.saveDay({id:d.id, portId:P.id}));
+        if (!O.virtual) S.store.deletePort(O.id); } }
+      S.store.savePort(rec); S.portStats = null; toast("Port saved"); }});
+}
+function portShoreModal(P){
+  let list = (P.shore || []).map(x => Object.assign({}, x));
+  const rows = () => list.map((x, i) => `<div><input class="f" data-i="${i}" data-k="name" value="${esc(x.name)}" aria-label="Name"><input class="f" data-i="${i}" data-k="cap" type="number" inputmode="numeric" value="${x.cap || ""}" style="max-width:90px" aria-label="Max load"><button type="button" class="btn small" data-del="${i}">Remove</button></div>`).join("");
+  modal({title:`Shoretenders · ${P.name}`, submit:"Save",
+    body:`<div class="shl" id="mSl">${rows()}</div><button type="button" class="btn" id="mAdd">+ Add shoretender</button><p class="hint" style="margin:0">Name and max load. Shown as quick picks when adding a shoretender in this port.</p>`,
+    onOpen: f => { f.dataset.nofocus = 1; const box = f.querySelector("#mSl");
+      const bind = () => { box.querySelectorAll("input").forEach(inp => inp.addEventListener("input", () => { const x = list[+inp.dataset.i]; x[inp.dataset.k] = inp.dataset.k === "cap" ? parseInt(inp.value, 10) || null : inp.value; }));
+        box.querySelectorAll("[data-del]").forEach(b => b.addEventListener("click", () => { list.splice(+b.dataset.del, 1); box.innerHTML = rows(); bind(); })); };
+      bind(); f.querySelector("#mAdd").addEventListener("click", () => { list.push({name:"", cap:SHORE_CAP}); box.innerHTML = rows(); bind(); box.querySelector("div:last-child input").focus(); }); },
+    onSubmit: () => { S.store.savePort({id:P.id, name:P.name, shore: list.filter(x => x.name.trim()).map(x => ({name:x.name.trim(), cap:x.cap || SHORE_CAP})), updatedAt:Date.now()}); toast("Shoretenders saved"); }});
+}
+/* from the board: this port at a glance */
+async function portModal(){
+  const d = day(); if (!d) return; const P = portOf(d.port, d.portId) || {id:portIdOf(d.port), name:d.port, shore:[], virtual:true};
+  const st = await portStats(P);
+  modal({title:`${P.name}`, submit:"Close",
+    body:`${portBoxHTML(P, st, false)}${isAdmin() ? `<button type="button" class="btn" id="mGoPort">Open in History → Ports</button>` : ""}`,
+    onOpen: f => { f.dataset.nofocus = 1; const g = f.querySelector("#mGoPort"); if (g) g.addEventListener("click", () => { closeModal(); S.histTab = "ports"; S.portSel = P.id; S.portStats = null; location.hash = "history"; if (S.view === "history") render(); }); },
+    onSubmit: () => {}});
 }
 
 /* ---------------- event wiring ---------------- */
@@ -2784,6 +3089,13 @@ document.addEventListener("click", e => {
     case "demo-role": S.role = el.dataset.r; render(); break;
     case "demo-reset": S.store.reset(); toast("Sample data reloaded"); break;
     case "open-day": dayModal(null); break;
+    case "port": portModal(); break;
+    case "htab": e.preventDefault(); S.histTab = el.dataset.v; S.portSel = null; render(); break;
+    case "port-open": S.portSel = el.dataset.id; S.portStats = null; render(); window.scrollTo(0, 0); break;
+    case "port-back": S.portSel = null; render(); break;
+    case "port-day": S.rep.id = el.dataset.id; S.rep.ev = null; S.rep.unit = "all"; S.rep.kind = "all"; S.rep.q = ""; location.hash = "reports"; break;
+    case "port-edit": { const P = portsAll().find(x => x.id === S.portSel); if (P) portEditModal(P); break; }
+    case "port-shore": { const P = portsAll().find(x => x.id === S.portSel); if (P) portShoreModal(P); break; }
     case "edit-day": dayModal(day()); break;
     case "sync": syncModal(); break;
     case "rec": S.recOpen = !S.recOpen; render(); break;
@@ -2833,7 +3145,7 @@ document.addEventListener("click", e => {
     case "rep-back": location.hash = "history"; break;
     case "rep-unit": S.rep.unit = el.dataset.v; render(); break;
     case "rep-kind": S.rep.kind = el.dataset.v; render(); break;
-    case "rep-pdf": repPDF(); break;
+    case "rep-pdf": repPDFModal(); break;
     case "rep-xlsx": repXLSX(); break;
     case "reset-day": resetDayModal(); break;
     case "del-day": { const d = S.data.days.find(x => x.id === (S.view === "reports" ? S.rep.id : S.hist)); if (d) deleteDayModal(d); break; }
