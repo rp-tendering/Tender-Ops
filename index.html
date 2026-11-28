@@ -692,9 +692,125 @@ body.kb-open .modal{max-height:calc(var(--vvh, 100vh) - 12px);overflow-y:auto}
 .four{display:grid;grid-template-columns:.8fr .8fr 1.2fr 1.2fr;gap:10px}
 @media (max-width:640px){ .four{grid-template-columns:1fr 1fr} }
 #mNext .btn{margin-left:6px}
+
+/* ---------- reports ---------- */
+.rp-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rp-head h2{font-family:var(--f-display);font-size:26px;font-weight:700;margin:0;line-height:1.05}
+.rp-head .sp{margin-right:auto}
+.rp-head select.f{font-weight:600}
+.rp-sub{color:var(--muted);font-size:13px;margin-top:-6px}
+.rp-kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.rp-kpis div{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+.rp-kpis span,.rp-times span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.rp-kpis b{font-family:var(--f-display);font-size:30px;line-height:1.05;font-weight:700}
+.rp-kpis b small{font-size:15px;font-weight:600;color:var(--muted);margin-left:2px}
+.rp-times{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.rp-times div{flex:1 1 120px;padding:8px 11px;border-right:1px solid var(--line)}
+.rp-times div:last-child{border-right:0}
+.rp-times b{font-family:var(--f-mono);font-size:16px}
+.rp-times i{font-style:normal;color:var(--muted);font-size:12px;margin-left:4px}
+.rp-times .late b{color:var(--warn)}
+.rp-sec{display:flex;flex-direction:column;gap:8px}
+.rp-sec h3{font-family:var(--f-display);font-size:20px;margin:6px 0 0;font-weight:700;display:flex;align-items:baseline;gap:10px}
+.rp-sec h3 small{font-family:var(--f-body);font-size:13px;font-weight:500;color:var(--muted)}
+.rp-run td,.rp-run th{white-space:nowrap}
+.rp-run td.tl{width:38%;min-width:240px;white-space:normal}
+.rp-run tr.shore td{color:var(--muted)}
+.rp-run tfoot td{font-weight:700;border-top:2px solid var(--line)}
+.tlbar{position:relative;height:18px;background:var(--track);border-radius:4px}
+.tlbar .sg{position:absolute;top:0;bottom:0;background:var(--sea);border-radius:4px;opacity:.9}
+.tlbar .sg.open{background:repeating-linear-gradient(135deg,var(--sea) 0 6px,color-mix(in srgb,var(--sea) 60%,transparent) 6px 12px)}
+.tlbar.shore .sg{background:var(--tc);opacity:.75}
+.tlbar .tk{position:absolute;top:3px;bottom:3px;width:2px;margin-left:-1px;background:#fff;opacity:.75;border-radius:1px}
+.tlbar .fl{position:absolute;top:-3px;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:var(--crit);border:2px solid var(--surface)}
+.tlaxis{position:relative;height:14px;font-family:var(--f-mono);font-size:10px;color:var(--muted)}
+.tlaxis i{position:absolute;font-style:normal;transform:translateX(-50%)}
+.tlaxis i:last-child{transform:translateX(-100%)}
+.rp-iss{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.rp-iss > div{display:grid;grid-template-columns:90px 120px 1fr auto;gap:10px;padding:9px 12px;border-top:1px solid var(--line);align-items:start}
+.rp-iss > div:first-child{border-top:0}
+.rp-iss .cat{font-weight:600}
+.rp-iss p{margin:0}
+.rp-iss .res{color:var(--muted);font-size:13px;margin-top:3px}
+.rp-flt{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.rp-flt .lbl{font-size:12px;color:var(--muted);margin-right:2px}
+.fchip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 11px;font-size:13px;font-weight:600;cursor:pointer;min-height:32px}
+.fchip[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.rp-flt input.f{min-width:200px;flex:1 1 200px;max-width:320px}
+.rp-count{font-size:13px;color:var(--muted);margin-left:auto}
+.rp-empty{color:var(--muted);padding:6px 0}
+@media (max-width:900px){ .rp-kpis{grid-template-columns:repeat(3,minmax(0,1fr))} .rp-iss > div{grid-template-columns:80px 1fr} .rp-iss > div > :nth-child(3){grid-column:1/-1} }
+#print-root{display:none}
+@media print{
+  body.printing > *:not(#print-root){display:none !important}
+  body.printing #print-root{display:block}
+  body.printing{background:#fff !important}
+}
 </style>
 
 <div id="app"></div>
+
+<style id="print-css">
+@page{size:A4;margin:12mm 12mm 16mm;
+  @bottom-left{content:var(--pfoot, "");font:500 8pt "Barlow",sans-serif;color:#5a6b7d}
+  @bottom-right{content:"Page " counter(page) " of " counter(pages);font:500 8pt "Barlow",sans-serif;color:#5a6b7d}}
+#print-root{font-family:"Barlow",system-ui,sans-serif;color:#13212f;font-size:9.5pt;line-height:1.35;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#print-root .pb{background:#13212f;color:#fff;border-radius:3mm;padding:5mm 6mm;display:flex;justify-content:space-between;align-items:flex-end;gap:6mm;position:relative;overflow:hidden}
+#print-root .pb::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1.4mm;background:#e4570f}
+#print-root .pb .l small{display:block;font-size:8pt;letter-spacing:.12em;text-transform:uppercase;color:#9fb3c6}
+#print-root .pb .l b{display:block;font-family:"Barlow Condensed",sans-serif;font-size:13pt;font-weight:600;letter-spacing:.02em}
+#print-root .pb .r{text-align:right}
+#print-root .pb .r h1{margin:0;font-family:"Barlow Condensed",sans-serif;font-size:30pt;line-height:.95;font-weight:700}
+#print-root .pb .r span{font-size:9.5pt;color:#c9d6e2}
+#print-root .kp{display:grid;grid-template-columns:repeat(6,1fr);margin-top:4mm;border:.3mm solid #d3dbe4;border-radius:2mm;overflow:hidden}
+#print-root .kp div{padding:2.6mm 3mm;border-left:.3mm solid #d3dbe4}
+#print-root .kp div:first-child{border-left:0}
+#print-root .kp span,#print-root .tm span{display:block;font-size:7pt;letter-spacing:.09em;text-transform:uppercase;color:#5a6b7d}
+#print-root .kp b{font-family:"Barlow Condensed",sans-serif;font-size:19pt;line-height:1.05;font-weight:700}
+#print-root .kp b small{font-size:10pt;color:#5a6b7d;font-weight:600}
+#print-root .tm{display:grid;grid-template-columns:repeat(6,1fr);margin-top:2mm;background:#f3f5f8;border-radius:2mm}
+#print-root .tm div{padding:2mm 3mm}
+#print-root .tm b{font-family:"IBM Plex Mono",monospace;font-size:10pt;font-weight:500}
+#print-root .tm i{font-style:normal;color:#5a6b7d;font-size:7.5pt}
+#print-root .tm .late b{color:#b45309}
+#print-root h2{font-family:"Barlow Condensed",sans-serif;font-size:14pt;margin:6mm 0 2mm;font-weight:700;display:flex;align-items:baseline;gap:3mm;border-bottom:.5mm solid #13212f;padding-bottom:1mm;break-after:avoid}
+#print-root h2 small{font-family:"Barlow",sans-serif;font-size:8.5pt;font-weight:500;color:#5a6b7d}
+#print-root table{width:100%;border-collapse:collapse}
+#print-root th{font-size:7pt;letter-spacing:.08em;text-transform:uppercase;color:#5a6b7d;text-align:left;font-weight:600;padding:1.4mm 2mm;border-bottom:.3mm solid #b8c4d0}
+#print-root td{padding:1.3mm 2mm;border-bottom:.2mm solid #e2e7ed;vertical-align:top}
+#print-root td.pn,#print-root th.pn{text-align:right;font-variant-numeric:tabular-nums}
+#print-root td.pm{font-family:"IBM Plex Mono",monospace;font-size:8.5pt;white-space:nowrap}
+#print-root tr{break-inside:avoid}
+#print-root thead{display:table-header-group}
+#print-root tfoot td{font-weight:700;border-top:.4mm solid #13212f;border-bottom:0}
+#print-root tr.shore td{color:#5a6b7d}
+#print-root .tlw{margin-top:3mm;break-inside:avoid}
+#print-root .tlr{display:grid;grid-template-columns:22mm 1fr;align-items:center;gap:2mm;margin:1.2mm 0}
+#print-root .tlr b{font-size:8.5pt}
+#print-root .tlbar{position:relative;height:4mm;background:#e2e7ed;border-radius:1mm}
+#print-root .tlbar .sg{position:absolute;top:0;bottom:0;background:#1f6391;border-radius:1mm}
+#print-root .tlbar.shore .sg{background:#b26a00;opacity:.8}
+#print-root .tlbar .tk{position:absolute;top:.8mm;bottom:.8mm;width:.4mm;background:#fff;opacity:.8}
+#print-root .tlbar .fl{position:absolute;top:-1mm;width:2mm;height:2mm;margin-left:-1mm;border-radius:50%;background:#d63031;border:.4mm solid #fff}
+#print-root .tlaxis{position:relative;height:3.5mm;margin-left:24mm;font-family:"IBM Plex Mono",monospace;font-size:6.5pt;color:#5a6b7d}
+#print-root .tlaxis i{position:absolute;font-style:normal;transform:translateX(-50%)}
+#print-root .tlaxis i:last-child{transform:translateX(-100%)}
+#print-root td.nw{white-space:nowrap}
+#print-root .lg{font-size:7.5pt;color:#5a6b7d;margin-top:1.5mm;display:flex;gap:5mm}
+#print-root .lg em{display:inline-block;width:4mm;height:2.2mm;border-radius:.6mm;background:#1f6391;margin-right:1mm;vertical-align:middle}
+#print-root .lg em.s{background:#b26a00}
+#print-root .lg em.t{width:.5mm;background:#5a6b7d}
+#print-root .lg em.f{width:2mm;height:2mm;border-radius:50%;background:#d63031}
+#print-root .st{display:inline-block;font-size:7pt;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.3mm 1.6mm;border-radius:5mm;background:#e2e7ed}
+#print-root .st.open{background:#fde8dc;color:#b4460c}
+#print-root .st.resolved{background:#dcefe1;color:#1f6b31}
+#print-root .log td{font-size:8.5pt;padding:.9mm 2mm}
+#print-root .log tr.k-last td,#print-root .log tr.k-em td{font-weight:700}
+#print-root .log tr.k-lower td:nth-child(3),#print-root .log tr.k-hoist td:nth-child(3){color:#1f6391;font-weight:600}
+#print-root .fnote{font-size:8pt;color:#5a6b7d;margin:1mm 0 0}
+#print-root .none{color:#5a6b7d;font-size:9pt}
+</style>
+<div id="print-root"></div>
 <div id="modal-root"></div>
 <div id="toast" class="toast" hidden></div>
 
@@ -733,7 +849,7 @@ const pad = n => String(n).padStart(2, "0");
    so that every device (bridge, hotel, an office ashore) shows ship's time */
 let DEV_TZ = (() => { const v = lsGet("tom.tz"); return v === null || v === "" || isNaN(+v) ? null : +v; })();
 let TZ = DEV_TZ;
-function pickTZ(){ const d = S.data ? (S.view === "history" && S.hist ? (S.data.days || []).find(x => x.id === S.hist) : S.data.currentDay) : null;
+function pickTZ(){ const d = S.data ? (S.view === "history" && S.hist ? (S.data.days || []).find(x => x.id === S.hist) : S.view === "reports" && S.rep && S.rep.id ? (S.data.days || []).find(x => x.id === S.rep.id) : S.data.currentDay) : null;
   TZ = d && d.tz != null && d.tz !== "" && !isNaN(+d.tz) ? +d.tz : DEV_TZ; return d; }
 const dayTZ = () => { const d = S.data && S.data.currentDay; return d && d.tz != null && d.tz !== "" && !isNaN(+d.tz); };
 const devOff = () => -new Date().getTimezoneOffset();
@@ -1325,7 +1441,7 @@ const isAdmin = () => S.role === "deck";
 const canIssues = () => S.role === "deck" || S.role === "tech";
 const canOpenTender = () => S.role === "deck" || S.role === "hotel";
 const DEPT = {deck:"DECK", hotel:"HOTEL", tech:"TECH"};
-const VIEWS = CONFIG.standalone ? ["board","log","issues","history"] : ["board","log","issues","chat","feedback","history"];
+const VIEWS = CONFIG.standalone ? ["board","log","issues","history","reports"] : ["board","log","issues","chat","feedback","history","reports"];
 let ST = null;
 const BOOT_T = Date.now();
 function setData(d){
@@ -1350,9 +1466,12 @@ function render(){
   else if (S.view === "issues") body = issuesHTML();
   else if (S.view === "chat") body = chatHTML();
   else if (S.view === "feedback") body = feedbackHTML();
+  else if (S.view === "reports") body = reportsHTML();
   else body = historyHTML();
+  const rq = $("#repQ"), rqs = rq && document.activeElement === rq ? rq.selectionStart : null;
   const ta = $("#chatText"), keep = ta ? {v: ta.value, f: document.activeElement === ta, s: ta.selectionStart} : null;
   app.innerHTML = headerHTML() + `<main class="wrap">${body}</main>`;
+  if (rqs != null){ const q = $("#repQ"); if (q){ q.focus(); try { q.setSelectionRange(rqs, rqs); } catch(e){} } }
   setTopH(); document.body.classList.toggle("noanim", !animOn());
   if (S.view === "chat") afterChatRender(keep);
 }
@@ -1369,7 +1488,7 @@ function headerHTML(){
     <button class="linkish" data-act="demo-reset">Reset sample</button></div></div>` : "";
   return `<header class="top"><div class="wrap">
     <div class="brand">${boatSVG(false)}<div><b>Tendering Operations</b><span>${esc(CONFIG.shipName)} · <i class="credit">made by Erio</i></span></div></div>
-    <nav class="tabs">${tab("board","Board")}${tab("log","Log")}${tab("issues","Issues" + (openIssues ? ` <i class="badge warnb">${openIssues}</i>` : ""))}${CONFIG.standalone ? "" : tab("chat","Chat" + (unreadCount() ? ` <i class="badge">${unreadCount()}</i>` : "")) + tab("feedback","Feedback")}${tab("history","History")}</nav>
+    <nav class="tabs">${tab("board","Board")}${tab("log","Log")}${tab("issues","Issues" + (openIssues ? ` <i class="badge warnb">${openIssues}</i>` : ""))}${CONFIG.standalone ? "" : tab("chat","Chat" + (unreadCount() ? ` <i class="badge">${unreadCount()}</i>` : "")) + tab("feedback","Feedback")}${tab("history","History")}${tab("reports","Reports")}</nav>
     <div class="who">${conn}${CONFIG.standalone ? "" : `<button class="chip onlbtn" data-act="online" title="Who is online"><span class="dot"></span>${Math.max(1, onlineList().length)} online</button>`}${S.data.currentDay && ST && ST.openTender.on && S.view !== "board" ? `<span class="chip ot">Open Tender</span>` : ""}
       <button class="chip tzbtn" data-act="tz" title="${dayTZ() ? "Ship's time for this tender day" : "Time shown in the app"} · tap for details"><b class="mono">${fmtT(Date.now())}</b> ${tzLabel(TZ ?? devOff())}${dayTZ() ? " · ship" : ""}</button>
       ${fsOK() ? `<button class="icon-btn fsbtn" data-act="fs" title="${fsOn() ? "Exit full screen" : "Full screen"}" aria-label="${fsOn() ? "Exit full screen" : "Full screen"}">${fsOn() ? FS_OFF : FS_ON}</button>` : ""}
@@ -1423,6 +1542,7 @@ function afterChatRender(keep){
   if (!identity()) setTimeout(() => { if (S.view === "chat" && !identity() && !$("#modal-root").innerHTML) identityModal(); }, 50);
 }
 function sendChat(force){
+  const rq = $("#repQ"), rqs = rq && document.activeElement === rq ? rq.selectionStart : null;
   const ta = $("#chatText"), id = identity(); if (!ta) return;
   if (!id) return identityModal(() => sendChat(true));
   const text = ta.value.trim(); if (!text) return;
@@ -1593,7 +1713,7 @@ function logHTML(){
   const names = st.list.filter(u => u.tripsOut || u.lowered || u.active || u.kind === "shore").map(u => u.name);
   return `<section class="panel"><div class="panel-head"><h2>${esc(day.port)} · Today’s log</h2><button class="icon-btn hbtn" data-act="help" data-k="log" aria-label="Help">?</button>
       <div class="filters"><select class="f" id="logUnit" data-act="log-unit" aria-label="Filter by unit"><option value="all">All units</option>${names.map(n => `<option value="${esc(n)}" ${S.logUnit === n ? "selected" : ""}>${esc(fullName(n))}</option>`).join("")}</select>
-      ${isAdmin() ? `<button class="btn" data-act="undo-last">Undo last</button><button class="btn danger" data-act="reset-day">Reset board…</button>` : ""}<button class="btn" data-act="csv">Export CSV</button>${isAdmin() ? `<button class="btn danger" data-act="close-day">Close day…</button>` : ""}</div></div>
+      ${isAdmin() ? `<button class="btn" data-act="undo-last">Undo last</button><button class="btn danger" data-act="reset-day">Reset board…</button>` : ""}<button class="btn" data-act="rep-today">Day report</button>${isAdmin() ? `<button class="btn danger" data-act="close-day">Close day…</button>` : ""}</div></div>
     <div class="sumgrid">${sumTiles(summaryOf(st))}</div>
     <div class="tablebox"><table><thead><tr><th>Time</th><th>Unit</th><th>Event</th><th style="text-align:right">Pax</th><th>Driver</th>${isAdmin() ? "<th></th>" : ""}</tr></thead>
     <tbody>${logRows(st, {unit:S.logUnit, edit:isAdmin()})}</tbody></table></div></section>`;
@@ -2416,6 +2536,223 @@ function csvFor(d, st){
   document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
 }
 
+
+/* ---------------- reports ---------------- */
+S.rep = {id:null, ev:null, unit:"all", kind:"all", q:""};
+const REP_KINDS = [["all","All"],["trips","Trips"],["water","Lower / hoist"],["status","Status"],["pont","Pontoons"],["sync","Sync"],["other","Changes"]];
+function repKind(l){ const t = l.e.type;
+  if (t === "depart" || t === "arrive") return "trips";
+  if (t === "activate" || t === "deactivate" || t === "shore_add" || t === "falls") return "water";
+  if (t === "status" || t === "opentender" || t === "pause") return "status";
+  if (t === "pontoons" || t === "recovery") return "pont";
+  if (t === "sync") return "sync"; return "other"; }
+const hhmm = ms => { if (ms == null) return "—"; const m = Math.round(ms / 60000); return Math.floor(m / 60) + ":" + pad(m % 60); };
+function repDays(){ return (S.data.days || []).slice().sort((a, b) => (b.date || "").localeCompare(a.date || "") || (b.openedAt || 0) - (a.openedAt || 0)); }
+function repDay(){ return (S.data.days || []).find(d => d.id === S.rep.id) || null; }
+function repEvents(){ const d = repDay(); if (!d) return null; return S.data.currentDay && S.data.currentDay.id === d.id ? S.data.events : S.rep.ev; }
+async function repLoad(id){
+  S.rep.id = id; S.rep.ev = null; S.rep.unit = "all"; S.rep.kind = "all"; S.rep.q = ""; render();
+  const d = repDay(); if (!d) return;
+  if (!(S.data.currentDay && S.data.currentDay.id === id)){ try { const ev = await S.store.getEvents(id); if (S.rep.id === id){ S.rep.ev = ev; } } catch(e){ S.rep.ev = []; } }
+  if (S.view === "reports") render();
+}
+function reportOf(d, evs){
+  const st = compute(d, evs), sorted = (evs || []).slice().sort((a, b) => a.t - b.t || a.c - b.c);
+  const live = d.status === "open" && S.data.currentDay && S.data.currentDay.id === d.id;
+  const lastT = sorted.length ? sorted[sorted.length - 1].t : null, endT = live ? Date.now() : lastT;
+  const segs = {}, deps = {}, flags = {}, drv = {}, statusN = {};
+  for (const e of sorted){
+    const u = st.units[e.unit]; if (!u) continue;
+    const L = segs[u.id] = segs[u.id] || [];
+    const open = L.length && L[L.length - 1].b == null;
+    if ((e.type === "activate" || e.type === "shore_add") && !open) L.push({a:e.t, b:null});
+    if (e.type === "deactivate" && open) L[L.length - 1].b = e.t;
+    if (e.type === "depart" && e.dir === "shore") (deps[u.id] = deps[u.id] || []).push(e.t);
+    if (e.type === "status" && e.status && e.status !== "ok"){ (flags[u.id] = flags[u.id] || []).push(e.t); statusN[u.id] = (statusN[u.id] || 0) + 1; }
+  }
+  st.log.forEach(l => { if (l.unitId && l.driver){ const s = drv[l.unitId] = drv[l.unitId] || []; if (!s.includes(l.driver)) s.push(l.driver); } });
+  const rows = st.list.filter(u => (segs[u.id] && segs[u.id].length) || u.tripsOut || u.tripsBack).map(u => {
+    const sg = (segs[u.id] || []).map(x => ({a:x.a, b:x.b == null ? endT : x.b, open:x.b == null}));
+    const water = sg.reduce((a, x) => a + Math.max(0, x.b - x.a), 0);
+    return {u, segs:sg, water, first: sg.length ? sg[0].a : null, last: sg.length ? (sg[sg.length - 1].open ? null : sg[sg.length - 1].b) : null,
+      relowered: sg.length > 1, deps: deps[u.id] || [], flags: flags[u.id] || [], drivers: drv[u.id] || [u.driver].filter(Boolean), statusN: statusN[u.id] || 0};
+  });
+  const own = rows.filter(r => r.u.kind === "tender"), shore = rows.filter(r => r.u.kind === "shore");
+  const all = rows.flatMap(r => r.segs);
+  const t0 = all.length ? Math.min(...all.map(x => x.a)) : null, t1 = all.length ? Math.max(...all.map(x => x.b)) : null;
+  const dayStart = sorted.length ? sorted[0].t - 3 * 3600e3 : 0, dayEnd = (lastT || 0) + 3 * 3600e3;
+  const issues = (S.data.issues || []).filter(i => i.dayId ? i.dayId === d.id : (i.t >= dayStart && i.t <= dayEnd)).sort((a, b) => a.t - b.t);
+  const dt = dayTimes(d);
+  return {d, st, rows, own, shore, t0, t1, live, endT, issues, dt,
+    waterOwn: own.reduce((a, r) => a + r.water, 0), syncs: sorted.filter(e => e.type === "sync").length,
+    lastBack: st.lastDep ? st.lastDep : null};
+}
+function tlHTML(R, r){
+  if (R.t0 == null) return "";
+  const a = Math.floor(R.t0 / 3600e3) * 3600e3, b = Math.ceil(R.t1 / 3600e3) * 3600e3, W = Math.max(1, b - a), x = t => ((t - a) / W * 100).toFixed(2) + "%";
+  return `<div class="tlbar${r.u.kind === "shore" ? " shore" : ""}">${r.segs.map(s => `<span class="sg${s.open ? " open" : ""}" style="left:${x(s.a)};width:${((s.b - s.a) / W * 100).toFixed(2)}%"></span>`).join("")}${r.deps.map(t => `<span class="tk" style="left:${x(t)}"></span>`).join("")}${r.flags.map(t => `<span class="fl" style="left:${x(t)}"></span>`).join("")}</div>`;
+}
+function tlAxis(R){
+  if (R.t0 == null) return "";
+  const a = Math.floor(R.t0 / 3600e3) * 3600e3, b = Math.ceil(R.t1 / 3600e3) * 3600e3, W = Math.max(1, b - a), n = Math.round(W / 3600e3), step = n > 10 ? 2 : 1, out = [];
+  for (let t = a; t <= b; t += step * 3600e3) out.push(`<i style="left:${((t - a) / W * 100).toFixed(2)}%">${fmtT(t)}</i>`);
+  return `<div class="tlaxis">${out.join("")}</div>`;
+}
+function repLogRows(R){
+  const f = S.rep, q = f.q.trim().toLowerCase();
+  const all = R.st.log, list = all.filter(l => (f.unit === "all" || l.unitName === f.unit) && (f.kind === "all" || repKind(l) === f.kind)
+    && (!q || (fullName(l.unitName) + " " + l.unitName + " " + l.text + " " + (l.driver || "") + " " + fmtT(l.e.t)).toLowerCase().includes(q)));
+  return {all, list};
+}
+function repLogBody(R){
+  const {all, list} = repLogRows(R);
+  return {count: `${list.length} of ${all.length} entries`, rows: list.length ? list.map(l => `<tr class="k-${l.kind}"><td class="t">${fmtT(l.e.t)}</td><td class="u">${esc(fullName(l.unitName))}</td><td>${esc(l.text)}</td><td class="num">${l.pax != null ? l.pax : ""}</td><td>${esc(l.driver || "")}</td></tr>`).join("")
+    : `<tr><td colspan="5" style="color:var(--muted)">No entries match these filters.</td></tr>`};
+}
+function timesCells(R){
+  const d = R.d, dt = R.dt, p1 = k => dt[k] && dt[k].next ? `<i>+1</i>` : "";
+  const lb = R.lastBack, lateT = lb && dt.lastTender ? lb.t - dt.lastTender.ms : null;
+  return [["First lowered", fmtT(R.st.firstLowered), ""],
+    ["Last tender (planned)", d.lastTender || "—", p1("lastTender")],
+    ["Last tender left shore", lb ? fmtT(lb.t) : "—", lb ? `<i>${esc(lb.name)}${lateT != null && Math.abs(lateT) >= 60000 ? " · " + (lateT > 0 ? "+" : "−") + Math.round(Math.abs(lateT) / 60000) + "′" : ""}</i>` : "", lateT != null && lateT > 5 * 60000],
+    ["All aboard", d.allAboard || "—", p1("allAboard")],
+    ["Last hoisted", fmtT(R.st.lastHoisted), ""],
+    ["Departure", d.departure || "—", p1("departure")]];
+}
+function kpiCells(R){
+  const st = R.st;
+  return [["Pax to shore", num(st.paxOut)], ["Pax back", num(st.paxBack)], ["Trips", String(st.tripsOut + st.tripsBack), `${st.tripsOut} out · ${st.tripsBack} back`],
+    ["Avg round trip", st.cycleAvg != null ? Math.round(st.cycleAvg) + "<small>min</small>" : "—"], ["Tenders used", String(R.own.length) + (R.shore.length ? `<small>+${R.shore.length} shore</small>` : "")],
+    ["Tender hours", hhmm(R.waterOwn) + "<small>h</small>"]];
+}
+function reportsHTML(){
+  const days = repDays();
+  if (!days.length) return `<section class="panel"><div class="emptystate" style="padding:24px"><h2>No tender days yet</h2><p>Reports appear here once a tender day has been opened.</p></div></section>`;
+  if (!S.rep.id || !repDay()) S.rep.id = (S.data.currentDay || days[0]).id;
+  const d = repDay(), evs = repEvents();
+  if (evs == null){ if (!S.rep.loading){ S.rep.loading = true; repLoad(d.id).finally(() => S.rep.loading = false); } }
+  const head = `<div class="rp-head"><button class="btn" data-act="rep-back">← All days</button><h2>Day report</h2><select class="f" data-act="rep-day" aria-label="Tender day">${days.map(x => `<option value="${x.id}" ${x.id === d.id ? "selected" : ""}>${esc(x.port)} · ${fmtDate(x.date)}${x.status === "open" ? " · today" : ""}</option>`).join("")}</select><span class="sp"></span>
+    ${isAdmin() && d.status !== "open" ? `<button class="btn danger" data-act="del-day">Delete day</button>` : ""}<button class="btn" data-act="rep-xlsx" ${evs ? "" : "disabled"}>Export Excel</button><button class="btn primary" data-act="rep-pdf" ${evs ? "" : "disabled"}>Export PDF</button></div>`;
+  if (!evs) return `<section class="panel">${head}<p>Loading…</p></section>`;
+  const R = reportOf(d, evs), st = R.st;
+  const tenderRow = r => `<tr class="${r.u.kind === "shore" ? "shore" : ""}"><td><b>${esc(r.u.full)}</b></td><td class="mono">${fmtT(r.first)}</td><td class="mono">${r.last ? fmtT(r.last) : (r.segs.length ? "in water" : "—")}</td><td class="mono num">${hhmm(r.water)}${r.relowered ? ` <span class="pill">×${r.segs.length}</span>` : ""}</td>
+    <td class="num">${r.u.tripsOut + r.u.tripsBack}</td><td class="num">${num(r.u.paxOut)}</td><td class="num">${num(r.u.paxBack)}</td><td>${esc(r.drivers.join(", ") || "—")}</td><td class="tl">${tlHTML(R, r)}</td></tr>`;
+  const L = repLogBody(R);
+  const unitNames = R.rows.map(r => r.u.name);
+  return `<section class="panel">${head}
+    <div class="rp-sub">${esc(d.port)} · ${fmtDate(d.date)} · ${d.status === "open" ? "in progress" : "closed"} · times in ship’s time ${tzLabel(TZ ?? devOff())}</div>
+    <div class="rp-kpis">${kpiCells(R).map(([k, v, s]) => `<div><span>${k}</span><b>${v}</b>${s ? `<span style="text-transform:none;letter-spacing:0">${s}</span>` : ""}</div>`).join("")}</div>
+    <div class="rp-times">${timesCells(R).map(([k, v, x, late]) => `<div class="${late ? "late" : ""}"><span>${k}</span><b>${esc(v)}</b>${x}</div>`).join("")}</div>
+    <div class="rp-sec"><h3>Running hours <small>time in the water, from lowered to out of the water</small></h3>
+      <div class="tablebox"><table class="rp-run"><thead><tr><th>Tender</th><th>Lowered</th><th>Out of water</th><th style="text-align:right">In water</th><th style="text-align:right">Trips</th><th style="text-align:right">Pax out</th><th style="text-align:right">Pax back</th><th>Drivers</th><th>${tlAxis(R) || "Timeline"}</th></tr></thead>
+      <tbody>${R.own.map(tenderRow).join("")}${R.shore.map(tenderRow).join("")}</tbody>
+      <tfoot><tr><td>Own tenders</td><td></td><td></td><td class="mono num">${hhmm(R.waterOwn)}</td><td class="num">${R.own.reduce((a, r) => a + r.u.tripsOut + r.u.tripsBack, 0)}</td><td class="num">${num(R.own.reduce((a, r) => a + r.u.paxOut, 0))}</td><td class="num">${num(R.own.reduce((a, r) => a + r.u.paxBack, 0))}</td><td></td><td></td></tr></tfoot></table></div></div>
+    <div class="rp-sec"><h3>Issues <small>${R.issues.length ? R.issues.length + " reported" : "none reported"}</small></h3>
+      ${R.issues.length ? `<div class="rp-iss">${R.issues.map(i => `<div><span class="mono">${fmtT(i.t)}</span><b>${esc(fullName(i.unitName))}</b><div><span class="cat">${esc(i.category)}</span><p>${esc(i.text)}</p>${i.status === "resolved" ? `<div class="res">${i.resolvedAt ? fmtT(i.resolvedAt) + " · " : ""}${esc(i.resolution || "Resolved")}</div>` : ""}</div><span class="status ${i.status}">${i.status}</span></div>`).join("")}</div>` : `<p class="rp-empty">No issues reported on this day.</p>`}</div>
+    <div class="rp-sec"><h3>Log</h3>
+      <div class="rp-flt"><span class="lbl">Unit</span>${[["all","All"], ...unitNames.map(n => [n, n])].map(([v, l]) => `<button class="fchip" data-act="rep-unit" data-v="${esc(v)}" aria-pressed="${S.rep.unit === v}">${esc(l)}</button>`).join("")}</div>
+      <div class="rp-flt"><span class="lbl">Type</span>${REP_KINDS.map(([v, l]) => `<button class="fchip" data-act="rep-kind" data-v="${v}" aria-pressed="${S.rep.kind === v}">${l}</button>`).join("")}
+        <input class="f" id="repQ" type="search" placeholder="Search driver, event, time…" value="${esc(S.rep.q)}" aria-label="Search the log"><span class="rp-count" id="repCount">${L.count}</span></div>
+      <div class="tablebox"><table><thead><tr><th>Time</th><th>Unit</th><th>Event</th><th style="text-align:right">Pax</th><th>Driver</th></tr></thead><tbody id="repRows">${L.rows}</tbody></table></div>
+      <p class="hint" style="margin:0">Excel and PDF include the log with the filters shown here.</p></div>${repChatHTML(d)}</section>`;
+}
+document.addEventListener("input", e => { if (e.target && e.target.id === "repQ"){ S.rep.q = e.target.value; const d = repDay(), ev = repEvents(); if (!d || !ev) return; const L = repLogBody(reportOf(d, ev)); $("#repRows").innerHTML = L.rows; $("#repCount").textContent = L.count; } });
+function repChatHTML(d){
+  if (CONFIG.standalone) return "";
+  const live = S.data.currentDay && S.data.currentDay.id === d.id;
+  let msgs = live ? chatMsgs() : (S.rep.msgsFor === d.id ? S.rep.msgs : null);
+  if (msgs == null && !live){ S.rep.msgsFor = d.id; S.rep.msgs = null; S.store.getMessages(d.id).then(m => { if (S.rep.msgsFor === d.id){ S.rep.msgs = m || []; if (S.view === "reports") render(); } }).catch(() => { S.rep.msgs = []; }); }
+  return `<div class="rp-sec"><h3>Chat <small>not included in Excel or PDF</small></h3>${msgs == null ? `<p class="hint" style="margin:0">Loading…</p>` : msgs.length ? `<div class="mlist hist">${msgsHTML(msgs)}</div>` : `<p class="rp-empty">No chat messages on this day.</p>`}</div>`;
+}
+function repFilterNote(){ const f = S.rep, parts = []; if (f.unit !== "all") parts.push(fullName(f.unit)); if (f.kind !== "all") parts.push(REP_KINDS.find(k => k[0] === f.kind)[1]); if (f.q.trim()) parts.push(`“${f.q.trim()}”`); return parts.join(" · "); }
+function repFile(d, ext){ return `tender-report_${d.date}_${(d.port || "port").replace(/\W+/g, "-")}.${ext}`; }
+
+/* PDF: an A4 layout printed by the browser (Save as PDF) */
+function reportPrintHTML(R){
+  const d = R.d, st = R.st, {all, list} = repLogRows(R), fn = repFilterNote();
+  const trow = r => `<tr class="${r.u.kind === "shore" ? "shore" : ""}"><td><b>${esc(r.u.full)}</b></td><td class="pm">${fmtT(r.first)}</td><td class="pm">${r.last ? fmtT(r.last) : (r.segs.length ? "in water" : "—")}</td><td class="pm pn">${hhmm(r.water)}${r.relowered ? " (×" + r.segs.length + ")" : ""}</td><td class="pn">${r.u.tripsOut + r.u.tripsBack}</td><td class="pn">${num(r.u.paxOut)}</td><td class="pn">${num(r.u.paxBack)}</td><td>${esc(r.drivers.join(", ") || "—")}</td></tr>`;
+  const tl = R.rows.length && R.t0 != null ? `<div class="tlw">${tlAxis(R)}${R.rows.map(r => `<div class="tlr"><b>${esc(r.u.name)}</b>${tlHTML(R, r)}</div>`).join("")}
+    <div class="lg"><span><em></em>In the water</span>${R.shore.length ? `<span><em class="s"></em>Shoretender on service</span>` : ""}<span><em class="t"></em>Departure to shore</span>${R.rows.some(r => r.flags.length) ? `<span><em class="f"></em>Status reported</span>` : ""}</div></div>` : "";
+  return `<div class="pb"><div class="l"><small>Tendering Operations · Day report</small><b>${esc(CONFIG.shipName)}</b></div>
+      <div class="r"><h1>${esc(d.port)}</h1><span>${fmtDate(d.date)} · ship’s time ${tzLabel(TZ ?? devOff())}${d.status === "open" ? " · in progress" : ""}</span></div></div>
+    <div class="kp">${kpiCells(R).map(([k, v]) => `<div><span>${k}</span><b>${v}</b></div>`).join("")}</div>
+    <div class="tm">${timesCells(R).map(([k, v, x, late]) => `<div class="${late ? "late" : ""}"><span>${k}</span><b>${esc(v)}</b> ${x}</div>`).join("")}</div>
+    <h2>Running hours <small>time in the water, from lowered to out of the water</small></h2>
+    <table><thead><tr><th>Tender</th><th>Lowered</th><th>Out of water</th><th class="pn">In water</th><th class="pn">Trips</th><th class="pn">Pax out</th><th class="pn">Pax back</th><th>Drivers</th></tr></thead>
+      <tbody>${R.own.map(trow).join("")}${R.shore.map(trow).join("")}</tbody>
+      <tfoot><tr><td>Own tenders</td><td></td><td></td><td class="pm pn">${hhmm(R.waterOwn)}</td><td class="pn">${R.own.reduce((a, r) => a + r.u.tripsOut + r.u.tripsBack, 0)}</td><td class="pn">${num(R.own.reduce((a, r) => a + r.u.paxOut, 0))}</td><td class="pn">${num(R.own.reduce((a, r) => a + r.u.paxBack, 0))}</td><td></td></tr></tfoot></table>
+    ${tl}
+    <h2>Issues <small>${R.issues.length ? R.issues.length + " reported" : "none reported"}</small></h2>
+    ${R.issues.length ? `<table><thead><tr><th>Time</th><th>Tender</th><th>Category</th><th>Description</th><th>Status</th></tr></thead><tbody>${R.issues.map(i => `<tr><td class="pm">${fmtT(i.t)}</td><td class="nw"><b>${esc(fullName(i.unitName))}</b></td><td>${esc(i.category)}</td><td>${esc(i.text)}${i.status === "resolved" && i.resolution ? `<div class="fnote">${i.resolvedAt ? fmtT(i.resolvedAt) + " · " : ""}${esc(i.resolution)}</div>` : ""}</td><td><span class="st ${i.status}">${i.status}</span></td></tr>`).join("")}</tbody></table>` : `<p class="none">No issues reported on this day.</p>`}
+    <h2>Log <small>${fn ? `filtered: ${esc(fn)} · ` : ""}${list.length} of ${all.length} entries</small></h2>
+    <table class="log"><thead><tr><th style="width:13mm">Time</th><th style="width:22mm">Unit</th><th>Event</th><th class="pn" style="width:12mm">Pax</th><th style="width:26mm">Driver</th></tr></thead>
+      <tbody>${list.map(l => `<tr class="k-${l.kind}"><td class="pm">${fmtT(l.e.t)}</td><td>${esc(fullName(l.unitName))}</td><td>${esc(l.text)}</td><td class="pn">${l.pax != null ? l.pax : ""}</td><td>${esc(l.driver || "")}</td></tr>`).join("")}</tbody></table>`;
+}
+function repPDF(){
+  const d = repDay(), ev = repEvents(); if (!d || !ev) return;
+  const R = reportOf(d, ev), root = $("#print-root");
+  root.innerHTML = reportPrintHTML(R);
+  document.documentElement.style.setProperty("--pfoot", `"Generated ${dLabel(Date.now(), {day:"numeric", month:"short", year:"numeric"})} ${fmtT(Date.now())} ship’s time ${tzLabel(TZ ?? devOff())} · ${CONFIG.shipName} · Tendering Operations"`);
+  const t = document.title; document.title = repFile(d, "pdf").replace(/\.pdf$/, "");
+  document.body.classList.add("printing");
+  const done = () => { document.body.classList.remove("printing"); root.innerHTML = ""; document.title = t; removeEventListener("afterprint", done); };
+  addEventListener("afterprint", done);
+  setTimeout(() => { try { window.print(); } catch(e){ done(); } }, 60);
+}
+
+/* Excel: a real .xlsx written here, no library or extra site needed */
+function xlsxBlob(sheets){
+  const enc = new TextEncoder(), X = v => String(v).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])).replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, "");
+  const col = i => { let s = ""; i++; while (i){ const m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = Math.floor((i - 1) / 26); } return s; };
+  const sheetXML = sh => {
+    const rows = sh.rows.map((r, ri) => `<row r="${ri + 1}">${r.map((c, ci) => { if (c == null || c === "") return ""; const ref = col(ci) + (ri + 1), st = ri === 0 && sh.header !== false ? ' s="1"' : (sh.bold && sh.bold.includes(ri) ? ' s="2"' : "");
+      return typeof c === "number" && isFinite(c) ? `<c r="${ref}"${st}><v>${c}</v></c>` : `<c r="${ref}" t="inlineStr"${st}><is><t xml:space="preserve">${X(c)}</t></is></c>`; }).join("")}</row>`).join("");
+    const cols = sh.widths ? `<cols>${sh.widths.map((w, i) => `<col min="${i + 1}" max="${i + 1}" width="${w}" customWidth="1"/>`).join("")}</cols>` : "";
+    return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0">${sh.header !== false ? '<pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/>' : ""}</sheetView></sheetViews>${cols}<sheetData>${rows}</sheetData></worksheet>`;
+  };
+  const files = [
+    ["[Content_Types].xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>${sheets.map((_, i) => `<Override PartName="/xl/worksheets/sheet${i + 1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join("")}</Types>`],
+    ["_rels/.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`],
+    ["xl/workbook.xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${sheets.map((sh, i) => `<sheet name="${X(sh.name)}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join("")}</sheets></workbook>`],
+    ["xl/_rels/workbook.xml.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${sheets.map((_, i) => `<Relationship Id="rId${i + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i + 1}.xml"/>`).join("")}<Relationship Id="rId${sheets.length + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`],
+    ["xl/styles.xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="3"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF13212F"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="3"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/><xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`],
+    ...sheets.map((sh, i) => [`xl/worksheets/sheet${i + 1}.xml`, sheetXML(sh)])];
+  /* zip, stored (no compression) */
+  const crcT = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++){ let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+  const crc = b => { let c = 0xFFFFFFFF; for (let i = 0; i < b.length; i++) c = crcT[(c ^ b[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+  const parts = [], cen = []; let off = 0;
+  const u16 = n => [n & 255, (n >>> 8) & 255], u32 = n => [n & 255, (n >>> 8) & 255, (n >>> 16) & 255, (n >>> 24) & 255];
+  for (const [name, text] of files){
+    const nb = enc.encode(name), db = enc.encode(text), c = crc(db);
+    const hd = [0x50,0x4b,3,4, ...u16(20), ...u16(0x0800), ...u16(0), ...u16(0), ...u16(0x21), ...u32(c), ...u32(db.length), ...u32(db.length), ...u16(nb.length), ...u16(0)];
+    parts.push(new Uint8Array(hd), nb, db);
+    cen.push(new Uint8Array([0x50,0x4b,1,2, ...u16(20), ...u16(20), ...u16(0x0800), ...u16(0), ...u16(0), ...u16(0x21), ...u32(c), ...u32(db.length), ...u32(db.length), ...u16(nb.length), ...u16(0), ...u16(0), ...u16(0), ...u16(0), ...u32(0), ...u32(off)]), nb);
+    off += hd.length + nb.length + db.length;
+  }
+  const cenLen = cen.reduce((a, b) => a + b.length, 0);
+  const end = new Uint8Array([0x50,0x4b,5,6, ...u16(0), ...u16(0), ...u16(files.length), ...u16(files.length), ...u32(cenLen), ...u32(off), ...u16(0)]);
+  return new Blob([...parts, ...cen, end], {type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+}
+function repXLSX(){
+  const d = repDay(), ev = repEvents(); if (!d || !ev) return;
+  const R = reportOf(d, ev), st = R.st, {list} = repLogRows(R), tz = tzLabel(TZ ?? devOff()), fn = repFilterNote();
+  const sum = [["Day report", ""], ["Ship", CONFIG.shipName], ["Port", d.port], ["Date", d.date], ["Status", d.status === "open" ? "In progress" : "Closed"], ["Ship's time", tz], ["", ""],
+    ["Pax to shore", st.paxOut], ["Pax back", st.paxBack], ["Trips to shore", st.tripsOut], ["Trips to ship", st.tripsBack], ["Avg round trip (min)", st.cycleAvg != null ? Math.round(st.cycleAvg) : ""],
+    ["Own tenders used", R.own.length], ["Shoretenders used", R.shore.length], ["Own tender hours in water", hhmm(R.waterOwn)], ["Ashore at end (count)", st.ashore], ["Syncs", R.syncs], ["Issues reported", R.issues.length], ["", ""],
+    ...timesCells(R).map(([k, v, x]) => [k, v + (x ? " " + x.replace(/<[^>]+>/g, "") : "")]), ["", ""], ["Generated", `${ymd(Date.now())} ${fmtT(Date.now())} ship's time ${tz}`]];
+  const run = [["Tender", "Type", "Lowered", "Out of water", "In water (h:mm)", "In water (hours)", "Times lowered", "Trips to shore", "Trips to ship", "Pax to shore", "Pax back", "Drivers"],
+    ...R.rows.map(r => [r.u.full, r.u.kind === "shore" ? "Shoretender" : "Own tender", fmtT(r.first), r.last ? fmtT(r.last) : (r.segs.length ? "in water" : ""), hhmm(r.water), Math.round(r.water / 36e3) / 100, r.segs.length, r.u.tripsOut, r.u.tripsBack, r.u.paxOut, r.u.paxBack, r.drivers.join(", ")]),
+    ["Own tenders total", "", "", "", hhmm(R.waterOwn), Math.round(R.waterOwn / 36e3) / 100, "", R.own.reduce((a, r) => a + r.u.tripsOut, 0), R.own.reduce((a, r) => a + r.u.tripsBack, 0), R.own.reduce((a, r) => a + r.u.paxOut, 0), R.own.reduce((a, r) => a + r.u.paxBack, 0), ""]];
+  const iss = [["Date", "Time", "Tender", "Category", "Description", "Status", "Resolved at", "What was done"],
+    ...R.issues.map(i => [ymd(i.t), fmtT(i.t), fullName(i.unitName), i.category, i.text, i.status, i.resolvedAt ? fmtT(i.resolvedAt) : "", i.resolution || ""])];
+  const log = [["Date", "Time", "Unit", "Type", "Event", "Pax", "Driver"], ...list.map(l => [ymd(l.e.t), fmtT(l.e.t), fullName(l.unitName), (REP_KINDS.find(k => k[0] === repKind(l)) || ["", ""])[1], l.text, typeof l.pax === "number" ? l.pax : (l.pax || ""), l.driver || ""])];
+  const blob = xlsxBlob([{name:"Summary", rows:sum, header:false, bold:[0], widths:[28, 40]}, {name:"Running hours", rows:run, bold:[run.length - 1], widths:[16, 13, 10, 12, 14, 14, 13, 13, 13, 12, 10, 30]},
+    {name:"Issues", rows:iss, widths:[11, 7, 12, 20, 60, 10, 11, 50]}, {name: fn ? "Log (filtered)" : "Log", rows:log, widths:[11, 7, 12, 13, 70, 6, 16]}]);
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = repFile(d, "xlsx");
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  toast("Excel saved · " + a.download);
+}
+
 /* ---------------- event wiring ---------------- */
 document.addEventListener("click", e => {
   const el = e.target.closest("[data-act]"); if (!el || !$("#app").contains(el)) return;
@@ -2478,15 +2815,21 @@ document.addEventListener("click", e => {
       else { el.dataset.armed = "1"; el.classList.add("arm"); el.textContent = `Tap again: undo ${l.unitName} · ${l.text.split(" · ")[0]}`; setTimeout(() => render(), 5000); }
       break; }
     case "csv": csvFor(day(), ST); break;
+    case "rep-today": if (day()){ S.rep.id = day().id; S.rep.ev = null; } location.hash = "reports"; break;
     case "close-day": closeDayModal(); break;
     case "edit-ev": editEvModal(el.dataset.id); break;
     case "new-issue": issueModal(null, S.issueUnit !== "all" ? S.issueUnit : null); break;
     case "resolve": { const i = S.data.issues.find(x => x.id === el.dataset.id); if (i) resolveModal(i); break; }
     case "reopen": S.store.saveIssue({id: el.dataset.id, status:"open", resolvedAt:null}); toast("Issue reopened"); break;
     case "edit-issue": { const i = S.data.issues.find(x => x.id === el.dataset.id); if (i) issueModal(i); break; }
-    case "hist-open": openHist(el.dataset.id); break;
+    case "hist-open": S.rep.id = el.dataset.id; S.rep.ev = null; S.rep.unit = "all"; S.rep.kind = "all"; S.rep.q = ""; S.rep.msgs = null; location.hash = "reports"; break;
+    case "rep-back": location.hash = "history"; break;
+    case "rep-unit": S.rep.unit = el.dataset.v; render(); break;
+    case "rep-kind": S.rep.kind = el.dataset.v; render(); break;
+    case "rep-pdf": repPDF(); break;
+    case "rep-xlsx": repXLSX(); break;
     case "reset-day": resetDayModal(); break;
-    case "del-day": { const d = S.data.days.find(x => x.id === S.hist); if (d) deleteDayModal(d); break; }
+    case "del-day": { const d = S.data.days.find(x => x.id === (S.view === "reports" ? S.rep.id : S.hist)); if (d) deleteDayModal(d); break; }
     case "backup-export": {
       const blob = new Blob([S.store.exportAll()], {type:"application/json"}), a = document.createElement("a");
       a.href = URL.createObjectURL(blob); a.download = "tendering-ops-backup-" + ymd(Date.now()) + ".json";
@@ -2504,6 +2847,7 @@ document.addEventListener("click", e => { const sm = e.target.closest && e.targe
 document.addEventListener("change", e => {
   const el = e.target; if (!el.dataset || !el.dataset.act) return;
   if (el.dataset.act === "log-unit"){ S.logUnit = el.value; render(); }
+  if (el.dataset.act === "rep-day"){ repLoad(el.value); }
   if (el.dataset.act === "issue-unit"){ S.issueUnit = el.value; render(); }
   if (el.dataset.act === "issue-status"){ S.issueStatus = el.value; render(); }
 });
