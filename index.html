@@ -867,6 +867,12 @@ body.kb-open .modal{max-height:calc(var(--vvh, 100vh) - 12px);overflow-y:auto}
 .til p{margin:0}
 .til .when{font-size:12.5px;color:var(--muted)}
 .til .res{font-size:13px;color:var(--muted)}
+
+.htile.plan{border-color:color-mix(in srgb,var(--sea) 45%,var(--line));background:var(--sea-tint)}
+.htile.plan.old{opacity:.7}
+.hsec{font-family:var(--f-display);font-size:15px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:4px 2px -6px}
+.htile .go{font-style:normal;margin-top:auto;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--sea)}
+.htile.main .go{color:var(--accent-ink)}
 </style>
 
 <div id="app"></div>
@@ -1617,7 +1623,8 @@ function setData(d){
   const ms = (d.messages || []); const max = ms.length ? ms[ms.length - 1].t : 0;
   if (prevMax != null && S.view !== "chat"){ const dayId = d.currentDay && d.currentDay.id, fresh = Date.now() - 2 * 60000; const nw = dayId ? ms.filter(m => m.t > prevMax && m.t > fresh && m.t > BOOT_T && m.dayId === dayId && m.dev !== me) : []; if (nw.length){ const m = nw[nw.length - 1]; setTimeout(() => toast(`Message · ${m.dept} ${m.name}: ${m.text.slice(0, 60)}`), 0); } }
   S.msgMax = max;
-  if (d.offline && !S.data.offline) S.offlineSince = Date.now(); if (!d.offline) S.offlineSince = null; S.data = d; pickTZ();
+  if (d.offline && !S.data.offline) S.offlineSince = Date.now(); if (!d.offline) S.offlineSince = null;
+  d.planned = (d.days || []).filter(x => x.status === "planned").sort((a, b) => (a.date || "").localeCompare(b.date || "")); d.days = (d.days || []).filter(x => x.status !== "planned"); S.data = d; pickTZ();
   /* a day opened before this version has no ship's time yet: Deck's device stores its own */
   /* only a device where ship's time was chosen by hand (the bridge) does it, never an office ashore on its own clock */
   if (d.currentDay && !dayTZ() && isAdmin() && DEV_TZ != null && S.tzSavedFor !== d.currentDay.id){ S.tzSavedFor = d.currentDay.id; S.store.saveDay({id: d.currentDay.id, tz: DEV_TZ}); }
@@ -1789,8 +1796,11 @@ function homeHTML(){
     tend:`<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15h18l-2.5 4h-13z"/><path d="M6 15v-4h9l3 4M9 11V8h4v3"/></svg>`};
   const tile = (act, icon, title, sub, cls = "", extra = "") => `<button class="htile ${cls}" ${act}>${icon}<b>${title}</b><span>${sub}</span>${extra}</button>`;
   return `<section class="home"><div class="home-h">${boatSVG(false)}<div><h2>No tender operation open</h2><p>${isAdmin() ? "Open a tender day to start, or look back at past days, ports and tenders." : "The board fills in as soon as the Bridge opens today’s tender operation."}</p></div></div>
+    ${(() => { const today = ymd(Date.now()), pl = (S.data.planned || []).filter(x => x.date >= today), now = pl.filter(x => x.date === today), later = pl.filter(x => x.date > today).slice(0, 3), past = (S.data.planned || []).filter(x => x.date < today);
+      const pt = (pd, main) => tile(`data-act="plan-view" data-id="${pd.id}"`, main ? I.open : I.hist, main ? `Open ${esc(pd.port)}` : `Next: ${esc(pd.port)}`, `${main ? "Planned for today" : fmtDate(pd.date)}${pd.lastTender ? " · last tender " + esc(pd.lastTender) : ""}`, main ? "main" : "plan", `<em class="go">${main ? (isAdmin() ? "Open now" : "Planned for today") : "Planned"}</em>`);
+      const t1 = [...now.map(x => pt(x, true)), isAdmin() ? tile('data-act="open-day"', I.open, "Open tender day", "Start logging lowering, trips and passengers", now.length ? "" : "main") : "", ...later.map(x => pt(x, false)), ...past.map(x => tile(`data-act="plan-view" data-id="${x.id}"`, I.hist, `Planned: ${esc(x.port)}`, `${fmtDate(x.date)} · date passed`, "plan old")), isAdmin() ? tile('data-act="plan-day"', I.hist, "Plan tender day", "Prepare a day in advance: times, channels, run") : ""].filter(Boolean);
+      return t1.length ? `<h3 class="hsec">Tender day</h3><div class="htiles">${t1.join("")}</div><h3 class="hsec">Records</h3>` : ""; })()}
     <div class="htiles">
-      ${isAdmin() ? tile('data-act="open-day"', I.open, "Open tender day", "Start logging lowering, trips and passengers", "main") : ""}
       ${last ? tile(`data-act="hist-open" data-id="${last.id}"`, I.report, "Last day report", `${esc(last.port)} · ${fmtDate(last.date)}`) : ""}
       ${tile('data-act="go" data-v="history"', I.hist, "History", days.length ? `${days.length} tender day${days.length > 1 ? "s" : ""}` : "No days yet")}
       ${tile('data-act="go" data-v="ports"', I.port, "Ports", ports.length ? `${ports.length} port${ports.length > 1 ? "s" : ""} on record` : "Added when a day is opened")}
@@ -2343,23 +2353,27 @@ function syncModal(){
       const mode = f.querySelector("#mMode").dataset.val, val = Math.round(+v);
       addEv("sync", null, mode === "off" ? {mode:"off", value: val} : {value: val}, readTime(f, "mT", day().date), mode === "off" ? `Off ${num(val)} − ${num(onT)} on tenders → Ashore ${num(Math.max(0, val - onT))}` : `Ashore synced to ${num(val)}`); }});
 }
-function dayModal(existing){
-  const d = existing || {side:"STBD", fwd:true, mid:true};
-  modal({title: existing ? "Edit tender day" : "Open tender day", submit: existing ? "Save" : "Open day",
-    extra: existing ? `<button type="button" class="btn danger" id="mReset" style="margin-right:auto">Reset board…</button>` : "",
+function dayModal(existing, opts){
+  const o = opts || {}, mode = o.plan ? "plan" : existing && existing.status === "planned" ? "openPlan" : existing ? "edit" : "new";
+  const d = Object.assign({side:"STBD", fwd:true, mid:true}, existing || {});
+  modal({title: mode === "plan" ? (existing ? "Edit planned day" : "Plan tender day") : mode === "edit" ? "Edit tender day" : "Open tender day",
+    submit: mode === "plan" ? "Save plan" : mode === "edit" ? "Save" : "Open day",
+    extra: mode === "edit" ? `<button type="button" class="btn danger" id="mReset" style="margin-right:auto">Reset board…</button>` : mode === "plan" && existing ? `<button type="button" class="btn danger" id="mDelPlan" style="margin-right:auto">Delete plan</button>` : "",
     body: `<div class="dform dayform"><div class="dleft"><label class="fld"><span>Port</span><input id="mPort" value="${esc(d.port || "")}" placeholder="Type to search · e.g. Kotor" required autocomplete="off"></label><div class="pres" id="mRes" hidden></div><div id="mMem"></div>
       <div class="two"><label class="fld"><span>Date</span><input id="mDate" type="date" value="${esc(d.date || ymd(Date.now()))}"></label>
       <label class="fld"><span>Last tender (24h)</span>${hmInput("mLast", d.lastTender || "")}</label></div>
       <div class="two"><label class="fld"><span>All aboard (24h)</span>${hmInput("mAA", d.allAboard || "")}</label><label class="fld"><span>Ship departure (24h)</span>${hmInput("mDep", d.departure || "")}</label></div>
       <div class="four"><label class="fld"><span>VHF</span><input id="mVhf" value="${esc(d.vhf || "")}" placeholder="72"></label><label class="fld"><span>UHF</span><input id="mUhf" value="${esc(d.uhf || "")}" placeholder="3"></label>
-        <label class="fld"><span title="Guests + crew, from the ship’s system">Total on board</span><input id="mTot" type="number" inputmode="numeric" min="0" value="${esc(d.total ?? "")}"></label>
+        <label class="fld"><span title="Guests + crew, from the ship’s system">Total on board</span><input id="mTot" type="number" inputmode="numeric" min="0" value="${esc(d.total || "")}"></label>
         <label class="fld"><span title="Used for the first ETAs; real run times take over as trips are logged">Run to shore (min)</span><input id="mRun" value="${esc(d.estRun ?? "")}" placeholder="15"></label></div>
       <div class="toggles"><label class="ovn"><input type="checkbox" id="mOvn" ${d.overnight ? "checked" : ""}>Overnight · ship departs the next day</label></div>
-      ${existing ? "" : `<div class="fld"><span>Pontoon side</span><div class="choice" id="mSide" data-val="${d.side}" style="grid-template-columns:1fr 1fr"><button type="button" data-berth="PORT" aria-pressed="false">Port</button><button type="button" data-berth="STBD" aria-pressed="true">Starboard</button></div></div>
+      ${mode === "plan" ? `<p class="hint" style="margin:0">Saved as planned: it does not start. On the day, tap it on Home and choose <b>Open now</b>; the pontoon side is chosen then.</p>` : ""}
+      ${mode === "edit" || mode === "plan" ? "" : `<div class="fld"><span>Pontoon side</span><div class="choice" id="mSide" data-val="${d.side}" style="grid-template-columns:1fr 1fr"><button type="button" data-berth="PORT" aria-pressed="false">Port</button><button type="button" data-berth="STBD" aria-pressed="true">Starboard</button></div></div>
       <div class="toggles"><label><input type="checkbox" id="mFwd" checked>FWD pontoon</label><label><input type="checkbox" id="mMid" checked>MIDSHIP pontoon</label></div>`}
       <div id="mNext" class="hint"></div><div id="mWarn"></div></div>
       <div class="dright"><div class="kp-for" id="kpFor">Last tender</div>${kpHTML("@focus", {empty:false})}<span class="hint">Tap a time or number field, then use the keypad.</span></div></div>`,
     onOpen: f => { bindChoice(f, "mSide"); const r = f.querySelector("#mReset"); if (r) r.addEventListener("click", () => resetDayModal());
+      const dp = f.querySelector("#mDelPlan"); if (dp) dp.addEventListener("click", () => { if (!dp.dataset.armed){ dp.dataset.armed = "1"; dp.textContent = "Tap again to delete"; return; } S.store.deleteDay(existing.id); closeModal(); toast("Plan deleted"); });
       f.dataset.nofocus = 1;
       const nums = [...f.querySelectorAll(".hm, #mVhf, #mUhf, #mTot, #mRun")];
       const touch = !matchMedia("(hover: hover) and (pointer: fine)").matches;
@@ -2399,10 +2413,12 @@ function dayModal(existing){
       if (!port){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Enter the port.</div>`; return false; }
       const rec = {port, date: f.querySelector("#mDate").value || ymd(Date.now()), lastTender: normHM(f.querySelector("#mLast").value) || "", allAboard: normHM(f.querySelector("#mAA").value) || "", departure: normHM(f.querySelector("#mDep").value) || "", overnight: f.querySelector("#mOvn").checked, estRun: parseInt(f.querySelector("#mRun").value, 10) > 0 ? parseInt(f.querySelector("#mRun").value, 10) : null, vhf: f.querySelector("#mVhf").value.trim(), uhf: f.querySelector("#mUhf").value.trim(), total: parseInt(f.querySelector("#mTot").value, 10) || 0};
       const P0 = portOf(port, null); if (P0 && portKey(P0.name) === portKey(port)) rec.port = P0.name; rec.portId = P0 && portMatch(P0.name, port) ? P0.id : portIdOf(port);
-      if (existing) S.store.saveDay(Object.assign({id: existing.id}, rec));
-      else { const nd = Object.assign({id: "d" + uid(), status:"open", openedAt: Date.now(), tz: DEV_TZ ?? devOff(), side: f.querySelector("#mSide").dataset.val, fwd: f.querySelector("#mFwd").checked, mid: f.querySelector("#mMid").checked}, rec);
-        S.store.saveDay(nd); if (!P0 || P0.virtual || !portMatch(P0.name, port)) S.store.savePort({id: rec.portId, name: rec.port, vhf: rec.vhf, uhf: rec.uhf, shore: [], created: Date.now(), updatedAt: Date.now()}); }
-      toast(existing ? "Day updated" : `Tender day open · ${port}`);
+      const newPort = !P0 || P0.virtual || !portMatch(P0.name, port), addPort = () => { if (newPort) S.store.savePort({id: rec.portId, name: rec.port, vhf: rec.vhf, uhf: rec.uhf, shore: [], created: Date.now(), updatedAt: Date.now()}); };
+      if (mode === "edit"){ S.store.saveDay(Object.assign({id: existing.id}, rec)); toast("Day updated"); return; }
+      if (mode === "plan"){ S.store.saveDay(Object.assign({id: existing ? existing.id : "d" + uid(), status:"planned", plannedAt: Date.now()}, rec)); addPort(); toast(`Planned · ${rec.port} · ${fmtDate(rec.date)}`); return; }
+      if (S.data.currentDay && (!existing || S.data.currentDay.id !== existing.id)){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">${esc(S.data.currentDay.port)} is still open. Close it first.</div>`; return false; }
+      const nd = Object.assign({id: existing ? existing.id : "d" + uid(), status:"open", openedAt: Date.now(), tz: DEV_TZ ?? devOff(), side: f.querySelector("#mSide").dataset.val, fwd: f.querySelector("#mFwd").checked, mid: f.querySelector("#mMid").checked}, rec);
+      S.store.saveDay(nd); addPort(); toast(`Tender day open · ${rec.port}`);
     }});
 }
 function confirmTyped({title, text, word, button, onConfirm, extra = ""}){
@@ -3103,7 +3119,7 @@ async function portsBackfill(){
 }
 function portBoxHTML(P, st, withUse, compact){
   const n = st ? st.n : 0;
-  return `<div class="pm-box">${compact ? "" : `<div class="pm-h"><b>${esc(P.name)}</b><span>${n ? `${n} visit${n > 1 ? "s" : ""} · last ${fmtDate(st.last.date)}` : "new port"}</span>${withUse ? `<button type="button" class="btn small" id="mUseMem">Use port data</button>` : ""}</div>`}
+  return `<div class="pm-box">${compact ? "" : `<div class="pm-h"><b>${esc(P.name)}</b><span>${n ? `${n} visit${n > 1 ? "s" : ""} · last ${fmtDate(st.last.date)}` : "no visits yet"}</span>${withUse ? `<button type="button" class="btn small" id="mUseMem">Use port data</button>` : ""}</div>`}
     <div class="pm-g"><div><span>Run to shore</span><b>${mins(st && st.out)}${st && st.out != null ? "<small>real</small>" : ""}</b></div><div><span>Round trip</span><b>${mins(st && st.round)}</b></div>
       <div><span>At the pier</span><b>${mins(st && st.pier)}</b></div><div><span>VHF · UHF</span><b>${esc(P.vhf || "—")} · ${esc(P.uhf || "—")}</b></div></div>
     ${compact ? "" : `<div class="pm-st">${(P.shore || []).length ? `<b>Shoretenders</b> ${P.shore.map(x => `${esc(x.name)} <i>max ${x.cap}</i>`).join(" · ")}` : "<i>No shoretenders on record</i>"}</div>
@@ -3116,7 +3132,7 @@ function histSegHTML(){ return `<span class="hseg" role="tablist"><a href="#hist
 function portsHTML(){
   if (S.portSel) return portDetailHTML();
   const all = portsAll();
-  return `<section class="panel"><div class="panel-head"><h2>Ports</h2><button class="icon-btn hbtn" data-act="help" data-k="ports" aria-label="Help">?</button></div>
+  return `<section class="panel"><div class="panel-head"><h2>Ports</h2><button class="icon-btn hbtn" data-act="help" data-k="ports" aria-label="Help">?</button>${isAdmin() && S.data.portsOK !== false ? `<button class="btn primary" data-act="port-add">+ Add port</button>` : ""}</div>
     ${S.data.portsOK === false ? `<div class="warnbox">The port database is not enabled on the server yet. Ports below come from the tender days; details cannot be saved until it is enabled.</div>` : ""}
     ${all.length ? `<div class="plist">${all.map(P => { const days = portDays(P), last = days[0];
       return `<button class="pcard" data-act="port-open" data-id="${esc(P.id)}"><div class="t"><b>${esc(P.name)}</b><span>${days.length} visit${days.length === 1 ? "" : "s"}${last ? " · " + fmtDate(last.date).replace(/^\w+, /, "") : ""}</span></div>
@@ -3140,13 +3156,18 @@ function portDetailHTML(){
       return `<button data-act="port-day" data-id="${d.id}"><b>${fmtDate(d.date)}${d.status === "open" ? " · today" : ""}</b><span>${f ? num(f.paxOut) : d.summary ? num(d.summary.paxOut) : "…"}</span><span class="mono">${f ? mins(f.round) : "…"}</span><span>${d.side === "PORT" ? "Port" : d.side === "STBD" ? "Starboard" : "—"}</span><span class="go">Report →</span></button>`; }).join("")}</div></section>`;
 }
 function portEditModal(P){
+  const nDays = portDays(P).length;
   modal({title:`Edit ${P.name}`, submit:"Save",
+    extra: `<button type="button" class="btn danger" id="mDelPort" style="margin-right:auto">Delete port</button>`,
     body:`<label class="fld"><span>Port name</span><input id="mPn" value="${esc(P.name)}"></label>
       <div class="two"><label class="fld"><span>VHF</span><input id="mPv" value="${esc(P.vhf || "")}"></label><label class="fld"><span>UHF</span><input id="mPu" value="${esc(P.uhf || "")}"></label></div>
-      <label class="fld"><span>Notes</span><textarea id="mPno" rows="3" placeholder="e.g. Strong current at the pier after 14:00">${esc(P.notes || "")}</textarea></label>
+      <div id="mDelWarn"></div><label class="fld"><span>Notes</span><textarea id="mPno" rows="3" placeholder="e.g. Strong current at the pier after 14:00">${esc(P.notes || "")}</textarea></label>
       ${portsAll().filter(x => x.id !== P.id).length ? `<details class="ua-more"><summary>Merge with another port</summary><p class="hint">Use when the same port was written two ways. Its days and shoretenders move here.</p>
         <select class="f" id="mMerge"><option value="">—</option>${portsAll().filter(x => x.id !== P.id).map(x => `<option value="${esc(x.id)}">${esc(x.name)}</option>`).join("")}</select></details>` : ""}`,
-    onOpen: f => { f.dataset.nofocus = 1; },
+    onOpen: f => { f.dataset.nofocus = 1; const b = f.querySelector("#mDelPort"); if (b) b.addEventListener("click", () => {
+        if (nDays){ const w = f.querySelector("#mDelWarn"); if (w) w.innerHTML = `<div class="warnbox">${esc(P.name)} still has ${nDays} tender day${nDays > 1 ? "s" : ""} in History. Delete ${nDays > 1 ? "them" : "it"} first (History → open the day → Delete day), or merge this port with another one.</div>`; return; }
+        if (!b.dataset.armed){ b.dataset.armed = "1"; b.textContent = "Tap again to delete"; return; }
+        if (!P.virtual) S.store.deletePort(P.id); closeModal(); S.portSel = null; S.portStats = null; toast(`${P.name} deleted`); render(); }); },
     onSubmit: f => { const name = f.querySelector("#mPn").value.trim() || P.name;
       const rec = {id:P.id, name, vhf:f.querySelector("#mPv").value.trim(), uhf:f.querySelector("#mPu").value.trim(), notes:f.querySelector("#mPno").value.trim(), shore:P.shore || [], updatedAt:Date.now()};
       const m = f.querySelector("#mMerge") && f.querySelector("#mMerge").value;
@@ -3350,6 +3371,34 @@ function tvPDF(){
 }
 document.addEventListener("change", e => { if (e.target && (e.target.id === "prFrom" || e.target.id === "prTo")){ S.pr[e.target.id === "prFrom" ? "from" : "to"] = e.target.value; render(); } });
 
+
+/* a planned day: see it, open it, change it */
+function planViewModal(pd){
+  const P = portOf(pd.port, pd.portId), row = (k, v) => v ? `<div><span>${k}</span><b>${esc(v)}</b></div>` : "";
+  modal({title:`${pd.port} · planned`, submit: isAdmin() ? "Open now" : "",
+    extra: isAdmin() ? `<button type="button" class="btn" id="mEditPlan" style="margin-right:auto">Edit plan</button>` : "",
+    body:`<p style="margin:0;color:var(--muted)">${fmtDate(pd.date)}${pd.overnight ? " · overnight" : ""}</p>
+      <div class="sumgrid">${row("Last tender", pd.lastTender)}${row("All aboard", pd.allAboard)}${row("Departure", pd.departure)}${row("VHF", pd.vhf)}${row("UHF", pd.uhf)}${pd.total ? row("Total on board", num(pd.total)) : ""}${pd.estRun ? row("Run to shore", pd.estRun + " min") : ""}</div>
+      ${P && (P.shore || []).length ? `<div class="pm-st"><b>Shoretenders</b> ${P.shore.map(x => `${esc(x.name)} <i>max ${x.cap}</i>`).join(" · ")}</div>` : ""}
+      ${P && P.notes ? `<div class="pm-note">${esc(P.notes)}</div>` : ""}
+      ${isAdmin() ? `<p class="hint" style="margin:0"><b>Open now</b> starts the tender day with these details; you choose the pontoon side.</p>` : ""}`,
+    onOpen: f => { f.dataset.nofocus = 1; const b = f.querySelector("#mEditPlan"); if (b) b.addEventListener("click", () => { closeModal(); dayModal(pd, {plan:true}); }); },
+    onSubmit: () => { setTimeout(() => dayModal(pd), 30); }});
+}
+/* a port added by hand, before the first visit */
+function portAddModal(){
+  modal({title:"Add port", submit:"Add port",
+    body:`<label class="fld"><span>Port name</span><input id="mPn" placeholder="e.g. Ko Samui" autocomplete="off"></label><div id="mPw"></div>
+      <div class="two"><label class="fld"><span>VHF</span><input id="mPv"></label><label class="fld"><span>UHF</span><input id="mPu"></label></div>
+      <label class="fld"><span>Notes</span><textarea id="mPno" rows="3" placeholder="e.g. Shore pontoon takes 2 boats · agent: shoretenders from 08:00"></textarea></label>
+      <p class="hint" style="margin:0">Shoretenders can be added on the port’s page after saving.</p>`,
+    onSubmit: f => { const name = f.querySelector("#mPn").value.trim(), w = f.querySelector("#mPw");
+      if (!name){ w.innerHTML = `<div class="warnbox">Enter the port name.</div>`; return false; }
+      const ex = portsAll().find(P => portMatch(P.name, name)); if (ex){ w.innerHTML = `<div class="warnbox">${esc(ex.name)} is already in the list. Open it to change its details.</div>`; return false; }
+      const id = portIdOf(name); S.store.savePort({id, name, vhf: f.querySelector("#mPv").value.trim(), uhf: f.querySelector("#mPu").value.trim(), notes: f.querySelector("#mPno").value.trim(), shore: [], created: Date.now(), updatedAt: Date.now()});
+      S.portSel = id; S.portStats = null; toast(`${name} added`); setTimeout(render, 50); }});
+}
+
 /* ---------------- event wiring ---------------- */
 document.addEventListener("click", e => {
   const el = e.target.closest("[data-act]"); if (!el || !$("#app").contains(el)) return;
@@ -3375,6 +3424,9 @@ document.addEventListener("click", e => {
     case "demo-reset": S.store.reset(); toast("Sample data reloaded"); break;
     case "open-day": dayModal(null); break;
     case "port": portModal(); break;
+    case "plan-day": dayModal(null, {plan:true}); break;
+    case "plan-view": { const pd = (S.data.planned || []).find(x => x.id === el.dataset.id); if (pd) planViewModal(pd); break; }
+    case "port-add": portAddModal(); break;
     case "rep-mode": e.preventDefault(); S.rep.mode = el.dataset.v; render(); break;
     case "per-open": S.rep.mode = "period"; location.hash = "reports"; break;
     case "pr-per": S.pr.per = el.dataset.v; render(); break;
