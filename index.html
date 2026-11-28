@@ -10,7 +10,9 @@
 <meta name="apple-mobile-web-app-title" content="Tendering Ops">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}.idchips button small{font-weight:500;color:var(--muted);margin-left:4px}
+.idchips button.on small{color:inherit;opacity:.8}
+</style>
 </head>
 <body>
 <title>Tendering Operations</title>
@@ -727,7 +729,13 @@ const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 
 const seq = () => Date.now() * 1000 + (_c++ % 1000);
 const pad = n => String(n).padStart(2, "0");
 /* Ship's time: null = use the device clock; otherwise a fixed UTC offset in minutes, chosen in the app (per device). */
-let TZ = (() => { const v = lsGet("tom.tz"); return v === null || v === "" || isNaN(+v) ? null : +v; })();
+/* DEV_TZ: this device's own choice (null = device clock). TZ: the zone in use, which is the open day's ship time when Deck has set it,
+   so that every device (bridge, hotel, an office ashore) shows ship's time */
+let DEV_TZ = (() => { const v = lsGet("tom.tz"); return v === null || v === "" || isNaN(+v) ? null : +v; })();
+let TZ = DEV_TZ;
+function pickTZ(){ const d = S.data ? (S.view === "history" && S.hist ? (S.data.days || []).find(x => x.id === S.hist) : S.data.currentDay) : null;
+  TZ = d && d.tz != null && d.tz !== "" && !isNaN(+d.tz) ? +d.tz : DEV_TZ; return d; }
+const dayTZ = () => { const d = S.data && S.data.currentDay; return d && d.tz != null && d.tz !== "" && !isNaN(+d.tz); };
 const devOff = () => -new Date().getTimezoneOffset();
 const tzLabel = m => { const a = Math.abs(m), h = Math.floor(a / 60), mm = a % 60; return "UTC" + (m < 0 ? "−" : "+") + h + (mm ? ":" + pad(mm) : ""); };
 const tzp = ms => { if (TZ == null){ const d = new Date(ms); return [d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes()]; }
@@ -1325,10 +1333,15 @@ function setData(d){
   const ms = (d.messages || []); const max = ms.length ? ms[ms.length - 1].t : 0;
   if (prevMax != null && S.view !== "chat"){ const dayId = d.currentDay && d.currentDay.id, fresh = Date.now() - 2 * 60000; const nw = dayId ? ms.filter(m => m.t > prevMax && m.t > fresh && m.t > BOOT_T && m.dayId === dayId && m.dev !== me) : []; if (nw.length){ const m = nw[nw.length - 1]; setTimeout(() => toast(`Message · ${m.dept} ${m.name}: ${m.text.slice(0, 60)}`), 0); } }
   S.msgMax = max;
-  if (d.offline && !S.data.offline) S.offlineSince = Date.now(); if (!d.offline) S.offlineSince = null; S.data = d; ST = d.currentDay ? compute(d.currentDay, d.events) : null; render(); refreshSheet(); }
+  if (d.offline && !S.data.offline) S.offlineSince = Date.now(); if (!d.offline) S.offlineSince = null; S.data = d; pickTZ();
+  /* a day opened before this version has no ship's time yet: Deck's device stores its own */
+  /* only a device where ship's time was chosen by hand (the bridge) does it, never an office ashore on its own clock */
+  if (d.currentDay && !dayTZ() && isAdmin() && DEV_TZ != null && S.tzSavedFor !== d.currentDay.id){ S.tzSavedFor = d.currentDay.id; S.store.saveDay({id: d.currentDay.id, tz: DEV_TZ}); }
+  ST = d.currentDay ? compute(d.currentDay, d.events) : null; render(); refreshSheet(); }
 
 /* ---------------- rendering ---------------- */
 function render(){
+  if (S.data) pickTZ();
   const app = $("#app");
   if (!S.role){ app.innerHTML = loginHTML(); bindLogin(); return; }
   let body = "";
@@ -1358,7 +1371,7 @@ function headerHTML(){
     <div class="brand">${boatSVG(false)}<div><b>Tendering Operations</b><span>${esc(CONFIG.shipName)} · <i class="credit">made by Erio</i></span></div></div>
     <nav class="tabs">${tab("board","Board")}${tab("log","Log")}${tab("issues","Issues" + (openIssues ? ` <i class="badge warnb">${openIssues}</i>` : ""))}${CONFIG.standalone ? "" : tab("chat","Chat" + (unreadCount() ? ` <i class="badge">${unreadCount()}</i>` : "")) + tab("feedback","Feedback")}${tab("history","History")}</nav>
     <div class="who">${conn}${CONFIG.standalone ? "" : `<button class="chip onlbtn" data-act="online" title="Who is online"><span class="dot"></span>${Math.max(1, onlineList().length)} online</button>`}${S.data.currentDay && ST && ST.openTender.on && S.view !== "board" ? `<span class="chip ot">Open Tender</span>` : ""}
-      <button class="chip tzbtn" data-act="tz" title="Ship's time · tap to change"><b class="mono">${fmtT(Date.now())}</b> ${tzLabel(TZ ?? devOff())}</button>
+      <button class="chip tzbtn" data-act="tz" title="${dayTZ() ? "Ship's time for this tender day" : "Time shown in the app"} · tap for details"><b class="mono">${fmtT(Date.now())}</b> ${tzLabel(TZ ?? devOff())}${dayTZ() ? " · ship" : ""}</button>
       ${fsOK() ? `<button class="icon-btn fsbtn" data-act="fs" title="${fsOn() ? "Exit full screen" : "Full screen"}" aria-label="${fsOn() ? "Exit full screen" : "Full screen"}">${fsOn() ? FS_OFF : FS_ON}</button>` : ""}
       <button class="icon-btn themebtn" data-act="theme" title="${isDark() ? "Switch to light" : "Switch to dark"}" aria-label="${isDark() ? "Switch to light" : "Switch to dark"}">${isDark() ? SUN : MOON}</button>
       <span class="acct"><span class="chip role d-${S.role}">${DEPT[S.role]}</span>${S.store.mode === "live" ? `<button class="icon-btn" data-act="signout">Sign out</button>` : ""}</span></div>
@@ -1368,6 +1381,14 @@ function headerHTML(){
 /* ---------------- chat ---------------- */
 function deviceId(){ let d = lsGet("tom.dev"); if (!d){ d = "v" + uid(); lsSet("tom.dev", d); } return d; }
 function identity(){ try { return JSON.parse(lsGet("tom.id." + S.role) || "null"); } catch(e){ return null; } }
+/* people who have written from this device (per login), newest first: one tap at the change of watch */
+function recentIds(){ let r = []; try { r = JSON.parse(lsGet("tom.ids." + S.role) || "[]"); } catch(e){} const id = identity(); return r.length || !id ? r : [id]; }
+function setIdentity(id){
+  const key = x => (x.name + "|" + (x.rank || "")).toLowerCase(), prev = recentIds();
+  lsSet("tom.id." + S.role, JSON.stringify(id));
+  lsSet("tom.ids." + S.role, JSON.stringify([id, ...prev.filter(x => key(x) !== key(id))].slice(0, 8)));
+  lsSet("tom.idt." + S.role, String(Date.now()));
+}
 function chatMsgs(){
   const day = S.data.currentDay;
   return day ? (S.data.messages || []).filter(m => m.dayId === day.id) : [];
@@ -1401,20 +1422,36 @@ function afterChatRender(keep){
     ta && ta.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey){ e.preventDefault(); sendChat(); } }); }
   if (!identity()) setTimeout(() => { if (S.view === "chat" && !identity() && !$("#modal-root").innerHTML) identityModal(); }, 50);
 }
-function sendChat(){
-  const ta = $("#chatText"), id = identity(); if (!ta || !id) return;
+function sendChat(force){
+  const ta = $("#chatText"), id = identity(); if (!ta) return;
+  if (!id) return identityModal(() => sendChat(true));
   const text = ta.value.trim(); if (!text) return;
-  ta.value = "";
+  /* after 4 hours without writing from this device, check that the same person is still on watch */
+  const last = +(lsGet("tom.idt." + S.role) || 0);
+  if (!force && last && Date.now() - last > 4 * 3600e3){
+    return modal({title:"Still you?", submit:null,
+      body:`<p style="margin:0">The last message from this device was sent ${fmtShort((Date.now() - last) / 60000)} ago as <b>${esc(id.name)}${id.rank ? " · " + esc(id.rank) : ""}</b>.</p>
+        <div class="ua-row"><button type="button" class="btn primary big" id="mYes">Yes, ${esc(id.name)}</button><button type="button" class="btn big" id="mChg">Change</button></div>`,
+      onOpen: f => { f.dataset.nofocus = 1;
+        f.querySelector("#mYes").addEventListener("click", () => { closeModal(); lsSet("tom.idt." + S.role, String(Date.now())); sendChat(true); });
+        f.querySelector("#mChg").addEventListener("click", () => identityModal(() => sendChat(true))); }});
+  }
+  ta.value = ""; lsSet("tom.idt." + S.role, String(Date.now()));
   S.store.saveMessage({id:"m" + uid(), t:Date.now(), dept:DEPT[S.role], name:id.name, rank:id.rank || "", text, dayId: S.data.currentDay ? S.data.currentDay.id : null, dev:deviceId()});
 }
-function identityModal(){
-  const id = identity() || {};
+function identityModal(after){
+  const id = identity() || {}, rec = recentIds();
+  const done = () => { heartbeat(); setTimeout(() => { render(); if (after) after(); }, 0); };
   modal({title:"Who is writing?", submit:"Save",
     body:`<p class="hint" style="margin:0">Several people share the ${DEPT[S.role]} login, so each message carries your name and rank. This device remembers them.</p>
-      <label class="fld"><span>Name</span><input id="mName" value="${esc(id.name || "")}" autocomplete="name" required></label>
-      <label class="fld"><span>Rank / position</span><input id="mRank" value="${esc(id.rank || "")}" placeholder="e.g. 2/O, Hotel Director, 1st Engineer"></label><div id="mWarn"></div>`,
-    onSubmit: f => { const name = f.querySelector("#mName").value.trim(); if (!name){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Enter your name.</div>`; return false; }
-      lsSet("tom.id." + S.role, JSON.stringify({name, rank: f.querySelector("#mRank").value.trim()})); heartbeat(); setTimeout(render, 0); }});
+      ${rec.length ? `<div class="fld"><span>Recent on this device · tap to switch</span><div class="dchips idchips">${rec.map((x, i) => `<button type="button" data-i="${i}" class="${x.name === id.name && (x.rank || "") === (id.rank || "") ? "on" : ""}">${esc(x.name)}${x.rank ? ` <small>${esc(x.rank)}</small>` : ""}</button>`).join("")}</div></div>` : ""}
+      <label class="fld"><span>${rec.length ? "Or someone new · name" : "Name"}</span><input id="mName" value="${rec.length ? "" : esc(id.name || "")}" autocomplete="name"></label>
+      <label class="fld"><span>Rank / position</span><input id="mRank" value="${rec.length ? "" : esc(id.rank || "")}" placeholder="e.g. 2/O, Hotel Director, 1st Engineer"></label><div id="mWarn"></div>`,
+    onOpen: f => { f.dataset.nofocus = 1;
+      f.querySelectorAll(".idchips [data-i]").forEach(b => b.addEventListener("click", () => { const x = rec[+b.dataset.i]; setIdentity({name: x.name, rank: x.rank || ""}); closeModal(); toast("Writing as " + x.name + (x.rank ? " · " + x.rank : "")); done(); })); },
+    onSubmit: f => { const name = f.querySelector("#mName").value.trim();
+      if (!name){ if (rec.length && identity()){ done(); return; } f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Enter your name${rec.length ? " or tap one above" : ""}.</div>`; return false; }
+      setIdentity({name, rank: f.querySelector("#mRank").value.trim()}); done(); }});
 }
 
 /* ---------------- presence ---------------- */
@@ -2029,7 +2066,7 @@ function dayModal(existing){
       if (!port){ f.querySelector("#mWarn").innerHTML = `<div class="warnbox">Enter the port.</div>`; return false; }
       const rec = {port, date: f.querySelector("#mDate").value || ymd(Date.now()), lastTender: normHM(f.querySelector("#mLast").value) || "", allAboard: normHM(f.querySelector("#mAA").value) || "", departure: normHM(f.querySelector("#mDep").value) || "", overnight: f.querySelector("#mOvn").checked, estRun: parseInt(f.querySelector("#mRun").value, 10) > 0 ? parseInt(f.querySelector("#mRun").value, 10) : null, vhf: f.querySelector("#mVhf").value.trim(), uhf: f.querySelector("#mUhf").value.trim(), total: parseInt(f.querySelector("#mTot").value, 10) || 0};
       if (existing) S.store.saveDay(Object.assign({id: existing.id}, rec));
-      else S.store.saveDay(Object.assign({id: "d" + uid(), status:"open", openedAt: Date.now(), side: f.querySelector("#mSide").dataset.val, fwd: f.querySelector("#mFwd").checked, mid: f.querySelector("#mMid").checked}, rec));
+      else S.store.saveDay(Object.assign({id: "d" + uid(), status:"open", openedAt: Date.now(), tz: DEV_TZ ?? devOff(), side: f.querySelector("#mSide").dataset.val, fwd: f.querySelector("#mFwd").checked, mid: f.querySelector("#mMid").checked}, rec));
       toast(existing ? "Day updated" : `Tender day open · ${port}`);
     }});
 }
@@ -2125,18 +2162,27 @@ new MutationObserver(ms => { for (const m of ms) m.addedNodes.forEach(n => { if 
   .observe(document.documentElement, {childList:true, subtree:true});
 function tzModal(){
   const dev = devOff(), opts = []; for (let m = -12 * 60; m <= 14 * 60; m += 30) opts.push(m); [345, 525, 765].forEach(m => opts.push(m)); opts.sort((a,b) => a - b);
-  const cur = TZ == null ? "dev" : String(TZ);
+  const day = S.data && S.data.currentDay, shared = !!day, canSet = !day || isAdmin();
+  const curVal = day && dayTZ() ? +day.tz : TZ;
+  const cur = curVal == null ? "dev" : String(curVal);
+  const nowIn = m => { const d = new Date(Date.now() + m * 60000); return pad(d.getUTCHours()) + ":" + pad(d.getUTCMinutes()); };
+  if (!canSet){
+    return modal({title:"Ship's time", submit:null, body:`<p style="margin:0">All times are shown in <b>ship's time, ${tzLabel(TZ ?? dev)}</b>, set by the bridge for this tender day.</p>
+      <div class="sumgrid"><div><span>Ship's time</span><b class="mono">${fmtT(Date.now())}</b></div><div><span>Your clock</span><b class="mono">${(() => { const d = new Date(); return pad(d.getHours()) + ":" + pad(d.getMinutes()); })()} · ${tzLabel(dev)}</b></div></div>`});
+  }
   modal({title:"Ship's time", submit:"Apply",
     body:`<p style="margin:0;color:var(--muted)">All times in the app are shown and entered in this time. Times already logged are converted automatically.</p>
       <label class="fld"><span>Time zone</span><select id="mTz">
-        <option value="dev" ${cur === "dev" ? "selected" : ""}>Device clock (${tzLabel(dev)})</option>
+        <option value="dev" ${cur === "dev" ? "selected" : ""}>This device's clock (${tzLabel(dev)})</option>
         ${opts.map(m => `<option value="${m}" ${cur === String(m) ? "selected" : ""}>${tzLabel(m)}</option>`).join("")}</select></label>
       <div class="sumgrid"><div><span>Ship's time</span><b class="mono" id="mNow"></b></div><div><span>Device clock</span><b class="mono">${(() => { const d = new Date(); return pad(d.getHours()) + ":" + pad(d.getMinutes()); })()}</b></div></div>
-      <p class="hint" style="margin:0">Set on this device only. Change it when the ship changes clocks.</p>`,
-    onOpen: f => { const sel = f.querySelector("#mTz"), upd = () => { const v = sel.value, m = v === "dev" ? new Date() : new Date(Date.now() + (+v) * 60000);
-        f.querySelector("#mNow").textContent = v === "dev" ? pad(m.getHours()) + ":" + pad(m.getMinutes()) : pad(m.getUTCHours()) + ":" + pad(m.getUTCMinutes()); };
+      <p class="hint" style="margin:0">${shared ? `Saved with today's tender day (${esc(day.port)}): every device, on board or ashore, shows this time. Change it when the ship changes clocks.` : "No tender day is open: this sets the time on this device only."}</p>`,
+    onOpen: f => { const sel = f.querySelector("#mTz"), upd = () => { const v = sel.value; f.querySelector("#mNow").textContent = nowIn(v === "dev" ? dev : +v); };
       sel.addEventListener("change", upd); upd(); },
-    onSubmit: f => { const v = f.querySelector("#mTz").value; TZ = v === "dev" ? null : +v; lsSet("tom.tz", TZ == null ? "" : String(TZ)); if (S.data) setData(S.data); render(); toast("Ship's time: " + (TZ == null ? "device clock" : tzLabel(TZ))); }});
+    onSubmit: f => { const v = f.querySelector("#mTz").value, val = v === "dev" ? null : +v;
+      DEV_TZ = val; lsSet("tom.tz", val == null ? "" : String(val));
+      if (shared){ S.store.saveDay({id: day.id, tz: val ?? dev}); }
+      if (S.data) setData(S.data); render(); toast("Ship's time: " + tzLabel(val ?? dev) + (shared ? " · for every device" : "")); }});
 }
 function legendModal(){
   modal({title:"How to read the board", submit:null,
