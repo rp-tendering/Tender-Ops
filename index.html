@@ -1195,7 +1195,15 @@ async function createFirebaseStore(){
     deleteDay: async dayId => { const snap = await dayRef(dayId).collection("events").get(); const docs = snap.docs;
       for (let i = 0; i < docs.length; i += 400){ const b = fs.batch(); docs.slice(i, i + 400).forEach(d => b.delete(d.ref)); await b.commit().catch(fail); }
       await dayRef(dayId).delete().catch(fail); },
-    getEvents: async dayId => (await dayRef(dayId).collection("events").get()).docs.map(d => d.data())
+    getEvents: async dayId => (await dayRef(dayId).collection("events").get()).docs.map(d => d.data()),
+    /* import one day from an offline backup: replaces any events already stored under that day */
+    importDay: async (day, evs, iss, onStep) => {
+      const old = await dayRef(day.id).collection("events").get();
+      for (let i = 0; i < old.docs.length; i += 400){ const b = fs.batch(); old.docs.slice(i, i + 400).forEach(d => b.delete(d.ref)); await b.commit(); }
+      await dayRef(day.id).set(clean(day));
+      for (let i = 0; i < evs.length; i += 400){ const b = fs.batch(); evs.slice(i, i + 400).forEach(e => b.set(dayRef(day.id).collection("events").doc(e.id), clean(e))); await b.commit(); if (onStep) onStep(Math.min(evs.length, i + 400), evs.length); }
+      for (let i = 0; i < iss.length; i += 400){ const b = fs.batch(); iss.slice(i, i + 400).forEach(x => b.set(fs.collection("issues").doc(x.id), clean(x), {merge:true})); await b.commit(); }
+    }
   };
 }
 
@@ -1583,6 +1591,36 @@ function backupHTML(){
     <p class="hint" style="margin:0 0 8px">Storage used: <b>${storageUse()}</b>. Everything is stored only in this browser. Save a backup file regularly (for example after each tender day) and keep it somewhere safe.</p>
     <div class="row-btns"><button class="btn" data-act="backup-export">Save backup file</button><button class="btn" data-act="backup-import">Restore from file…</button><input type="file" id="backupFile" accept=".json,application/json" hidden></div></div>`;
 }
+function importHTML(){
+  return `<div class="backup"><h3 class="bh">Import from the offline version</h3>
+    <p class="hint" style="margin:0 0 8px">Load a backup file saved with the offline version (History → Save backup file) to bring a tender day online. Everyone signed in will see it.</p>
+    <div class="row-btns"><button class="btn" data-act="import-offline">Import from offline backup…</button><input type="file" id="importFile" accept=".json,application/json" hidden></div></div>`;
+}
+function importModal(o){
+  const days = Object.values(o.data.days || {}).sort((a, b) => (b.openedAt || 0) - (a.openedAt || 0));
+  if (!days.length) return toast("No tender days in this file");
+  const evN = id => ((o.data.events || {})[id] || []).length;
+  const openOnline = S.data.currentDay;
+  modal({title:"Import a tender day", submit:"Import",
+    body:`<p style="margin:0;color:var(--muted)">Backup saved ${o.saved ? dLabel(o.saved, {day:"numeric", month:"short"}) + " " + fmtT(o.saved) : ""}. Choose the day to bring online.</p>
+      <div class="choice imp" id="mDay" data-val="${days[0].id}" style="grid-template-columns:1fr">${days.map((d, i) => `<button type="button" data-berth="${esc(d.id)}" aria-pressed="${i === 0}">${esc(d.port)} · ${esc(d.date)}${d.status === "open" ? " · open" : ""}<small>${evN(d.id)} entries${S.data.days.some(x => x.id === d.id) ? " · already online, will be replaced" : ""}</small></button>`).join("")}</div>
+      ${openOnline ? `<div class="warnbox">${esc(openOnline.port)} is open online. If you import an open day, ${esc(openOnline.port)} is closed first and moves to History.</div>` : ""}
+      <div id="mProg" class="hint"></div><div id="mWarn"></div>`,
+    onOpen: f => bindChoice(f, "mDay"),
+    onSubmit: f => {
+      const id = f.querySelector("#mDay").dataset.val, d = days.find(x => x.id === id); if (!d) return false;
+      const evs = ((o.data.events || {})[id] || []).slice(), iss = Object.values(o.data.issues || {}).filter(x => x.dayId === id);
+      const btn = f.querySelector("button[type=submit]"); if (btn) btn.disabled = true;
+      (async () => {
+        try {
+          if (d.status === "open" && openOnline && openOnline.id !== id) await S.store.saveDay({id: openOnline.id, status:"closed", closedAt: Date.now()});
+          await S.store.importDay(d, evs, iss, (n, t) => { const pg = f.querySelector("#mProg"); if (pg) pg.textContent = `Uploading ${n} of ${t}…`; });
+          closeModal(); toast(`${d.port} imported · ${evs.length} entries`); S.view = d.status === "open" ? "board" : "history"; render();
+        } catch(err){ if (btn) btn.disabled = false; const w = f.querySelector("#mWarn"); if (w) w.innerHTML = `<div class="warnbox">Import failed: ${esc(err.message || String(err))}. Check the connection and try again.</div>`; }
+      })();
+      return false;
+    }});
+}
 function historyHTML(){
   if (S.hist){
     const d = S.data.days.find(x => x.id === S.hist);
@@ -1601,7 +1639,7 @@ function historyHTML(){
       <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b>${esc(d.port)}</b><span class="status ${d.status === "open" ? "open" : "resolved"}">${d.status === "open" ? "Today" : "Closed"}</span></div>
       <span class="d">${fmtDate(d.date)} · last tender ${esc(d.lastTender || "—")}</span>
       <div class="g"><div><span>Trips</span><i>${s.tripsOut != null ? s.tripsOut + s.tripsBack : "—"}</i></div><div><span>Pax ashore</span><i>${s.paxOut != null ? num(s.paxOut) : "—"}</i></div><div><span>Round trip</span><i>${s.cycleAvg != null ? s.cycleAvg + "′" : "—"}</i></div></div></button>`; }).join("")}</div>`
-      : `<p style="color:var(--muted);margin:0">Closed tender days appear here.</p>`}${CONFIG.standalone ? backupHTML() : ""}</section>`;
+      : `<p style="color:var(--muted);margin:0">Closed tender days appear here.</p>`}${CONFIG.standalone ? backupHTML() : S.store.mode === "live" && isAdmin() ? importHTML() : ""}</section>`;
 }
 function loginHTML(){
   return `<div class="wrap login"><form id="loginForm" autocomplete="on">
@@ -2407,6 +2445,8 @@ document.addEventListener("click", e => {
       const blob = new Blob([S.store.exportAll()], {type:"application/json"}), a = document.createElement("a");
       a.href = URL.createObjectURL(blob); a.download = "tendering-ops-backup-" + ymd(Date.now()) + ".json";
       document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); toast("Backup saved"); break; }
+    case "import-offline": { const inp = $("#importFile"); if (!inp) break; inp.value = ""; inp.onchange = () => { const f = inp.files && inp.files[0]; if (!f) return;
+      f.text().then(txt => { const o = JSON.parse(txt); if (!o || o.app !== "tendering-ops-deck" || !o.data || !o.data.days) throw new Error("bad"); importModal(o); }).catch(() => toast("Not a valid backup file from the offline version")); }; inp.click(); break; }
     case "backup-import": { const inp = $("#backupFile"); if (!inp) break; inp.value = ""; inp.onchange = () => { const f = inp.files && inp.files[0]; if (!f) return;
       f.text().then(txt => { JSON.parse(txt); confirmTyped({title:"Restore backup", text:"This replaces ALL data on this device with the backup file.", word:"RESTORE", button:"Restore",
         onConfirm: () => { try { S.store.importAll(txt); S.hist = null; S.histEvents = null; toast("Backup restored"); } catch(e){ toast(e.message); } }}); }).catch(() => toast("Not a valid backup file")); }; inp.click(); break; }
